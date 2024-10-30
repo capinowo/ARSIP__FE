@@ -24,9 +24,10 @@ export default [
     to: { name: 'list_arsip' },
     icon: { icon: 'ri-book-shelf-line' },
   },
-  {
-    title: 'Test Page',
-    to: { name: 'second-page' },
-    icon: { icon: 'ri-file-text-line' },
-  },
+
+  // {
+  //   title: 'Test Page',
+  //   to: { name: 'second-page' },
+  //   icon: { icon: 'ri-file-text-line' },
+  // },
 ]

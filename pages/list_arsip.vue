@@ -1,5 +1,5 @@
 <script setup>
-import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
+import AddListArsip from '@/views/apps/list-arsip/AddListArsip.vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -9,7 +9,7 @@ definePageMeta({
 })
 
 const router = useRouter()
-const isAddNewUserDrawerVisible = ref(false)
+const isAddListArsipVisible = ref(false)
 const searchQuery = ref('')
 const users = ref([])
 const isLoading = ref(false)
@@ -91,7 +91,7 @@ onMounted(() => {
             class="me-4"
           />
           <!-- Add User Button -->
-          <VBtn @click="isAddNewUserDrawerVisible = true">
+          <VBtn @click="isAddListArsipVisible = true">
             Add New Arsip
           </VBtn>
         </div>
@@ -138,10 +138,7 @@ onMounted(() => {
       </VCard>
     </div>
     <!-- Drawer untuk Tambah User Baru -->
-    <AddNewUserDrawer
-      v-model:isDrawerOpen="isAddNewUserDrawerVisible"
-      @user-data="addNewUser"
-    />
+    <AddListArsip v-model:isDrawerOpen="isAddListArsipVisible" />
   </section>
 </template>
 

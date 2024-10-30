@@ -1,4 +1,5 @@
 <script setup>
+import GrafikArsip from '@/views/apps/dashboard/GrafikArsip.vue'
 import WelcomeUsers from '@/views/apps/dashboard/WelcomeUsers.vue'
 import { jwtDecode } from 'jwt-decode'
 import { computed, onMounted, ref } from 'vue'
@@ -61,26 +62,13 @@ const remainingMinutes = computed(() => {
     <VRow>
       <VCol
         cols="12"
-        md="8"
         class="d-flex flex-column align-self-end"
       >
         <WelcomeUsers />
       </VCol>
-      <VCard
-        title="Debug Information"
-        class="mt-6"
-      >
-        <VCardText>
-          <strong>Auth Token:</strong> {{ authToken || 'Token not found' }}
-        </VCardText>
-        <!-- Decoded Token Data -->
-        <VCardText><strong>Name:</strong> {{ tokenData.name || 'Not available' }}</VCardText>
-        <VCardText><strong>Email:</strong> {{ tokenData.email || 'Not available' }}</VCardText>
-        <VCardText><strong>Session Roles:</strong> {{ tokenData.sessionRoles.join(', ') || 'Not available' }}</VCardText>
-        <VCardText><strong>Selected Role:</strong> {{ tokenData.selectedRole || 'Not available' }}</VCardText>
-        <VCardText><strong>Issued At (iat):</strong> {{ tokenData.iat || 'Not available' }}</VCardText>
-        <VCardText><strong>Expiration (exp):</strong> {{ tokenData.exp || 'Not available' }}</VCardText>
-      </VCard>
+      <VCol cols="12">
+        <GrafikArsip />
+      </VCol>
     </VRow>
   </div>
 </template>

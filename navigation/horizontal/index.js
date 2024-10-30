@@ -32,9 +32,9 @@ export default [
   //     { title: 'List', to: 'apps-user-list' },
   //   ],
   // },
-  {
-    title: 'Test Page',
-    to: { name: 'second-page' },
-    icon: { icon: 'ri-file-text-line' },
-  },
+  // {
+  //   title: 'Test Page',
+  //   to: { name: 'second-page' },
+  //   icon: { icon: 'ri-file-text-line' },
+  // },
 ]

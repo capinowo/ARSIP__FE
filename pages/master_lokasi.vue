@@ -1,5 +1,5 @@
 <script setup>
-import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
+import AddNewMasterLokasi from '@/views/apps/master-lokasi/AddNewMasterLokasi.vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -9,7 +9,7 @@ definePageMeta({
 })
 
 const router = useRouter()
-const isAddNewUserDrawerVisible = ref(false)
+const isAddNewMasterLokasiVisible = ref(false)
 const searchQuery = ref('')
 const users = ref([])
 const isLoading = ref(false)
@@ -91,7 +91,7 @@ onMounted(() => {
             class="me-4"
           />
           <!-- Add User Button -->
-          <VBtn @click="isAddNewUserDrawerVisible = true">
+          <VBtn @click="isAddNewMasterLokasiVisible = true">
             Add New Lokasi
           </VBtn>
         </div>
@@ -138,10 +138,7 @@ onMounted(() => {
       </VCard>
     </div>
     <!-- Drawer untuk Tambah User Baru -->
-    <AddNewUserDrawer
-      v-model:isDrawerOpen="isAddNewUserDrawerVisible"
-      @user-data="addNewUser"
-    />
+    <AddNewMasterLokasi v-model:isDrawerOpen="isAddNewMasterLokasiVisible" />
   </section>
 </template>
 
