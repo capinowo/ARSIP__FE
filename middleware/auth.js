@@ -1,34 +1,34 @@
-// middleware/auth.js
-import { jwtDecode } from 'jwt-decode'
+// utils/auth.js
 
-export default defineNuxtRouteMiddleware((to, from) => {
-  if (!import.meta.env.SSR) { // Memastikan kode berjalan hanya di sisi klien
-    // Ambil token dari localStorage
-    const token = localStorage.getItem('authToken')
-    
-    // Jika token tidak ada, arahkan ke halaman login
-    if (!token) {
-      return navigateTo('/login')
-    }
+const AUTH_TOKEN_KEY = 'authToken'
+const ROLE_TOKEN_KEY = 'selectedRoleToken'
 
-    try {
-      // Dekode token untuk mendapatkan waktu kedaluwarsa (exp)
-      const decoded = jwtDecode(token)
-      const currentTime = Date.now() / 1000
+// Store auth token
+export function setAuthToken(token) {
+  localStorage.setItem(AUTH_TOKEN_KEY, token)
+}
 
-      // Periksa apakah token sudah kadaluarsa
-      if (decoded.exp < currentTime) {
-        localStorage.removeItem('authToken') // Hapus token yang kadaluarsa
-        localStorage.removeItem('tokenExpiration')
-        
-        return navigateTo('/login') // Arahkan ke halaman login jika token kadaluarsa
-      }
-    } catch (error) {
-      // Jika terjadi error dalam mendekode token, anggap token tidak valid dan redirect ke login
-      localStorage.removeItem('authToken')
-      localStorage.removeItem('tokenExpiration')
-      
-      return navigateTo('/login')
-    }
-  }
-})
+// Retrieve auth token
+export function getAuthToken() {
+  return localStorage.getItem(AUTH_TOKEN_KEY)
+}
+
+// Clear auth token
+export function clearAuthToken() {
+  localStorage.removeItem(AUTH_TOKEN_KEY)
+}
+
+// Store selected role token
+export function setSelectedRoleToken(token) {
+  localStorage.setItem(ROLE_TOKEN_KEY, token)
+}
+
+// Retrieve selected role token
+export function getSelectedRoleToken() {
+  return localStorage.getItem(ROLE_TOKEN_KEY)
+}
+
+// Clear selected role token
+export function clearSelectedRoleToken() {
+  localStorage.removeItem(ROLE_TOKEN_KEY)
+}

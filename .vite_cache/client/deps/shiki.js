@@ -2,57 +2,57 @@ import {
   __publicField
 } from "./chunk-BSPL5VGI.js";
 
-// node_modules/shiki/dist/langs.mjs
+// node_modules/.pnpm/shiki@1.11.1/node_modules/shiki/dist/langs.mjs
 var bundledLanguagesInfo = [
   {
     "id": "abap",
     "name": "ABAP",
-    "import": () => import("./abap-QRMDODJF.js")
+    "import": () => import("./abap-U6PAVQHU.js")
   },
   {
     "id": "actionscript-3",
     "name": "ActionScript",
-    "import": () => import("./actionscript-3-LSNMH7FE.js")
+    "import": () => import("./actionscript-3-GQWUKD5C.js")
   },
   {
     "id": "ada",
     "name": "Ada",
-    "import": () => import("./ada-5QYTORQ7.js")
+    "import": () => import("./ada-TT4OUVTS.js")
   },
   {
     "id": "angular-html",
     "name": "Angular HTML",
-    "import": () => import("./angular-html-QQE6NK7N.js")
+    "import": () => import("./angular-html-LL3YF3JB.js")
   },
   {
     "id": "angular-ts",
     "name": "Angular TypeScript",
-    "import": () => import("./angular-ts-HYFN7CO4.js")
+    "import": () => import("./angular-ts-3Q2UHLWJ.js")
   },
   {
     "id": "apache",
     "name": "Apache Conf",
-    "import": () => import("./apache-YGIWLWI7.js")
+    "import": () => import("./apache-7OFSVSBN.js")
   },
   {
     "id": "apex",
     "name": "Apex",
-    "import": () => import("./apex-STMM3Y2S.js")
+    "import": () => import("./apex-TJ5RWFMX.js")
   },
   {
     "id": "apl",
     "name": "APL",
-    "import": () => import("./apl-MPI6BNSO.js")
+    "import": () => import("./apl-Z25QAUU7.js")
   },
   {
     "id": "applescript",
     "name": "AppleScript",
-    "import": () => import("./applescript-HKF74TST.js")
+    "import": () => import("./applescript-4HNRC3T2.js")
   },
   {
     "id": "ara",
     "name": "Ara",
-    "import": () => import("./ara-MUTRGETM.js")
+    "import": () => import("./ara-HQYVMKFO.js")
   },
   {
     "id": "asciidoc",
@@ -60,27 +60,27 @@ var bundledLanguagesInfo = [
     "aliases": [
       "adoc"
     ],
-    "import": () => import("./asciidoc-4GR4U7RP.js")
+    "import": () => import("./asciidoc-JL5JDT5A.js")
   },
   {
     "id": "asm",
     "name": "Assembly",
-    "import": () => import("./asm-4W6TS3HL.js")
+    "import": () => import("./asm-L5DZT3J5.js")
   },
   {
     "id": "astro",
     "name": "Astro",
-    "import": () => import("./astro-5X6CY346.js")
+    "import": () => import("./astro-ERA37DZE.js")
   },
   {
     "id": "awk",
     "name": "AWK",
-    "import": () => import("./awk-33KVME5F.js")
+    "import": () => import("./awk-W3YXJZ2F.js")
   },
   {
     "id": "ballerina",
     "name": "Ballerina",
-    "import": () => import("./ballerina-HGUMMBGP.js")
+    "import": () => import("./ballerina-QB2EJHCT.js")
   },
   {
     "id": "bat",
@@ -88,12 +88,12 @@ var bundledLanguagesInfo = [
     "aliases": [
       "batch"
     ],
-    "import": () => import("./bat-QFDNC25A.js")
+    "import": () => import("./bat-BUDNVY2X.js")
   },
   {
     "id": "beancount",
     "name": "Beancount",
-    "import": () => import("./beancount-ND74ZEBG.js")
+    "import": () => import("./beancount-5XJYQSUP.js")
   },
   {
     "id": "berry",
@@ -101,27 +101,27 @@ var bundledLanguagesInfo = [
     "aliases": [
       "be"
     ],
-    "import": () => import("./berry-7KRKMCJG.js")
+    "import": () => import("./berry-V3WAM4EX.js")
   },
   {
     "id": "bibtex",
     "name": "BibTeX",
-    "import": () => import("./bibtex-GKHIGJ2I.js")
+    "import": () => import("./bibtex-K44G3MQZ.js")
   },
   {
     "id": "bicep",
     "name": "Bicep",
-    "import": () => import("./bicep-CCZZQVEF.js")
+    "import": () => import("./bicep-DXTN4PKE.js")
   },
   {
     "id": "blade",
     "name": "Blade",
-    "import": () => import("./blade-Q24GIVCN.js")
+    "import": () => import("./blade-TATWR76M.js")
   },
   {
     "id": "c",
     "name": "C",
-    "import": () => import("./c-6NWSIG7X.js")
+    "import": () => import("./c-EIQXXHK3.js")
   },
   {
     "id": "cadence",
@@ -129,12 +129,12 @@ var bundledLanguagesInfo = [
     "aliases": [
       "cdc"
     ],
-    "import": () => import("./cadence-Q3RPOG6N.js")
+    "import": () => import("./cadence-22H36I5M.js")
   },
   {
     "id": "clarity",
     "name": "Clarity",
-    "import": () => import("./clarity-KYWD326W.js")
+    "import": () => import("./clarity-KYAPMGVG.js")
   },
   {
     "id": "clojure",
@@ -142,22 +142,22 @@ var bundledLanguagesInfo = [
     "aliases": [
       "clj"
     ],
-    "import": () => import("./clojure-NK5V5SUE.js")
+    "import": () => import("./clojure-47XV3RKH.js")
   },
   {
     "id": "cmake",
     "name": "CMake",
-    "import": () => import("./cmake-KNZBOXG3.js")
+    "import": () => import("./cmake-C7VP5RZA.js")
   },
   {
     "id": "cobol",
     "name": "COBOL",
-    "import": () => import("./cobol-R5KHY4BE.js")
+    "import": () => import("./cobol-3AH2JWGC.js")
   },
   {
     "id": "codeowners",
     "name": "CODEOWNERS",
-    "import": () => import("./codeowners-ZYBMJUJZ.js")
+    "import": () => import("./codeowners-WBER55AF.js")
   },
   {
     "id": "codeql",
@@ -165,7 +165,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "ql"
     ],
-    "import": () => import("./codeql-JF4YDQLJ.js")
+    "import": () => import("./codeql-D5K7ISIH.js")
   },
   {
     "id": "coffee",
@@ -173,7 +173,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "coffeescript"
     ],
-    "import": () => import("./coffee-XIRRXDA3.js")
+    "import": () => import("./coffee-XT3FS2U3.js")
   },
   {
     "id": "common-lisp",
@@ -181,7 +181,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "lisp"
     ],
-    "import": () => import("./common-lisp-HYWKK4TN.js")
+    "import": () => import("./common-lisp-6JDCKIF6.js")
   },
   {
     "id": "cpp",
@@ -189,12 +189,12 @@ var bundledLanguagesInfo = [
     "aliases": [
       "c++"
     ],
-    "import": () => import("./cpp-NGZJNFEH.js")
+    "import": () => import("./cpp-KFQ2IOAF.js")
   },
   {
     "id": "crystal",
     "name": "Crystal",
-    "import": () => import("./crystal-MLPVW2NQ.js")
+    "import": () => import("./crystal-HZOD3BEG.js")
   },
   {
     "id": "csharp",
@@ -203,22 +203,22 @@ var bundledLanguagesInfo = [
       "c#",
       "cs"
     ],
-    "import": () => import("./csharp-BGL55R6T.js")
+    "import": () => import("./csharp-EVQBM63O.js")
   },
   {
     "id": "css",
     "name": "CSS",
-    "import": () => import("./css-MV7W66TL.js")
+    "import": () => import("./css-ETFLUJ2L.js")
   },
   {
     "id": "csv",
     "name": "CSV",
-    "import": () => import("./csv-THDFEFZZ.js")
+    "import": () => import("./csv-WHBFSYFU.js")
   },
   {
     "id": "cue",
     "name": "CUE",
-    "import": () => import("./cue-PKSVDFZV.js")
+    "import": () => import("./cue-3TFF3IGM.js")
   },
   {
     "id": "cypher",
@@ -226,32 +226,32 @@ var bundledLanguagesInfo = [
     "aliases": [
       "cql"
     ],
-    "import": () => import("./cypher-BYTTFTW5.js")
+    "import": () => import("./cypher-YMHRQAS4.js")
   },
   {
     "id": "d",
     "name": "D",
-    "import": () => import("./d-NNE7QEM3.js")
+    "import": () => import("./d-ZRACVAHM.js")
   },
   {
     "id": "dart",
     "name": "Dart",
-    "import": () => import("./dart-CBS5YFQF.js")
+    "import": () => import("./dart-FXCJH5ED.js")
   },
   {
     "id": "dax",
     "name": "DAX",
-    "import": () => import("./dax-ZYNWMPUF.js")
+    "import": () => import("./dax-NENVJRCR.js")
   },
   {
     "id": "desktop",
     "name": "Desktop",
-    "import": () => import("./desktop-7KWHTLCX.js")
+    "import": () => import("./desktop-6WEZ3KCI.js")
   },
   {
     "id": "diff",
     "name": "Diff",
-    "import": () => import("./diff-ZELAQ6EC.js")
+    "import": () => import("./diff-B53Y4NPG.js")
   },
   {
     "id": "docker",
@@ -259,27 +259,27 @@ var bundledLanguagesInfo = [
     "aliases": [
       "dockerfile"
     ],
-    "import": () => import("./docker-XINWZYDL.js")
+    "import": () => import("./docker-IGCFODOH.js")
   },
   {
     "id": "dream-maker",
     "name": "Dream Maker",
-    "import": () => import("./dream-maker-4CKO3WB3.js")
+    "import": () => import("./dream-maker-DGKB3EWB.js")
   },
   {
     "id": "edge",
     "name": "Edge",
-    "import": () => import("./edge-FGDNTQRL.js")
+    "import": () => import("./edge-CDMZLEHQ.js")
   },
   {
     "id": "elixir",
     "name": "Elixir",
-    "import": () => import("./elixir-C2YS2KMT.js")
+    "import": () => import("./elixir-WPV6SNEW.js")
   },
   {
     "id": "elm",
     "name": "Elm",
-    "import": () => import("./elm-P4BMGO26.js")
+    "import": () => import("./elm-6XC5DRDI.js")
   },
   {
     "id": "emacs-lisp",
@@ -287,12 +287,12 @@ var bundledLanguagesInfo = [
     "aliases": [
       "elisp"
     ],
-    "import": () => import("./emacs-lisp-J6Y3JAYY.js")
+    "import": () => import("./emacs-lisp-BTG5F4BW.js")
   },
   {
     "id": "erb",
     "name": "ERB",
-    "import": () => import("./erb-OJCZKCEY.js")
+    "import": () => import("./erb-ZZMDYDSZ.js")
   },
   {
     "id": "erlang",
@@ -300,17 +300,17 @@ var bundledLanguagesInfo = [
     "aliases": [
       "erl"
     ],
-    "import": () => import("./erlang-TLN7D6JO.js")
+    "import": () => import("./erlang-IEEDVEWE.js")
   },
   {
     "id": "fennel",
     "name": "Fennel",
-    "import": () => import("./fennel-UVQIGFSD.js")
+    "import": () => import("./fennel-FD65HFW6.js")
   },
   {
     "id": "fish",
     "name": "Fish",
-    "import": () => import("./fish-3XDF22ZX.js")
+    "import": () => import("./fish-CTQSOPAH.js")
   },
   {
     "id": "fluent",
@@ -318,7 +318,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "ftl"
     ],
-    "import": () => import("./fluent-4FP6NFNB.js")
+    "import": () => import("./fluent-DTR4MX2W.js")
   },
   {
     "id": "fortran-fixed-form",
@@ -328,7 +328,7 @@ var bundledLanguagesInfo = [
       "for",
       "f77"
     ],
-    "import": () => import("./fortran-fixed-form-6AXMVVOG.js")
+    "import": () => import("./fortran-fixed-form-CZJAVBUK.js")
   },
   {
     "id": "fortran-free-form",
@@ -340,7 +340,7 @@ var bundledLanguagesInfo = [
       "f08",
       "f18"
     ],
-    "import": () => import("./fortran-free-form-ZWAXELXC.js")
+    "import": () => import("./fortran-free-form-2PSITZRY.js")
   },
   {
     "id": "fsharp",
@@ -349,47 +349,47 @@ var bundledLanguagesInfo = [
       "f#",
       "fs"
     ],
-    "import": () => import("./fsharp-PFWGVHYN.js")
+    "import": () => import("./fsharp-QHIUT2FZ.js")
   },
   {
     "id": "gdresource",
     "name": "GDResource",
-    "import": () => import("./gdresource-HYHQGUET.js")
+    "import": () => import("./gdresource-U23TMMFI.js")
   },
   {
     "id": "gdscript",
     "name": "GDScript",
-    "import": () => import("./gdscript-CCITOZNT.js")
+    "import": () => import("./gdscript-74OIIYTY.js")
   },
   {
     "id": "gdshader",
     "name": "GDShader",
-    "import": () => import("./gdshader-M2TER2WD.js")
+    "import": () => import("./gdshader-OUJTGWAX.js")
   },
   {
     "id": "genie",
     "name": "Genie",
-    "import": () => import("./genie-I6NZ3RJT.js")
+    "import": () => import("./genie-Q6SJCLYD.js")
   },
   {
     "id": "gherkin",
     "name": "Gherkin",
-    "import": () => import("./gherkin-E76S4EBQ.js")
+    "import": () => import("./gherkin-TGIEUCQ7.js")
   },
   {
     "id": "git-commit",
     "name": "Git Commit Message",
-    "import": () => import("./git-commit-Q7HIXOX4.js")
+    "import": () => import("./git-commit-62KBCYE3.js")
   },
   {
     "id": "git-rebase",
     "name": "Git Rebase Message",
-    "import": () => import("./git-rebase-JTFKY57W.js")
+    "import": () => import("./git-rebase-N4PTJYH5.js")
   },
   {
     "id": "gleam",
     "name": "Gleam",
-    "import": () => import("./gleam-UOE6PHNA.js")
+    "import": () => import("./gleam-ET6QHZKX.js")
   },
   {
     "id": "glimmer-js",
@@ -397,7 +397,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "gjs"
     ],
-    "import": () => import("./glimmer-js-Q24U4USI.js")
+    "import": () => import("./glimmer-js-4FVY5U6P.js")
   },
   {
     "id": "glimmer-ts",
@@ -405,22 +405,22 @@ var bundledLanguagesInfo = [
     "aliases": [
       "gts"
     ],
-    "import": () => import("./glimmer-ts-DENGFQZD.js")
+    "import": () => import("./glimmer-ts-OJ2VZC7L.js")
   },
   {
     "id": "glsl",
     "name": "GLSL",
-    "import": () => import("./glsl-ZEIN4DAN.js")
+    "import": () => import("./glsl-IJYIXP2E.js")
   },
   {
     "id": "gnuplot",
     "name": "Gnuplot",
-    "import": () => import("./gnuplot-JMXEV3MW.js")
+    "import": () => import("./gnuplot-OQN57ANH.js")
   },
   {
     "id": "go",
     "name": "Go",
-    "import": () => import("./go-HSURXTGW.js")
+    "import": () => import("./go-LOKGRXM4.js")
   },
   {
     "id": "graphql",
@@ -428,22 +428,22 @@ var bundledLanguagesInfo = [
     "aliases": [
       "gql"
     ],
-    "import": () => import("./graphql-FBRIKCA2.js")
+    "import": () => import("./graphql-PDHOGAC5.js")
   },
   {
     "id": "groovy",
     "name": "Groovy",
-    "import": () => import("./groovy-FOFYJ4OF.js")
+    "import": () => import("./groovy-3D2DPOQL.js")
   },
   {
     "id": "hack",
     "name": "Hack",
-    "import": () => import("./hack-XZFRQ3NX.js")
+    "import": () => import("./hack-LFRS6I6F.js")
   },
   {
     "id": "haml",
     "name": "Ruby Haml",
-    "import": () => import("./haml-CAVCMDGJ.js")
+    "import": () => import("./haml-PXC2YEGE.js")
   },
   {
     "id": "handlebars",
@@ -451,7 +451,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "hbs"
     ],
-    "import": () => import("./handlebars-PXWUMN7T.js")
+    "import": () => import("./handlebars-UWP2TXHJ.js")
   },
   {
     "id": "haskell",
@@ -459,57 +459,57 @@ var bundledLanguagesInfo = [
     "aliases": [
       "hs"
     ],
-    "import": () => import("./haskell-EEQDGY3F.js")
+    "import": () => import("./haskell-BRBPHZ7V.js")
   },
   {
     "id": "haxe",
     "name": "Haxe",
-    "import": () => import("./haxe-FLCTT5MF.js")
+    "import": () => import("./haxe-JOS2OUQZ.js")
   },
   {
     "id": "hcl",
     "name": "HashiCorp HCL",
-    "import": () => import("./hcl-KL5QZJYH.js")
+    "import": () => import("./hcl-32NYR2RO.js")
   },
   {
     "id": "hjson",
     "name": "Hjson",
-    "import": () => import("./hjson-ABESXINV.js")
+    "import": () => import("./hjson-GTLDVJUD.js")
   },
   {
     "id": "hlsl",
     "name": "HLSL",
-    "import": () => import("./hlsl-DSXGOLRE.js")
+    "import": () => import("./hlsl-MXITYAW2.js")
   },
   {
     "id": "html",
     "name": "HTML",
-    "import": () => import("./html-GQEEA2PM.js")
+    "import": () => import("./html-UNFVHMZA.js")
   },
   {
     "id": "html-derivative",
     "name": "HTML (Derivative)",
-    "import": () => import("./html-derivative-ZRKOQ7SU.js")
+    "import": () => import("./html-derivative-HXDGACZA.js")
   },
   {
     "id": "http",
     "name": "HTTP",
-    "import": () => import("./http-ZNTD2S2A.js")
+    "import": () => import("./http-IV4M7IJH.js")
   },
   {
     "id": "hxml",
     "name": "HXML",
-    "import": () => import("./hxml-37R6M6AM.js")
+    "import": () => import("./hxml-U7S26TSB.js")
   },
   {
     "id": "hy",
     "name": "Hy",
-    "import": () => import("./hy-M2L3STAE.js")
+    "import": () => import("./hy-RVGU72RH.js")
   },
   {
     "id": "imba",
     "name": "Imba",
-    "import": () => import("./imba-OXZQAXZG.js")
+    "import": () => import("./imba-ORWWRD4Z.js")
   },
   {
     "id": "ini",
@@ -517,12 +517,12 @@ var bundledLanguagesInfo = [
     "aliases": [
       "properties"
     ],
-    "import": () => import("./ini-2DMUOUQC.js")
+    "import": () => import("./ini-5OJ3BKYS.js")
   },
   {
     "id": "java",
     "name": "Java",
-    "import": () => import("./java-IQ6LJIHD.js")
+    "import": () => import("./java-AKGTQEHU.js")
   },
   {
     "id": "javascript",
@@ -530,42 +530,42 @@ var bundledLanguagesInfo = [
     "aliases": [
       "js"
     ],
-    "import": () => import("./javascript-WRYHA6DR.js")
+    "import": () => import("./javascript-QZH2YZJE.js")
   },
   {
     "id": "jinja",
     "name": "Jinja",
-    "import": () => import("./jinja-RRTH7WN2.js")
+    "import": () => import("./jinja-ONJA34VA.js")
   },
   {
     "id": "jison",
     "name": "Jison",
-    "import": () => import("./jison-XX42BEEM.js")
+    "import": () => import("./jison-5NGJB3JT.js")
   },
   {
     "id": "json",
     "name": "JSON",
-    "import": () => import("./json-F64UY4FY.js")
+    "import": () => import("./json-24BS2PCL.js")
   },
   {
     "id": "json5",
     "name": "JSON5",
-    "import": () => import("./json5-BZ55IWAI.js")
+    "import": () => import("./json5-FNPHOBHU.js")
   },
   {
     "id": "jsonc",
     "name": "JSON with Comments",
-    "import": () => import("./jsonc-5ZKVNFKS.js")
+    "import": () => import("./jsonc-CH3O4YZK.js")
   },
   {
     "id": "jsonl",
     "name": "JSON Lines",
-    "import": () => import("./jsonl-ANZHGPUY.js")
+    "import": () => import("./jsonl-USXUAEGR.js")
   },
   {
     "id": "jsonnet",
     "name": "Jsonnet",
-    "import": () => import("./jsonnet-V6KQVWBE.js")
+    "import": () => import("./jsonnet-AM2RJNQJ.js")
   },
   {
     "id": "jssm",
@@ -573,12 +573,12 @@ var bundledLanguagesInfo = [
     "aliases": [
       "fsl"
     ],
-    "import": () => import("./jssm-MK4XEGEL.js")
+    "import": () => import("./jssm-XG4A552I.js")
   },
   {
     "id": "jsx",
     "name": "JSX",
-    "import": () => import("./jsx-R2MX7KK3.js")
+    "import": () => import("./jsx-JP3HACMV.js")
   },
   {
     "id": "julia",
@@ -586,7 +586,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "jl"
     ],
-    "import": () => import("./julia-VENZTKRZ.js")
+    "import": () => import("./julia-WYDHZNVQ.js")
   },
   {
     "id": "kotlin",
@@ -595,7 +595,7 @@ var bundledLanguagesInfo = [
       "kt",
       "kts"
     ],
-    "import": () => import("./kotlin-NA3HYYTL.js")
+    "import": () => import("./kotlin-MHPTML5V.js")
   },
   {
     "id": "kusto",
@@ -603,12 +603,12 @@ var bundledLanguagesInfo = [
     "aliases": [
       "kql"
     ],
-    "import": () => import("./kusto-6ZP3Q4D5.js")
+    "import": () => import("./kusto-WZW5KDJU.js")
   },
   {
     "id": "latex",
     "name": "LaTeX",
-    "import": () => import("./latex-SU6HPLQC.js")
+    "import": () => import("./latex-CAOZFBBH.js")
   },
   {
     "id": "lean",
@@ -616,37 +616,37 @@ var bundledLanguagesInfo = [
     "aliases": [
       "lean4"
     ],
-    "import": () => import("./lean-EHKWTDXG.js")
+    "import": () => import("./lean-CSSTNGAP.js")
   },
   {
     "id": "less",
     "name": "Less",
-    "import": () => import("./less-HAN3W3B5.js")
+    "import": () => import("./less-MBJAFDU5.js")
   },
   {
     "id": "liquid",
     "name": "Liquid",
-    "import": () => import("./liquid-OZW774RX.js")
+    "import": () => import("./liquid-KX2FMUJH.js")
   },
   {
     "id": "log",
     "name": "Log file",
-    "import": () => import("./log-RVSEVK2G.js")
+    "import": () => import("./log-W5JBUX4P.js")
   },
   {
     "id": "logo",
     "name": "Logo",
-    "import": () => import("./logo-NJ7X7TMW.js")
+    "import": () => import("./logo-OTH6Z7JO.js")
   },
   {
     "id": "lua",
     "name": "Lua",
-    "import": () => import("./lua-FHQRAWCC.js")
+    "import": () => import("./lua-ZU5O25U2.js")
   },
   {
     "id": "luau",
     "name": "Luau",
-    "import": () => import("./luau-T7CJ33O2.js")
+    "import": () => import("./luau-UWLUOLL2.js")
   },
   {
     "id": "make",
@@ -654,7 +654,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "makefile"
     ],
-    "import": () => import("./make-XMRD5N3P.js")
+    "import": () => import("./make-YSEHQLN5.js")
   },
   {
     "id": "markdown",
@@ -662,42 +662,42 @@ var bundledLanguagesInfo = [
     "aliases": [
       "md"
     ],
-    "import": () => import("./markdown-D42VI4V2.js")
+    "import": () => import("./markdown-6UQLGF67.js")
   },
   {
     "id": "marko",
     "name": "Marko",
-    "import": () => import("./marko-6MELKWBL.js")
+    "import": () => import("./marko-C7IGETZD.js")
   },
   {
     "id": "matlab",
     "name": "MATLAB",
-    "import": () => import("./matlab-QTTYPRAK.js")
+    "import": () => import("./matlab-WUVGFTXC.js")
   },
   {
     "id": "mdc",
     "name": "MDC",
-    "import": () => import("./mdc-F7R75FGF.js")
+    "import": () => import("./mdc-EP4Z35GB.js")
   },
   {
     "id": "mdx",
     "name": "MDX",
-    "import": () => import("./mdx-HSQLI2WP.js")
+    "import": () => import("./mdx-JKIIH4GF.js")
   },
   {
     "id": "mermaid",
     "name": "Mermaid",
-    "import": () => import("./mermaid-KVCEHPAP.js")
+    "import": () => import("./mermaid-3BUET5G6.js")
   },
   {
     "id": "mojo",
     "name": "Mojo",
-    "import": () => import("./mojo-WZZYFFP4.js")
+    "import": () => import("./mojo-MZCXASV4.js")
   },
   {
     "id": "move",
     "name": "Move",
-    "import": () => import("./move-GGFXOWCH.js")
+    "import": () => import("./move-JQC2FVFP.js")
   },
   {
     "id": "narrat",
@@ -705,7 +705,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "nar"
     ],
-    "import": () => import("./narrat-XQO7MK3F.js")
+    "import": () => import("./narrat-KN5X4N72.js")
   },
   {
     "id": "nextflow",
@@ -713,22 +713,22 @@ var bundledLanguagesInfo = [
     "aliases": [
       "nf"
     ],
-    "import": () => import("./nextflow-4UI5DEZV.js")
+    "import": () => import("./nextflow-OV6WLHVP.js")
   },
   {
     "id": "nginx",
     "name": "Nginx",
-    "import": () => import("./nginx-P3A5X7RH.js")
+    "import": () => import("./nginx-4DU4NGED.js")
   },
   {
     "id": "nim",
     "name": "Nim",
-    "import": () => import("./nim-QC3HVLSW.js")
+    "import": () => import("./nim-CNMKWMAP.js")
   },
   {
     "id": "nix",
     "name": "Nix",
-    "import": () => import("./nix-M4AFRWT3.js")
+    "import": () => import("./nix-63CL2A6Y.js")
   },
   {
     "id": "nushell",
@@ -736,7 +736,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "nu"
     ],
-    "import": () => import("./nushell-RW2SWOKP.js")
+    "import": () => import("./nushell-YZPKHVLZ.js")
   },
   {
     "id": "objective-c",
@@ -744,37 +744,37 @@ var bundledLanguagesInfo = [
     "aliases": [
       "objc"
     ],
-    "import": () => import("./objective-c-2BXOBQ6Z.js")
+    "import": () => import("./objective-c-6Q3JL3LE.js")
   },
   {
     "id": "objective-cpp",
     "name": "Objective-C++",
-    "import": () => import("./objective-cpp-C4YO43KG.js")
+    "import": () => import("./objective-cpp-5SJQCITS.js")
   },
   {
     "id": "ocaml",
     "name": "OCaml",
-    "import": () => import("./ocaml-QKFVS6VY.js")
+    "import": () => import("./ocaml-NJZ4HGXD.js")
   },
   {
     "id": "pascal",
     "name": "Pascal",
-    "import": () => import("./pascal-O44FP3IZ.js")
+    "import": () => import("./pascal-7L5XXZGU.js")
   },
   {
     "id": "perl",
     "name": "Perl",
-    "import": () => import("./perl-CJ3RSAMJ.js")
+    "import": () => import("./perl-J27VNYAY.js")
   },
   {
     "id": "php",
     "name": "PHP",
-    "import": () => import("./php-W5VJE4DK.js")
+    "import": () => import("./php-WHZ55AAO.js")
   },
   {
     "id": "plsql",
     "name": "PL/SQL",
-    "import": () => import("./plsql-EX4HBZ4Y.js")
+    "import": () => import("./plsql-GCNVSML6.js")
   },
   {
     "id": "po",
@@ -783,17 +783,17 @@ var bundledLanguagesInfo = [
       "pot",
       "potx"
     ],
-    "import": () => import("./po-HXZRK3PL.js")
+    "import": () => import("./po-ZEKCACVX.js")
   },
   {
     "id": "postcss",
     "name": "PostCSS",
-    "import": () => import("./postcss-ZNKRZCYT.js")
+    "import": () => import("./postcss-VX4RQMAW.js")
   },
   {
     "id": "powerquery",
     "name": "PowerQuery",
-    "import": () => import("./powerquery-FPND27RN.js")
+    "import": () => import("./powerquery-JOA2YX4I.js")
   },
   {
     "id": "powershell",
@@ -802,22 +802,22 @@ var bundledLanguagesInfo = [
       "ps",
       "ps1"
     ],
-    "import": () => import("./powershell-IIYAPRYA.js")
+    "import": () => import("./powershell-3DD563VU.js")
   },
   {
     "id": "prisma",
     "name": "Prisma",
-    "import": () => import("./prisma-KYD5UO6H.js")
+    "import": () => import("./prisma-RLUZ7I44.js")
   },
   {
     "id": "prolog",
     "name": "Prolog",
-    "import": () => import("./prolog-34GPM2NS.js")
+    "import": () => import("./prolog-5JIIK4KG.js")
   },
   {
     "id": "proto",
     "name": "Protocol Buffer 3",
-    "import": () => import("./proto-Q73EWHB6.js")
+    "import": () => import("./proto-WHL6OQIJ.js")
   },
   {
     "id": "pug",
@@ -825,17 +825,17 @@ var bundledLanguagesInfo = [
     "aliases": [
       "jade"
     ],
-    "import": () => import("./pug-KBI6EJ4U.js")
+    "import": () => import("./pug-CJVG3OYD.js")
   },
   {
     "id": "puppet",
     "name": "Puppet",
-    "import": () => import("./puppet-WYDA43HV.js")
+    "import": () => import("./puppet-B4ZDGLWO.js")
   },
   {
     "id": "purescript",
     "name": "PureScript",
-    "import": () => import("./purescript-IZTHZJO4.js")
+    "import": () => import("./purescript-PKSQ7IY3.js")
   },
   {
     "id": "python",
@@ -843,32 +843,32 @@ var bundledLanguagesInfo = [
     "aliases": [
       "py"
     ],
-    "import": () => import("./python-F4MBDHAH.js")
+    "import": () => import("./python-4H2TNQYI.js")
   },
   {
     "id": "qml",
     "name": "QML",
-    "import": () => import("./qml-C6BO4W4Z.js")
+    "import": () => import("./qml-AX2SF6TD.js")
   },
   {
     "id": "qmldir",
     "name": "QML Directory",
-    "import": () => import("./qmldir-ZUQBWP75.js")
+    "import": () => import("./qmldir-K76LE3CZ.js")
   },
   {
     "id": "qss",
     "name": "Qt Style Sheets",
-    "import": () => import("./qss-5PPHZ6BP.js")
+    "import": () => import("./qss-Q5OY4WA4.js")
   },
   {
     "id": "r",
     "name": "R",
-    "import": () => import("./r-SECPSE3H.js")
+    "import": () => import("./r-TFQWGXLE.js")
   },
   {
     "id": "racket",
     "name": "Racket",
-    "import": () => import("./racket-JKOZYBMM.js")
+    "import": () => import("./racket-B4OFQEEQ.js")
   },
   {
     "id": "raku",
@@ -876,17 +876,17 @@ var bundledLanguagesInfo = [
     "aliases": [
       "perl6"
     ],
-    "import": () => import("./raku-SPN7NJZR.js")
+    "import": () => import("./raku-TYO6QWZA.js")
   },
   {
     "id": "razor",
     "name": "ASP.NET Razor",
-    "import": () => import("./razor-FFNRUFMU.js")
+    "import": () => import("./razor-XEGHLO6O.js")
   },
   {
     "id": "reg",
     "name": "Windows Registry Script",
-    "import": () => import("./reg-CYYZEA4O.js")
+    "import": () => import("./reg-Q6YJHRBX.js")
   },
   {
     "id": "regexp",
@@ -894,22 +894,22 @@ var bundledLanguagesInfo = [
     "aliases": [
       "regex"
     ],
-    "import": () => import("./regexp-H2TTR3Z6.js")
+    "import": () => import("./regexp-XI57HCAK.js")
   },
   {
     "id": "rel",
     "name": "Rel",
-    "import": () => import("./rel-AESAY3BB.js")
+    "import": () => import("./rel-FW6JPTWK.js")
   },
   {
     "id": "riscv",
     "name": "RISC-V",
-    "import": () => import("./riscv-AEFV6MWT.js")
+    "import": () => import("./riscv-FT7RTUY4.js")
   },
   {
     "id": "rst",
     "name": "reStructuredText",
-    "import": () => import("./rst-THCTYW44.js")
+    "import": () => import("./rst-HSE7FJFR.js")
   },
   {
     "id": "ruby",
@@ -917,7 +917,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "rb"
     ],
-    "import": () => import("./ruby-FMQ5ICWQ.js")
+    "import": () => import("./ruby-DGVSBBP5.js")
   },
   {
     "id": "rust",
@@ -925,32 +925,32 @@ var bundledLanguagesInfo = [
     "aliases": [
       "rs"
     ],
-    "import": () => import("./rust-4VIELGKF.js")
+    "import": () => import("./rust-SNOKJCN6.js")
   },
   {
     "id": "sas",
     "name": "SAS",
-    "import": () => import("./sas-DG7NI23E.js")
+    "import": () => import("./sas-4HEAZXGW.js")
   },
   {
     "id": "sass",
     "name": "Sass",
-    "import": () => import("./sass-DLHPWJJB.js")
+    "import": () => import("./sass-2KIHMFFY.js")
   },
   {
     "id": "scala",
     "name": "Scala",
-    "import": () => import("./scala-JHTFUV4H.js")
+    "import": () => import("./scala-PU3TIDFS.js")
   },
   {
     "id": "scheme",
     "name": "Scheme",
-    "import": () => import("./scheme-JQTMHS42.js")
+    "import": () => import("./scheme-Y2TMW5PL.js")
   },
   {
     "id": "scss",
     "name": "SCSS",
-    "import": () => import("./scss-LAFIAQKR.js")
+    "import": () => import("./scss-TADSS3CI.js")
   },
   {
     "id": "shaderlab",
@@ -958,7 +958,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "shader"
     ],
-    "import": () => import("./shaderlab-VWDK2JHX.js")
+    "import": () => import("./shaderlab-KQHH3WYQ.js")
   },
   {
     "id": "shellscript",
@@ -969,7 +969,7 @@ var bundledLanguagesInfo = [
       "shell",
       "zsh"
     ],
-    "import": () => import("./shellscript-QK463GBU.js")
+    "import": () => import("./shellscript-MY2TM44P.js")
   },
   {
     "id": "shellsession",
@@ -977,17 +977,17 @@ var bundledLanguagesInfo = [
     "aliases": [
       "console"
     ],
-    "import": () => import("./shellsession-UBKAAAFP.js")
+    "import": () => import("./shellsession-ADIPCNYZ.js")
   },
   {
     "id": "smalltalk",
     "name": "Smalltalk",
-    "import": () => import("./smalltalk-CIIXBQ7V.js")
+    "import": () => import("./smalltalk-OS6UJDYZ.js")
   },
   {
     "id": "solidity",
     "name": "Solidity",
-    "import": () => import("./solidity-KDD4OJNZ.js")
+    "import": () => import("./solidity-KXREH6LR.js")
   },
   {
     "id": "soy",
@@ -995,12 +995,12 @@ var bundledLanguagesInfo = [
     "aliases": [
       "closure-templates"
     ],
-    "import": () => import("./soy-JHV4F6SC.js")
+    "import": () => import("./soy-2MAAH7XW.js")
   },
   {
     "id": "sparql",
     "name": "SPARQL",
-    "import": () => import("./sparql-ORCNNAK4.js")
+    "import": () => import("./sparql-BHFAEDWL.js")
   },
   {
     "id": "splunk",
@@ -1008,22 +1008,22 @@ var bundledLanguagesInfo = [
     "aliases": [
       "spl"
     ],
-    "import": () => import("./splunk-VXDKJQQH.js")
+    "import": () => import("./splunk-MKJPHA3W.js")
   },
   {
     "id": "sql",
     "name": "SQL",
-    "import": () => import("./sql-RQ2NOQAS.js")
+    "import": () => import("./sql-KVKZJ4IA.js")
   },
   {
     "id": "ssh-config",
     "name": "SSH Config",
-    "import": () => import("./ssh-config-FA2FJLZG.js")
+    "import": () => import("./ssh-config-Y6I4VAF7.js")
   },
   {
     "id": "stata",
     "name": "Stata",
-    "import": () => import("./stata-WZPCFMTL.js")
+    "import": () => import("./stata-KLP3RHUX.js")
   },
   {
     "id": "stylus",
@@ -1031,42 +1031,42 @@ var bundledLanguagesInfo = [
     "aliases": [
       "styl"
     ],
-    "import": () => import("./stylus-GVDEK6V7.js")
+    "import": () => import("./stylus-MTWJTDS3.js")
   },
   {
     "id": "svelte",
     "name": "Svelte",
-    "import": () => import("./svelte-CFMWXZID.js")
+    "import": () => import("./svelte-NYQQ67KU.js")
   },
   {
     "id": "swift",
     "name": "Swift",
-    "import": () => import("./swift-UX33UURP.js")
+    "import": () => import("./swift-BBWXZWHV.js")
   },
   {
     "id": "system-verilog",
     "name": "SystemVerilog",
-    "import": () => import("./system-verilog-L5RJMJ4E.js")
+    "import": () => import("./system-verilog-3LMHPRIS.js")
   },
   {
     "id": "systemd",
     "name": "Systemd Units",
-    "import": () => import("./systemd-RSCVONIL.js")
+    "import": () => import("./systemd-ENFW7SD3.js")
   },
   {
     "id": "tasl",
     "name": "Tasl",
-    "import": () => import("./tasl-6SYCXAVT.js")
+    "import": () => import("./tasl-4P5PYLT4.js")
   },
   {
     "id": "tcl",
     "name": "Tcl",
-    "import": () => import("./tcl-AYD4R55E.js")
+    "import": () => import("./tcl-KPSO4HGG.js")
   },
   {
     "id": "templ",
     "name": "Templ",
-    "import": () => import("./templ-K7Z27U6K.js")
+    "import": () => import("./templ-JE2SLFXH.js")
   },
   {
     "id": "terraform",
@@ -1075,37 +1075,37 @@ var bundledLanguagesInfo = [
       "tf",
       "tfvars"
     ],
-    "import": () => import("./terraform-3REDCJJB.js")
+    "import": () => import("./terraform-RDOG7XDW.js")
   },
   {
     "id": "tex",
     "name": "TeX",
-    "import": () => import("./tex-TGQATECY.js")
+    "import": () => import("./tex-P74OAYU4.js")
   },
   {
     "id": "toml",
     "name": "TOML",
-    "import": () => import("./toml-2RHS7NXJ.js")
+    "import": () => import("./toml-4Q5VKRBL.js")
   },
   {
     "id": "tsv",
     "name": "TSV",
-    "import": () => import("./tsv-M67FFNBY.js")
+    "import": () => import("./tsv-7RYNTTY4.js")
   },
   {
     "id": "tsx",
     "name": "TSX",
-    "import": () => import("./tsx-GS7QBEGT.js")
+    "import": () => import("./tsx-KLTAZQP2.js")
   },
   {
     "id": "turtle",
     "name": "Turtle",
-    "import": () => import("./turtle-EFW7UUQY.js")
+    "import": () => import("./turtle-EHAHTWIW.js")
   },
   {
     "id": "twig",
     "name": "Twig",
-    "import": () => import("./twig-BG6FWRCM.js")
+    "import": () => import("./twig-RCPUNGNA.js")
   },
   {
     "id": "typescript",
@@ -1113,7 +1113,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "ts"
     ],
-    "import": () => import("./typescript-TQXHRQFB.js")
+    "import": () => import("./typescript-HE3JWSDS.js")
   },
   {
     "id": "typespec",
@@ -1121,7 +1121,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "tsp"
     ],
-    "import": () => import("./typespec-P7EWLFNJ.js")
+    "import": () => import("./typespec-JNQWCX4O.js")
   },
   {
     "id": "typst",
@@ -1129,17 +1129,17 @@ var bundledLanguagesInfo = [
     "aliases": [
       "typ"
     ],
-    "import": () => import("./typst-NLGO6S3T.js")
+    "import": () => import("./typst-2DXWQ332.js")
   },
   {
     "id": "v",
     "name": "V",
-    "import": () => import("./v-4DXQ35QF.js")
+    "import": () => import("./v-LZF7XJV4.js")
   },
   {
     "id": "vala",
     "name": "Vala",
-    "import": () => import("./vala-2MPRUM22.js")
+    "import": () => import("./vala-XTW5NPJ5.js")
   },
   {
     "id": "vb",
@@ -1147,17 +1147,17 @@ var bundledLanguagesInfo = [
     "aliases": [
       "cmd"
     ],
-    "import": () => import("./vb-XZ74HRYC.js")
+    "import": () => import("./vb-2VTUTDQG.js")
   },
   {
     "id": "verilog",
     "name": "Verilog",
-    "import": () => import("./verilog-CPBLR2UK.js")
+    "import": () => import("./verilog-G7UNFXC2.js")
   },
   {
     "id": "vhdl",
     "name": "VHDL",
-    "import": () => import("./vhdl-2RPMYZEO.js")
+    "import": () => import("./vhdl-DOII36IB.js")
   },
   {
     "id": "viml",
@@ -1166,17 +1166,17 @@ var bundledLanguagesInfo = [
       "vim",
       "vimscript"
     ],
-    "import": () => import("./viml-PF3NBQPP.js")
+    "import": () => import("./viml-E73FPCQN.js")
   },
   {
     "id": "vue",
     "name": "Vue",
-    "import": () => import("./vue-ZSMBNURY.js")
+    "import": () => import("./vue-UGCMDVPN.js")
   },
   {
     "id": "vue-html",
     "name": "Vue HTML",
-    "import": () => import("./vue-html-K5RPNBOR.js")
+    "import": () => import("./vue-html-2OLROWYM.js")
   },
   {
     "id": "vyper",
@@ -1184,12 +1184,12 @@ var bundledLanguagesInfo = [
     "aliases": [
       "vy"
     ],
-    "import": () => import("./vyper-3BSREUEY.js")
+    "import": () => import("./vyper-GAQ2MKSX.js")
   },
   {
     "id": "wasm",
     "name": "WebAssembly",
-    "import": () => import("./wasm-KZHYZ65J.js")
+    "import": () => import("./wasm-KIEMRJJ4.js")
   },
   {
     "id": "wenyan",
@@ -1197,12 +1197,12 @@ var bundledLanguagesInfo = [
     "aliases": [
       "文言"
     ],
-    "import": () => import("./wenyan-IFFL5CFN.js")
+    "import": () => import("./wenyan-DTPRZOLS.js")
   },
   {
     "id": "wgsl",
     "name": "WGSL",
-    "import": () => import("./wgsl-LHC3FVF4.js")
+    "import": () => import("./wgsl-UPXHSV3U.js")
   },
   {
     "id": "wikitext",
@@ -1211,7 +1211,7 @@ var bundledLanguagesInfo = [
       "mediawiki",
       "wiki"
     ],
-    "import": () => import("./wikitext-2IN7FNVL.js")
+    "import": () => import("./wikitext-U64NDR3M.js")
   },
   {
     "id": "wolfram",
@@ -1219,17 +1219,17 @@ var bundledLanguagesInfo = [
     "aliases": [
       "wl"
     ],
-    "import": () => import("./wolfram-TSHJXVV2.js")
+    "import": () => import("./wolfram-JQCR7YV2.js")
   },
   {
     "id": "xml",
     "name": "XML",
-    "import": () => import("./xml-SYUKEXEP.js")
+    "import": () => import("./xml-AIMPFU5F.js")
   },
   {
     "id": "xsl",
     "name": "XSL",
-    "import": () => import("./xsl-5GO7PA3S.js")
+    "import": () => import("./xsl-PLA2J6TM.js")
   },
   {
     "id": "yaml",
@@ -1237,17 +1237,17 @@ var bundledLanguagesInfo = [
     "aliases": [
       "yml"
     ],
-    "import": () => import("./yaml-BT6AYGKU.js")
+    "import": () => import("./yaml-3NVW2ID7.js")
   },
   {
     "id": "zenscript",
     "name": "ZenScript",
-    "import": () => import("./zenscript-KEC25U3M.js")
+    "import": () => import("./zenscript-6XASBU3N.js")
   },
   {
     "id": "zig",
     "name": "Zig",
-    "import": () => import("./zig-N7Y2JBND.js")
+    "import": () => import("./zig-HPKMAKBK.js")
   }
 ];
 var bundledLanguagesBase = Object.fromEntries(bundledLanguagesInfo.map((i) => [i.id, i.import]));
@@ -1260,293 +1260,293 @@ var bundledLanguages = {
   ...bundledLanguagesAlias
 };
 
-// node_modules/shiki/dist/chunks/wasm-dynamic.mjs
+// node_modules/.pnpm/shiki@1.11.1/node_modules/shiki/dist/chunks/wasm-dynamic.mjs
 var getWasmInlined = async (info) => {
-  return import("./wasm-M2RTLOOT.js").then((wasm) => wasm.default(info));
+  return import("./wasm-WEX5YITM.js").then((wasm) => wasm.default(info));
 };
 
-// node_modules/shiki/dist/themes.mjs
+// node_modules/.pnpm/shiki@1.11.1/node_modules/shiki/dist/themes.mjs
 var bundledThemesInfo = [
   {
     "id": "andromeeda",
     "displayName": "Andromeeda",
     "type": "dark",
-    "import": () => import("./andromeeda-LD7O4GDB.js")
+    "import": () => import("./andromeeda-YP6U5EIZ.js")
   },
   {
     "id": "aurora-x",
     "displayName": "Aurora X",
     "type": "dark",
-    "import": () => import("./aurora-x-W2FNAYKC.js")
+    "import": () => import("./aurora-x-BLSNBRND.js")
   },
   {
     "id": "ayu-dark",
     "displayName": "Ayu Dark",
     "type": "dark",
-    "import": () => import("./ayu-dark-FVUSSXFM.js")
+    "import": () => import("./ayu-dark-T42LVAIQ.js")
   },
   {
     "id": "catppuccin-frappe",
     "displayName": "Catppuccin Frappé",
     "type": "dark",
-    "import": () => import("./catppuccin-frappe-LBPTIQKR.js")
+    "import": () => import("./catppuccin-frappe-ZQQ3GQON.js")
   },
   {
     "id": "catppuccin-latte",
     "displayName": "Catppuccin Latte",
     "type": "light",
-    "import": () => import("./catppuccin-latte-O4EBSHCE.js")
+    "import": () => import("./catppuccin-latte-EUUGQ5OR.js")
   },
   {
     "id": "catppuccin-macchiato",
     "displayName": "Catppuccin Macchiato",
     "type": "dark",
-    "import": () => import("./catppuccin-macchiato-RXBGQI7K.js")
+    "import": () => import("./catppuccin-macchiato-67X2YQZJ.js")
   },
   {
     "id": "catppuccin-mocha",
     "displayName": "Catppuccin Mocha",
     "type": "dark",
-    "import": () => import("./catppuccin-mocha-YDVJ2RAK.js")
+    "import": () => import("./catppuccin-mocha-FGO3XOVQ.js")
   },
   {
     "id": "dark-plus",
     "displayName": "Dark Plus",
     "type": "dark",
-    "import": () => import("./dark-plus-TZ4O5P34.js")
+    "import": () => import("./dark-plus-3ZON2DSF.js")
   },
   {
     "id": "dracula",
     "displayName": "Dracula Theme",
     "type": "dark",
-    "import": () => import("./dracula-M3UVZLJE.js")
+    "import": () => import("./dracula-FH3MDOBO.js")
   },
   {
     "id": "dracula-soft",
     "displayName": "Dracula Theme Soft",
     "type": "dark",
-    "import": () => import("./dracula-soft-EM6G5ITH.js")
+    "import": () => import("./dracula-soft-4KAISWRI.js")
   },
   {
     "id": "github-dark",
     "displayName": "GitHub Dark",
     "type": "dark",
-    "import": () => import("./github-dark-RYB32MGA.js")
+    "import": () => import("./github-dark-S6HGPMVA.js")
   },
   {
     "id": "github-dark-default",
     "displayName": "GitHub Dark Default",
     "type": "dark",
-    "import": () => import("./github-dark-default-DQXCXEQG.js")
+    "import": () => import("./github-dark-default-EGNYF52C.js")
   },
   {
     "id": "github-dark-dimmed",
     "displayName": "GitHub Dark Dimmed",
     "type": "dark",
-    "import": () => import("./github-dark-dimmed-5M44FVBD.js")
+    "import": () => import("./github-dark-dimmed-TFVEJSQ2.js")
   },
   {
     "id": "github-light",
     "displayName": "GitHub Light",
     "type": "light",
-    "import": () => import("./github-light-UBL37XXW.js")
+    "import": () => import("./github-light-HA2Z2ZOV.js")
   },
   {
     "id": "github-light-default",
     "displayName": "GitHub Light Default",
     "type": "light",
-    "import": () => import("./github-light-default-G2ZH5TZO.js")
+    "import": () => import("./github-light-default-6774UVHG.js")
   },
   {
     "id": "houston",
     "displayName": "Houston",
     "type": "dark",
-    "import": () => import("./houston-E7OFH3YU.js")
+    "import": () => import("./houston-NKNM3M5F.js")
   },
   {
     "id": "laserwave",
     "displayName": "LaserWave",
     "type": "dark",
-    "import": () => import("./laserwave-PUTUSEVM.js")
+    "import": () => import("./laserwave-BPIFPNXT.js")
   },
   {
     "id": "light-plus",
     "displayName": "Light Plus",
     "type": "light",
-    "import": () => import("./light-plus-EED46E2H.js")
+    "import": () => import("./light-plus-GZ5HCFQD.js")
   },
   {
     "id": "material-theme",
     "displayName": "Material Theme",
     "type": "dark",
-    "import": () => import("./material-theme-IUC3YOAF.js")
+    "import": () => import("./material-theme-AXUZIRFA.js")
   },
   {
     "id": "material-theme-darker",
     "displayName": "Material Theme Darker",
     "type": "dark",
-    "import": () => import("./material-theme-darker-HN3VLSNJ.js")
+    "import": () => import("./material-theme-darker-6I2IMEI4.js")
   },
   {
     "id": "material-theme-lighter",
     "displayName": "Material Theme Lighter",
     "type": "light",
-    "import": () => import("./material-theme-lighter-6BLF6JJ5.js")
+    "import": () => import("./material-theme-lighter-TQF4SDF4.js")
   },
   {
     "id": "material-theme-ocean",
     "displayName": "Material Theme Ocean",
     "type": "dark",
-    "import": () => import("./material-theme-ocean-R3JY5MSQ.js")
+    "import": () => import("./material-theme-ocean-D63PSLOF.js")
   },
   {
     "id": "material-theme-palenight",
     "displayName": "Material Theme Palenight",
     "type": "dark",
-    "import": () => import("./material-theme-palenight-C7WCZRZY.js")
+    "import": () => import("./material-theme-palenight-GL2DLARF.js")
   },
   {
     "id": "min-dark",
     "displayName": "Min Dark",
     "type": "dark",
-    "import": () => import("./min-dark-QUIC4MQU.js")
+    "import": () => import("./min-dark-RSJJ56QQ.js")
   },
   {
     "id": "min-light",
     "displayName": "Min Light",
     "type": "light",
-    "import": () => import("./min-light-RQY2R6WW.js")
+    "import": () => import("./min-light-T4FJOTUB.js")
   },
   {
     "id": "monokai",
     "displayName": "Monokai",
     "type": "dark",
-    "import": () => import("./monokai-ZVCBFNYT.js")
+    "import": () => import("./monokai-BCDXXHUD.js")
   },
   {
     "id": "night-owl",
     "displayName": "Night Owl",
     "type": "dark",
-    "import": () => import("./night-owl-CQHIUCVV.js")
+    "import": () => import("./night-owl-ZNMMAIY7.js")
   },
   {
     "id": "nord",
     "displayName": "Nord",
     "type": "dark",
-    "import": () => import("./nord-W2PWXMNB.js")
+    "import": () => import("./nord-B4Q56ERC.js")
   },
   {
     "id": "one-dark-pro",
     "displayName": "One Dark Pro",
     "type": "dark",
-    "import": () => import("./one-dark-pro-6XEHZ3PS.js")
+    "import": () => import("./one-dark-pro-3FTRZMBI.js")
   },
   {
     "id": "one-light",
     "displayName": "One Light",
     "type": "light",
-    "import": () => import("./one-light-5W3BTHLP.js")
+    "import": () => import("./one-light-5MZIWHAR.js")
   },
   {
     "id": "poimandres",
     "displayName": "Poimandres",
     "type": "dark",
-    "import": () => import("./poimandres-VRMB3IAZ.js")
+    "import": () => import("./poimandres-OQG3BGJH.js")
   },
   {
     "id": "red",
     "displayName": "Red",
     "type": "dark",
-    "import": () => import("./red-GSY5G2M2.js")
+    "import": () => import("./red-G2MKVHLA.js")
   },
   {
     "id": "rose-pine",
     "displayName": "Rosé Pine",
     "type": "dark",
-    "import": () => import("./rose-pine-LO765EZP.js")
+    "import": () => import("./rose-pine-J5G3J4KC.js")
   },
   {
     "id": "rose-pine-dawn",
     "displayName": "Rosé Pine Dawn",
     "type": "light",
-    "import": () => import("./rose-pine-dawn-S5SNYC76.js")
+    "import": () => import("./rose-pine-dawn-M7LTHU7S.js")
   },
   {
     "id": "rose-pine-moon",
     "displayName": "Rosé Pine Moon",
     "type": "dark",
-    "import": () => import("./rose-pine-moon-VAIHVSK6.js")
+    "import": () => import("./rose-pine-moon-JR7LSCJ6.js")
   },
   {
     "id": "slack-dark",
     "displayName": "Slack Dark",
     "type": "dark",
-    "import": () => import("./slack-dark-GKJY3IIX.js")
+    "import": () => import("./slack-dark-DZ2EZ4KV.js")
   },
   {
     "id": "slack-ochin",
     "displayName": "Slack Ochin",
     "type": "light",
-    "import": () => import("./slack-ochin-L4HQAM5E.js")
+    "import": () => import("./slack-ochin-HNW4UZQM.js")
   },
   {
     "id": "snazzy-light",
     "displayName": "Snazzy Light",
     "type": "light",
-    "import": () => import("./snazzy-light-V2KF4QAU.js")
+    "import": () => import("./snazzy-light-CJSDGMYQ.js")
   },
   {
     "id": "solarized-dark",
     "displayName": "Solarized Dark",
     "type": "dark",
-    "import": () => import("./solarized-dark-I2RLEB7G.js")
+    "import": () => import("./solarized-dark-V5PHZIMP.js")
   },
   {
     "id": "solarized-light",
     "displayName": "Solarized Light",
     "type": "light",
-    "import": () => import("./solarized-light-CKQUDGZS.js")
+    "import": () => import("./solarized-light-6636RFAC.js")
   },
   {
     "id": "synthwave-84",
     "displayName": "Synthwave '84",
     "type": "dark",
-    "import": () => import("./synthwave-84-QTIHRIVV.js")
+    "import": () => import("./synthwave-84-YBGWA2DI.js")
   },
   {
     "id": "tokyo-night",
     "displayName": "Tokyo Night",
     "type": "dark",
-    "import": () => import("./tokyo-night-GCMJLX5E.js")
+    "import": () => import("./tokyo-night-JOIWTNBR.js")
   },
   {
     "id": "vesper",
     "displayName": "Vesper",
     "type": "dark",
-    "import": () => import("./vesper-O7EBUUX6.js")
+    "import": () => import("./vesper-EORVXZS4.js")
   },
   {
     "id": "vitesse-black",
     "displayName": "Vitesse Black",
     "type": "dark",
-    "import": () => import("./vitesse-black-MR2J2XBD.js")
+    "import": () => import("./vitesse-black-SGL6DC47.js")
   },
   {
     "id": "vitesse-dark",
     "displayName": "Vitesse Dark",
     "type": "dark",
-    "import": () => import("./vitesse-dark-DJTWN3VS.js")
+    "import": () => import("./vitesse-dark-4DXI7UID.js")
   },
   {
     "id": "vitesse-light",
     "displayName": "Vitesse Light",
     "type": "light",
-    "import": () => import("./vitesse-light-ARV33TGI.js")
+    "import": () => import("./vitesse-light-KZ2FM3O7.js")
   }
 ];
 var bundledThemes = Object.fromEntries(bundledThemesInfo.map((i) => [i.id, i.import]));
 
-// node_modules/@shikijs/core/dist/types.mjs
+// node_modules/.pnpm/@shikijs+core@1.11.1/node_modules/@shikijs/core/dist/types.mjs
 var FontStyle;
 (function(FontStyle2) {
   FontStyle2[FontStyle2["NotSet"] = -1] = "NotSet";
@@ -1556,7 +1556,7 @@ var FontStyle;
   FontStyle2[FontStyle2["Underline"] = 4] = "Underline";
 })(FontStyle || (FontStyle = {}));
 
-// node_modules/@shikijs/core/dist/textmate.mjs
+// node_modules/.pnpm/@shikijs+core@1.11.1/node_modules/@shikijs/core/dist/textmate.mjs
 ({
   InDebugMode: typeof process !== "undefined" && !!process.env["VSCODE_TEXTMATE_DEBUG"]
 });
@@ -4436,7 +4436,7 @@ var StackElementMetadata = class _StackElementMetadata {
   }
 };
 
-// node_modules/@shikijs/core/dist/index.mjs
+// node_modules/.pnpm/@shikijs+core@1.11.1/node_modules/@shikijs/core/dist/index.mjs
 function toArray(x) {
   return Array.isArray(x) ? x : [x];
 }
@@ -8672,7 +8672,7 @@ function createSingletonShorthands(createHighlighter2) {
   };
 }
 
-// node_modules/shiki/dist/theme-css-variables.mjs
+// node_modules/.pnpm/shiki@1.11.1/node_modules/shiki/dist/theme-css-variables.mjs
 function createCssVariablesTheme(options = {}) {
   var _a;
   const {
@@ -8911,7 +8911,7 @@ function createCssVariablesTheme(options = {}) {
   return theme;
 }
 
-// node_modules/shiki/dist/bundle-full.mjs
+// node_modules/.pnpm/shiki@1.11.1/node_modules/shiki/dist/bundle-full.mjs
 var createHighlighter = createdBundledHighlighter(
   bundledLanguages,
   bundledThemes,

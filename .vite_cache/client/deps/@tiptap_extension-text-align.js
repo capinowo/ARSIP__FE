@@ -1,9 +1,9 @@
 import {
   Extension
-} from "./chunk-XOAEQQWX.js";
+} from "./chunk-J6CHK6JC.js";
 import "./chunk-BSPL5VGI.js";
 
-// node_modules/@tiptap/extension-text-align/dist/index.js
+// node_modules/.pnpm/@tiptap+extension-text-align@2.5.6_@tiptap+core@2.5.6_@tiptap+pm@2.5.6_/node_modules/@tiptap/extension-text-align/dist/index.js
 var TextAlign = Extension.create({
   name: "textAlign",
   addOptions() {

@@ -1,6 +1,6 @@
 import "./chunk-BSPL5VGI.js";
 
-// node_modules/vue3-apexcharts/dist/vue3-apexcharts.js
+// node_modules/.pnpm/vue3-apexcharts@1.5.3_apexcharts@3.51.0_vue@3.3.13_typescript@5.5.4_/node_modules/vue3-apexcharts/dist/vue3-apexcharts.js
 import { defineComponent as _t, ref as gt, onBeforeMount as Ut, onMounted as qt, getCurrentInstance as Zt, onBeforeUnmount as $t, toRefs as Jt, watch as Te, h as Qt, nextTick as Kt } from "vue";
 function ei(_) {
   return _ && _.__esModule && Object.prototype.hasOwnProperty.call(_, "default") ? _.default : _;

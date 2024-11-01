@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 
 // Middleware untuk auth pada halaman
 definePageMeta({
-  middleware: 'auth',
+  middleware: 'auth-middleware',
 })
 
 const router = useRouter()
@@ -141,5 +141,4 @@ onMounted(() => {
     <AddNewMasterJra v-model:isDrawerOpen="isAddNewMasterJraVisible" />
   </section>
 </template>
-
 

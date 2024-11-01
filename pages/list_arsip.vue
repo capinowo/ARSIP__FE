@@ -5,8 +5,9 @@ import { useRouter } from 'vue-router'
 
 // Middleware untuk auth pada halaman
 definePageMeta({
-  middleware: 'auth',
+  middleware: 'auth-middleware',
 })
+
 
 const router = useRouter()
 const isAddListArsipVisible = ref(false)

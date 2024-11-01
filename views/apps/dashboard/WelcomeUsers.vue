@@ -3,11 +3,9 @@ import illustrationJohn2 from '@/images/illustration-john-2.png'
 import { jwtDecode } from 'jwt-decode'
 import { computed, onMounted, ref } from 'vue'
 
-
-
-// State for storing token, expiration, and decoded token data
+// Terapkan middleware 'auth' hanya untuk halaman ini
 definePageMeta({
-  middleware: 'auth', // Apply 'auth' middleware only on this page
+  middleware: 'auth-middleware',
 })
 
 const authToken = ref('')
@@ -15,43 +13,41 @@ const tokenExpiration = ref('')
 
 const tokenData = ref({
   userId: null,
-  name: '',
-  email: '',
+  username: '',
   sessionRoles: [],
   selectedRole: '',
   iat: null,
   exp: null,
 })
 
-// Load token from localStorage, decode it, and calculate expiration time
+// Muat token dari localStorage, decode, dan hitung waktu kedaluwarsa
 onMounted(() => {
   authToken.value = localStorage.getItem('authToken')
   tokenExpiration.value = localStorage.getItem('tokenExpiration')
 
-  // Decode the token to extract data if token exists
+  // Decode token jika ada
   if (authToken.value) {
     const decoded = jwtDecode(authToken.value)
 
     tokenData.value = {
       userId: decoded.userId,
-      name: decoded.name,
-      email: decoded.email,
-      sessionRoles: decoded.sessionRoles,
-      selectedRole: decoded.selectedRole,
-      iat: new Date(decoded.iat * 1000).toLocaleString(), // Convert iat to date
-      exp: new Date(decoded.exp * 1000).toLocaleString(),  // Convert exp to date
+      username: decoded.username || 'Unknown', // Gunakan username dari token
+      sessionRoles: decoded.roles || [], // Gunakan roles jika ada
+      selectedRole: decoded.selectedRole || '',
+      iat: decoded.iat ? new Date(decoded.iat * 1000).toLocaleString() : null, // Konversi iat ke tanggal
+      exp: decoded.exp ? new Date(decoded.exp * 1000).toLocaleString() : null,  // Konversi exp ke tanggal
     }
   }
 })
 
-// Computed variable to calculate remaining time in minutes
+// Variable computed untuk menghitung waktu sisa dalam menit
 const remainingMinutes = computed(() => {
   if (!tokenExpiration.value) return null
   const expirationTime = Number(tokenExpiration.value)
   const currentTime = Date.now()
   const remainingTime = expirationTime - currentTime
 
-  // Convert milliseconds to minutes
+  // Konversi milidetik ke menit
   return remainingTime > 0 ? Math.floor(remainingTime / 1000 / 60) : 0
 })
 </script>
@@ -68,14 +64,35 @@ const remainingMinutes = computed(() => {
         <VCardItem>
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
-              Welcome !   <strong>{{ tokenData.name || 'Not available' }}</strong>  <span class="text-high-emphasis">🎉</span>
+              <strong>ARSIP</strong> 
+            </h4>
+          </VCardTitle>
+          <VCardTitle>
+            <h4 class="text-h4 text-wrap">
+              <strong>UNIVERSITAS DIPONEGORO</strong>
+            </h4>
+          </VCardTitle>
+          <VCardTitle>
+            <h4 class="text-h4 text-wrap">
+              <!-- Welcome !   <strong>{{ tokenData.sessionRoles || 'Not available' }}</strong> -->
+            </h4>
+          </VCardTitle>
+          <VCardTitle>
+            <h4 class="text-h4 text-wrap">
+              Welcome   <strong>{{ tokenData.userId || 'Not available' }}</strong>
+            </h4>
+          </VCardTitle>
+          <VCardTitle>
+            <h4 class="text-h4 text-wrap">
+              All Roles Set  <strong>{{ tokenData.sessionRoles || 'Not available' }}</strong>
+            </h4>
+          </VCardTitle>
+          <VCardTitle>
+            <h4 class="text-h4 text-wrap">
+              Selected Roles  <strong>{{ tokenData.selectedRole || 'Not available' }}</strong>
             </h4>
           </VCardTitle>
         </VCardItem>
-
-        <VCardText><strong>Email:</strong> {{ tokenData.email || 'Not available' }}</VCardText>
-        <VCardText><strong>Session Roles:</strong> {{ tokenData.sessionRoles.join(', ') || 'Not available' }}</VCardText>
-        <VCardText><strong>Selected Role:</strong> {{ tokenData.selectedRole || 'Not available' }}</VCardText>
       </VCol>
 
       <VCol

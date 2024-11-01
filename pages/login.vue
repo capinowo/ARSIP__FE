@@ -6,6 +6,7 @@ import authV2LoginIllustrationDark from '@images/pages/auth-v2-login-illustratio
 import authV2LoginIllustrationLight from '@images/pages/auth-v2-login-illustration-light.png'
 import authV2MaskDark from '@images/pages/mask-v2-dark.png'
 import authV2MaskLight from '@images/pages/mask-v2-light.png'
+import { navigateTo } from 'nuxt/app'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -21,7 +22,7 @@ definePageMeta({
 
 // State untuk form login
 const form = ref({
-  email: '',
+  username: '',
   password: '',
   remember: false,
 })
@@ -35,50 +36,37 @@ async function login() {
   errorMessage.value = '' // Reset pesan error
 
   try {
-    // Memanggil API menggunakan fetch
-    const response = await fetch('https://x5phivbwydc28xcqc.apps.undip.ac.id/graphql', {
+    const response = await fetch('http://localhost:4000/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         query: `
-          mutation SignIn($email: String!, $password: String!) {
-            signIn(email: $email, password: $password) {
-              token
-              expiresAt
-            }
-          }
-        `,
+        mutation($username: String!, $password: String!) {
+          login(username: $username, password: $password)
+        }
+      `,
         variables: {
-          email: form.value.email,
+          username: form.value.username,
           password: form.value.password,
         },
       }),
     })
+  
+    const data = await response.json()
+  
+    if (!response.ok || data.errors) {
+      console.error('Error:', data.errors) // Tampilkan pesan error jika ada
+    } else {
+      const authToken = data.data.login // Ambil token dan beri nama authToken
 
-    // Memeriksa respons dari server
-    if (!response.ok) {
-      throw new Error('Login failed, please check your credentials')
+      localStorage.setItem('authToken', authToken) // Simpan authToken di localStorage
+      console.log('Token saved to localStorage:', authToken) // Verifikasi bahwa token telah disimpan
+      navigateTo('/role')
     }
-
-    // Mendapatkan data token dari respons
-    const result = await response.json()
-
-    // Cek jika GraphQL mengembalikan error
-    if (result.errors) {
-      throw new Error(result.errors[0].message)
-    }
-
-    const data = result.data.signIn
-
-    localStorage.setItem('authToken', data.token)
-    localStorage.setItem('tokenExpiration', data.expiresAt * 1000) // Menyimpan waktu kadaluarsa token
-
-    // Arahkan pengguna ke halaman dashboard jika login berhasil
-    router.push('/')
   } catch (error) {
-    errorMessage.value = error.message
+    console.error('Fetch error:', error)
   }
 }
 </script>
@@ -148,11 +136,11 @@ async function login() {
                 <!-- email -->
                 <VCol cols="12">
                   <VTextField
-                    v-model="form.email"
+                    v-model="form.username"
                     autofocus
-                    label="Email"
-                    type="email"
-                    placeholder="johndoe@email.com"
+                    label="Username"
+                    type="text"
+                    placeholder="johndoe"
                   />
                 </VCol>
 

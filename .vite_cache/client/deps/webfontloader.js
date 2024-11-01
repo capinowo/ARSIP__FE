@@ -2,9 +2,9 @@ import {
   __commonJS
 } from "./chunk-BSPL5VGI.js";
 
-// node_modules/webfontloader/webfontloader.js
+// node_modules/.pnpm/webfontloader@1.6.28/node_modules/webfontloader/webfontloader.js
 var require_webfontloader = __commonJS({
-  "node_modules/webfontloader/webfontloader.js"(exports, module) {
+  "node_modules/.pnpm/webfontloader@1.6.28/node_modules/webfontloader/webfontloader.js"(exports, module) {
     (function() {
       function aa(a, b, c) {
         return a.call.apply(a.bind, arguments);

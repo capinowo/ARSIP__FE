@@ -1,6 +1,6 @@
 import "./chunk-BSPL5VGI.js";
 
-// node_modules/shepherd.js/dist/esm/shepherd.mjs
+// node_modules/.pnpm/shepherd.js@13.0.1/node_modules/shepherd.js/dist/esm/shepherd.mjs
 function isElement$1(value) {
   return value instanceof Element;
 }

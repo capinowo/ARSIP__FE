@@ -1,9 +1,9 @@
 import "./chunk-BSPL5VGI.js";
 
-// node_modules/vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.js
+// node_modules/.pnpm/vue3-perfect-scrollbar@2.0.0_vue@3.3.13_typescript@5.5.4_/node_modules/vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.js
 import { defineComponent as g, ref as v, watch as b, onMounted as w, onBeforeUnmount as P, openBlock as S, createBlock as _, resolveDynamicComponent as L, withCtx as E, renderSlot as k } from "vue";
 
-// node_modules/perfect-scrollbar/dist/perfect-scrollbar.esm.js
+// node_modules/.pnpm/perfect-scrollbar@1.5.5/node_modules/perfect-scrollbar/dist/perfect-scrollbar.esm.js
 function get(element) {
   return getComputedStyle(element);
 }
@@ -1043,7 +1043,7 @@ PerfectScrollbar.prototype.removePsClasses = function removePsClasses() {
 };
 var perfect_scrollbar_esm_default = PerfectScrollbar;
 
-// node_modules/vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.js
+// node_modules/.pnpm/vue3-perfect-scrollbar@2.0.0_vue@3.3.13_typescript@5.5.4_/node_modules/vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.js
 var C = g({
   __name: "PerfectScrollbar",
   props: {

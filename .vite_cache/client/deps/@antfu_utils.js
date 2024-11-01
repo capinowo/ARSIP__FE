@@ -6,7 +6,7 @@ import {
   __publicField
 } from "./chunk-BSPL5VGI.js";
 
-// node_modules/@antfu/utils/dist/index.mjs
+// node_modules/.pnpm/@antfu+utils@0.7.10/node_modules/@antfu/utils/dist/index.mjs
 function clamp(n, min, max) {
   return Math.min(max, Math.max(min, n));
 }
