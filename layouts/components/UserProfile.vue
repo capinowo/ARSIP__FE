@@ -1,8 +1,8 @@
 <script setup>
-import avatar1 from '@images/avatars/avatar-1.png';
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
+import avatar1 from '@/images/avatars/avatar-1.png'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 
 const router = useRouter()
 const userRole = ref('') // Store the decoded role name here
@@ -13,6 +13,7 @@ onMounted(() => {
   if (selectedRoleToken) {
     try {
       const payload = JSON.parse(atob(selectedRoleToken.split('.')[1]))
+
       userRole.value = payload?.selectedRole?.name || 'Unknown Role'
     } catch (error) {
       console.error('Error decoding selectedRoleToken:', error)
@@ -25,6 +26,7 @@ onMounted(() => {
 const userProfileList = [
   { type: 'navItem', title: 'Select Role', icon: 'ri-shield-user-line', value: '/role' },
   { type: 'divider' },
+
   // Additional menu items can be added here if needed
 ]
 
@@ -84,17 +86,15 @@ function logout() {
                 </VBadge>
               </VListItemAction>
             </template>
-            <h8 class="text-sm font-weight-medium">
+            <h6 class="text-sm font-weight-medium">
               Users
-            </h8>
+            </h6>
             <VListItemSubtitle class="text-capitalize">
               {{ userRole || 'Not available' }}
             </VListItemSubtitle>
           </VListItem>
 
-          <VDivider
-                class="my-1"
-              />
+          <VDivider class="my-1" />
 
           <PerfectScrollbar :options="{ wheelPropagation: false }">
             <template
@@ -112,7 +112,9 @@ function logout() {
                   />
                 </template>
 
-                <VListItemTitle class="text-sm font-weight-medium" >{{ item.title }}</VListItemTitle>
+                <VListItemTitle class="text-sm font-weight-medium">
+                  {{ item.title }}
+                </VListItemTitle>
               </VListItem>
 
               <VDivider

@@ -10,12 +10,19 @@ export default defineNuxtConfig({
     head: {
       titleTemplate: '%s - NuxtJS Admin Template',
       title: 'ARSIP',
+      link: [
+        {
+          rel: 'icon',
+          type: 'image/x-icon',
+          href: '/favicon.ico', // Direct path to avoid undefined issue
+        },
+      ],
+    },
+  },
 
-      link: [{
-        rel: 'icon',
-        type: 'image/x-icon',
-        href: process.env.NUXT_APP_BASE_URL+'/favicon.ico',
-      }],
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/graphql', // Ensure fallback if undefined
     },
   },
 
@@ -30,16 +37,20 @@ export default defineNuxtConfig({
   ],
 
   components: {
-    dirs: [{
-      path: '@/@core/components',
-      pathPrefix: false,
-    }, {
-      path: '~/components/global',
-      global: true,
-    }, {
-      path: '~/components',
-      pathPrefix: false,
-    }],
+    dirs: [
+      {
+        path: '@/@core/components',
+        pathPrefix: false,
+      },
+      {
+        path: '~/components/global',
+        global: true,
+      },
+      {
+        path: '~/components',
+        pathPrefix: false,
+      },
+    ],
   },
 
   plugins: ['@/plugins/vuetify/index.js', '@/plugins/iconify/index.js'],
@@ -74,7 +85,6 @@ export default defineNuxtConfig({
     },
   },
 
-  // ℹ️ Disable source maps until this is resolved: https://github.com/vuetifyjs/vuetify-loader/issues/290
   sourcemap: {
     server: false,
     client: false,

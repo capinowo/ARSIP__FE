@@ -1,9 +1,9 @@
 <script setup>
-import miscMaskDark from '@images/misc/misc-mask-dark.png'
-import miscMaskLight from '@images/misc/misc-mask-light.png'
-import tree1 from '@images/misc/tree1.png'
-import tree3 from '@images/misc/tree3.png'
-import misc404 from '@images/pages/404.png'
+import miscMaskDark from '@/images/misc/misc-mask-dark.png'
+import miscMaskLight from '@/images/misc/misc-mask-light.png'
+import tree1 from '@/images/misc/tree1.png'
+import tree3 from '@/images/misc/tree3.png'
+import misc404 from '@/images/pages/404.png'
 
 const props = defineProps({
   error: {
@@ -115,9 +115,10 @@ const handleError = () => clearError({ redirect: '/' })
 </template>
 
 <style lang="scss">
-@use "@core/scss/template/pages/misc.scss";
+@use "@core/scss/template/pages/misc";
 
-.misc-footer-tree, .misc-footer-tree-1 {
+.misc-footer-tree,
+ .misc-footer-tree-1 {
   position: absolute;
 }
 
