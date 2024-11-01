@@ -1,45 +1,30 @@
 // middleware/authMiddleware.js
+import { clearSelectedRoleToken, getSelectedRoleToken } from '@/middleware/auth.js'
 import { jwtDecode } from 'jwt-decode'
 import { navigateTo, useState } from 'nuxt/app'
 
 export default defineNuxtRouteMiddleware((to, from) => {
   if (!import.meta.env.SSR) {
-    const authToken = localStorage.getItem('authToken')
-    const selectedRoleToken = localStorage.getItem('selectedRoleToken')
+    const selectedRoleToken = getSelectedRoleToken()
     
-    if (!authToken) {
+    if (!selectedRoleToken) {
+      clearSelectedRoleToken()
       return navigateTo('/login')
     }
 
     try {
-      const decodedAuth = jwtDecode(authToken)
+      const decodedRole = jwtDecode(selectedRoleToken)
       const currentTime = Date.now() / 1000
 
-      if (decodedAuth.exp < currentTime) {
-        localStorage.removeItem('authToken')
-        
+      if (decodedRole.exp < currentTime) {
+        clearSelectedRoleToken()
         return navigateTo('/login')
       }
 
-      useState('user', () => decodedAuth)
-
-      // Optional check for selectedRoleToken
-      if (selectedRoleToken) {
-        const decodedRole = jwtDecode(selectedRoleToken)
-        
-        if (decodedRole.exp < currentTime) {
-          localStorage.removeItem('selectedRoleToken')
-          
-          return navigateTo('/login')
-        }
-
-        useState('selectedRole', () => decodedRole)
-      }
+      useState('selectedRole', () => decodedRole)
       
     } catch (error) {
-      localStorage.removeItem('authToken')
-      localStorage.removeItem('selectedRoleToken')
-      
+      clearSelectedRoleToken()
       return navigateTo('/login')
     }
   }

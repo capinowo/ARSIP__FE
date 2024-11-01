@@ -1,53 +1,68 @@
 <script setup>
-import illustrationJohn2 from '@/images/illustration-john-2.png'
-import { jwtDecode } from 'jwt-decode'
-import { computed, onMounted, ref } from 'vue'
+import illustrationJohn2 from '@/images/illustration-john-2.png';
+import { computed, onMounted, ref } from 'vue';
 
-// Terapkan middleware 'auth' hanya untuk halaman ini
+// Apply 'auth' middleware only for this page
 definePageMeta({
   middleware: 'auth-middleware',
 })
 
-const authToken = ref('')
+const selectedRoleToken = ref('')
 const tokenExpiration = ref('')
 
+// Adjusted tokenData to match the selectedRoleToken structure
 const tokenData = ref({
   userId: null,
-  username: '',
-  sessionRoles: [],
-  selectedRole: '',
+  roles: [],
+  selectedRole: {},
+  permissions: [],
+  selectedUnit: null,
   iat: null,
   exp: null,
 })
 
-// Muat token dari localStorage, decode, dan hitung waktu kedaluwarsa
+// Load selectedRoleToken from localStorage, decode it, and set expiration time
 onMounted(() => {
-  authToken.value = localStorage.getItem('authToken')
-  tokenExpiration.value = localStorage.getItem('tokenExpiration')
+  selectedRoleToken.value = localStorage.getItem('selectedRoleToken')
+  console.log('Retrieved selectedRoleToken:', selectedRoleToken.value)
 
-  // Decode token jika ada
-  if (authToken.value) {
-    const decoded = jwtDecode(authToken.value)
+  if (selectedRoleToken.value) {
+    try {
+      // Split the token and decode the payload
+      const payload = selectedRoleToken.value.split('.')[1]
+      const decoded = JSON.parse(atob(payload))
+      console.log('Decoded token structure:', decoded) // Log to inspect structure
 
-    tokenData.value = {
-      userId: decoded.userId,
-      username: decoded.username || 'Unknown', // Gunakan username dari token
-      sessionRoles: decoded.roles || [], // Gunakan roles jika ada
-      selectedRole: decoded.selectedRole || '',
-      iat: decoded.iat ? new Date(decoded.iat * 1000).toLocaleString() : null, // Konversi iat ke tanggal
-      exp: decoded.exp ? new Date(decoded.exp * 1000).toLocaleString() : null,  // Konversi exp ke tanggal
+      tokenData.value = {
+        userId: decoded.userId,
+        roles: decoded.roles || [],
+        selectedRole: decoded.selectedRole || {},
+        permissions: decoded.permissions || [],
+        selectedUnit: decoded.selectedUnit || 'None',
+        iat: decoded.iat ? new Date(decoded.iat * 1000).toLocaleString() : null,
+        exp: decoded.exp ? new Date(decoded.exp * 1000).toLocaleString() : null,
+      }
+
+      console.log('Populated tokenData:', tokenData.value)
+
+    } catch (error) {
+      console.error('Error decoding token:', error)
     }
+  } else {
+    console.warn('selectedRoleToken is not available in localStorage.')
   }
 })
 
-// Variable computed untuk menghitung waktu sisa dalam menit
+
+
+// Computed variable to calculate remaining time in minutes
 const remainingMinutes = computed(() => {
   if (!tokenExpiration.value) return null
   const expirationTime = Number(tokenExpiration.value)
   const currentTime = Date.now()
   const remainingTime = expirationTime - currentTime
 
-  // Konversi milidetik ke menit
+  // Convert milliseconds to minutes
   return remainingTime > 0 ? Math.floor(remainingTime / 1000 / 60) : 0
 })
 </script>
@@ -55,12 +70,7 @@ const remainingMinutes = computed(() => {
 <template>
   <VCard class="overflow-visible mt-sm-10 mt-md-0">
     <VRow no-gutters>
-      <VCol
-        cols="12"
-        sm="6"
-        order="2"
-        order-sm="1"
-      >
+      <VCol cols="12" sm="6" order="2" order-sm="1">
         <VCardItem>
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
@@ -74,34 +84,33 @@ const remainingMinutes = computed(() => {
           </VCardTitle>
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
-              <!-- Welcome !   <strong>{{ tokenData.sessionRoles || 'Not available' }}</strong> -->
+              Welcome, <strong>{{ tokenData.userId || 'Not available' }}</strong>
             </h4>
           </VCardTitle>
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
-              Welcome   <strong>{{ tokenData.userId || 'Not available' }}</strong>
+              All Roles: <strong>{{ tokenData.roles.join(', ') || 'Not available' }}</strong>
             </h4>
           </VCardTitle>
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
-              All Roles Set  <strong>{{ tokenData.sessionRoles || 'Not available' }}</strong>
+              Selected Role: <strong>{{ tokenData.selectedRole.name || 'Not available' }}</strong>
             </h4>
           </VCardTitle>
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
-              Selected Roles  <strong>{{ tokenData.selectedRole || 'Not available' }}</strong>
+              Permissions: <strong>{{ tokenData.permissions.length ? tokenData.permissions.join(', ') : 'No permissions' }}</strong>
+            </h4>
+          </VCardTitle>
+          <VCardTitle>
+            <h4 class="text-h4 text-wrap">
+              Selected Unit: <strong>{{ tokenData.selectedUnit || 'Not available' }}</strong>
             </h4>
           </VCardTitle>
         </VCardItem>
       </VCol>
 
-      <VCol
-        cols="12"
-        sm="6"
-        order="1"
-        order-sm="2"
-        class="text-center"
-      >
+      <VCol cols="12" sm="6" order="1" order-sm="2" class="text-center">
         <img
           :src="illustrationJohn2"
           :height="$vuetify.display.xs ? '165' : '200'"

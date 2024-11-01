@@ -1,22 +1,42 @@
 <script setup>
-import avatar1 from '@images/avatars/avatar-1.png'
-import { useRouter } from 'vue-router'
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-
-const userProfileList = [
-  { type: 'divider' },
-
-  // Menu items lainnya bisa ditambahkan di sini
-]
+import avatar1 from '@images/avatars/avatar-1.png';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
 
 const router = useRouter()
+const userRole = ref('') // Store the decoded role name here
+
+// Decode the role from `selectedRoleToken`
+onMounted(() => {
+  const selectedRoleToken = localStorage.getItem('selectedRoleToken')
+  if (selectedRoleToken) {
+    try {
+      const payload = JSON.parse(atob(selectedRoleToken.split('.')[1]))
+      userRole.value = payload?.selectedRole?.name || 'Unknown Role'
+    } catch (error) {
+      console.error('Error decoding selectedRoleToken:', error)
+      userRole.value = 'Unknown Role'
+    }
+  }
+})
+
+// Add the "Role" navigation item to `userProfileList`
+const userProfileList = [
+  { type: 'navItem', title: 'Select Role', icon: 'ri-shield-user-line', value: '/role' },
+  { type: 'divider' },
+  // Additional menu items can be added here if needed
+]
+
+// Navigate to the route specified in each menu item
+function navigateTo(path) {
+  router.push(path)
+}
 
 function logout() {
-  // Hapus semua data terkait autentikasi di localStorage
   localStorage.removeItem('authToken')
   localStorage.removeItem('tokenExpiration')
-
-  // Arahkan pengguna ke halaman login
+  localStorage.removeItem('selectedRoleToken')
   router.push('/login')
 }
 </script>
@@ -64,14 +84,17 @@ function logout() {
                 </VBadge>
               </VListItemAction>
             </template>
-
-            <h6 class="text-sm font-weight-medium">
-              John Doe
-            </h6>
-            <VListItemSubtitle class="text-capitalize text-disabled">
-              Admin
+            <h8 class="text-sm font-weight-medium">
+              Users
+            </h8>
+            <VListItemSubtitle class="text-capitalize">
+              {{ userRole || 'Not available' }}
             </VListItemSubtitle>
           </VListItem>
+
+          <VDivider
+                class="my-1"
+              />
 
           <PerfectScrollbar :options="{ wheelPropagation: false }">
             <template
@@ -80,26 +103,16 @@ function logout() {
             >
               <VListItem
                 v-if="item.type === 'navItem'"
-                :value="item.value"
+                @click="navigateTo(item.value)"
               >
                 <template #prepend>
                   <VIcon
                     :icon="item.icon"
-                    size="22"
+                    size="24"
                   />
                 </template>
 
-                <VListItemTitle>{{ item.title }}</VListItemTitle>
-
-                <template
-                  v-if="item.badgeProps"
-                  #append
-                >
-                  <VBadge
-                    inline
-                    v-bind="item.badgeProps"
-                  />
-                </template>
+                <VListItemTitle class="text-sm font-weight-medium" >{{ item.title }}</VListItemTitle>
               </VListItem>
 
               <VDivider
@@ -108,7 +121,7 @@ function logout() {
               />
             </template>
 
-            <!-- Tombol Logout -->
+            <!-- Logout Button -->
             <VListItem>
               <VBtn
                 block

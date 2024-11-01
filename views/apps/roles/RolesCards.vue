@@ -4,17 +4,14 @@ import avatar2 from '@/images/avatars/avatar-2.png'
 import avatar3 from '@/images/avatars/avatar-3.png'
 import avatar4 from '@/images/avatars/avatar-4.png'
 import avatar5 from '@/images/avatars/avatar-5.png'
-import { editPermission } from '@/utils/permission' // Import editPermission function from permission.js
-import { useState } from 'nuxt/app'
+import { getAuthToken, setSelectedRoleToken } from '@/middleware/auth.js'
+import { navigateTo, useState } from 'nuxt/app'
 import { computed, ref } from 'vue'
 
-// Array of avatars
 const avatarImages = [avatar1, avatar2, avatar3, avatar4, avatar5]
-
-// Helper function to get a random avatar
 const getRandomAvatar = () => avatarImages[Math.floor(Math.random() * avatarImages.length)]
 
-// Role mapping: map each role value to a display label
+// Define role mapping
 const roleMapping = {
   system: 'ADMIN PUSAT',
   admin: 'ADMIN',
@@ -25,37 +22,86 @@ const roleMapping = {
   verifikator: 'VERIFIKATOR',
 }
 
-// Fetch user data from global state
 const userState = useState('user')
 
-// Roles List with display name and random avatars
+// Computed roles with name and value
 const roles = computed(() =>
-  userState.value.roles.map(role => ({
-    role: roleMapping[role] || role, // Display name, fallback to original if not in mapping
-    value: role,                      // Original role value
-    users: [getRandomAvatar()],       // Assign a random avatar
+  userState.value?.roles?.map(role => ({
+    name: roleMapping[role] || role, // Display name for the role
+    value: role,                     // Identifier for API requests
+    users: [getRandomAvatar()],
     details: {
-      name: roleMapping[role] || role,
-      permissions: userState.value.permissions.map(permission => ({
+      name: roleMapping[role] || role, // Display name in details
+      value: role,                    // Identifier in details for consistency
+      permissions: userState.value?.permissions?.map(permission => ({
         name: permission,
         read: true,
         write: true,
         create: true,
       })),
     },
-  })),
+  })) || []
 )
 
 const isRoleDialogVisible = ref(false)
 const roleDetail = ref()
-const isAddRoleDialogVisible = ref(false)
 
-// Update the role selection to call the API, store token, and navigate
 const selectRole = async roleDetails => {
-  await editPermission(roleDetails) // Call the imported function from permission.js
-  isRoleDialogVisible.value = true
-  roleDetail.value = roleDetails
+  const authToken = getAuthToken()
+
+  if (!authToken) {
+    console.error('Auth token is missing. Redirecting to login.')
+    navigateTo('/login')
+    return
+  }
+
+  try {
+    const query = `
+      mutation Mutation($roleName: String!) {
+        selectRole(roleName: $roleName)
+      }
+    `
+    const variables = { roleName: roleDetails.value }
+    console.log('Role Name being sent to API:', variables.roleName)
+
+    const response = await fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify({
+        query,
+        variables,
+      }),
+    })
+
+    const result = await response.json()
+    console.log('API response:', result)
+
+    if (result.errors) {
+      console.error('GraphQL error:', result.errors)
+      throw new Error('Failed to retrieve role token due to GraphQL error')
+    }
+
+    const roleToken = result.data.selectRole
+
+    if (!roleToken) {
+      throw new Error('Role token not received')
+    }
+
+    // Store the role token in local storage for later use
+    setSelectedRoleToken(roleToken)
+    console.log('Role token saved to local storage.')
+
+    // Redirect to the home page or dashboard
+    navigateTo('/')
+
+  } catch (error) {
+    console.error('Error fetching role token:', error)
+  }
 }
+
 </script>
 
 <template>
@@ -63,7 +109,6 @@ const selectRole = async roleDetails => {
     class="pt-6 px-4 mx-auto"
     style="max-inline-size: 1200px;"
   >
-    <!-- 👉 Roles -->
     <VCol
       v-for="item in roles"
       :key="item.value"
@@ -84,7 +129,7 @@ const selectRole = async roleDetails => {
 
         <VCardText>
           <h5 class="text-h5 mb-2">
-            {{ item.role }} <!-- Display name -->
+            {{ item.name }} <!-- Display name for role -->
           </h5>
           <div class="d-flex align-center">
             <VBtn
@@ -100,7 +145,7 @@ const selectRole = async roleDetails => {
     </VCol>
   </VRow>
 
-  <!-- Role dialog for editing permissions -->
+  <!-- Role dialog for editing permissions if needed -->
   <AddEditRoleDialog
     v-model:is-dialog-visible="isRoleDialogVisible"
     v-model:role-permissions="roleDetail"
@@ -108,7 +153,6 @@ const selectRole = async roleDetails => {
 </template>
 
 <style scoped>
-/* Additional spacing adjustments */
 .VRow {
   margin-block-start: 1rem;
   max-inline-size: 1200px;
