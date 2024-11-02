@@ -1,6 +1,5 @@
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth' // Import token retrieval function
-import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -10,38 +9,36 @@ definePageMeta({
 })
 
 const router = useRouter()
-const isAddNewUserDrawerVisible = ref(false)
 const searchQuery = ref('')
-const users = ref([])
+const roles = ref([])
 const isLoading = ref(false)
-const totalUsers = ref(0)
+const totalRoles = ref(0)
 const itemsPerPage = ref(10)
 const currentPage = ref(1)
 
 // Konfigurasi headers tabel
 const headers = [
   { title: 'No', key: 'no', sortable: false },
-  { title: 'Nama', key: 'name' },
-  { title: 'Email', key: 'email' },
-  { title: 'Username', key: 'username' },
-  { title: 'Identity', key: 'identity' },
-  { title: 'Unit Name', key: 'eduk_unit_1_name' },
-  { title: 'Actions', key: 'actions', sortable: false }, // Ensure Actions is the last column
+  { title: 'Role Name', key: 'name' },
+  { title: 'Description', key: 'description' },
+  { title: 'Created At', key: 'created_at' },
+  { title: 'Updated At', key: 'updated_at' },
+  { title: 'Actions', key: 'actions', sortable: false },
 ]
 
-// Query GraphQL untuk mendapatkan data pengguna
-const fetchUsers = async () => {
+// Query GraphQL untuk mendapatkan data roles
+const fetchRoles = async () => {
   const query = `
-    query Query {
-      getUsers {
+    query GetRoles {
+      getRoles {
         data {
           id
           name
-          username
-          identity
-          email
-          eduk_unit_1_name
+          description
+          created_at
+          updated_at
         }
+        total
       }
     }
   `
@@ -61,31 +58,26 @@ const fetchUsers = async () => {
 
     const result = await response.json()
 
-    users.value = result.data.getUsers.data
-    totalUsers.value = users.value.length
+    roles.value = result.data.getRoles.data
+    totalRoles.value = result.data.getRoles.total
   } catch (error) {
-    console.error('Error fetching users:', error)
+    console.error('Error fetching roles:', error)
   } finally {
     isLoading.value = false
   }
 }
 
 // Fungsi placeholder untuk tombol edit dan delete
-const editUser = item => {
-  console.log('Edit user:', item)
+const editRole = item => {
+  console.log('Edit role:', item)
 }
 
-const deleteUser = item => {
-  console.log('Delete user:', item)
-}
-
-// Fungsi untuk menambahkan pengguna baru
-const addNewUser = userData => {
-  console.log('Data user baru:', userData)
+const deleteRole = item => {
+  console.log('Delete role:', item)
 }
 
 onMounted(() => {
-  fetchUsers()
+  fetchRoles()
 })
 </script>
 
@@ -93,17 +85,17 @@ onMounted(() => {
   <section>
     <div class="mb-6">
       <VCard style="padding: 24px;">
-        <div class="app-user-search-filter d-flex align-center">
+        <div class="app-role-search-filter d-flex align-center">
           <!-- Search Field -->
           <VTextField
             v-model="searchQuery"
-            placeholder="Search User"
+            placeholder="Search Role"
             density="compact"
             class="me-4"
           />
-          <!-- Add User Button -->
-          <VBtn @click="isAddNewUserDrawerVisible = true">
-            Add New User
+          <!-- Add Role Button -->
+          <VBtn @click="isAddNewRoleDrawerVisible = true">
+            Add New Role
           </VBtn>
         </div>
       </VCard>
@@ -112,10 +104,10 @@ onMounted(() => {
       <VCard style="padding: 24px;">
         <VDataTable
           :headers="headers"
-          :items="users"
+          :items="roles"
           :search="searchQuery"
           :loading="isLoading"
-          :total-items="totalUsers"
+          :total-items="totalRoles"
           :items-per-page="itemsPerPage"
           :page="currentPage"
           item-key="id"
@@ -133,13 +125,13 @@ onMounted(() => {
               <VBtn
                 icon
                 style="margin-inline-end: 6px;"
-                @click="editUser(item)"
+                @click="editRole(item)"
               >
                 <VIcon>ri-edit-2-fill</VIcon>
               </VBtn>
               <VBtn
                 icon
-                @click="deleteUser(item)"
+                @click="deleteRole(item)"
               >
                 <VIcon>ri-delete-bin-2-fill</VIcon>
               </VBtn>
@@ -148,10 +140,5 @@ onMounted(() => {
         </VDataTable>
       </VCard>
     </div>
-    <!-- Drawer untuk Tambah User Baru -->
-    <AddNewUserDrawer
-      v-model:isDrawerOpen="isAddNewUserDrawerVisible"
-      @user-data="addNewUser"
-    />
   </section>
 </template>

@@ -1,11 +1,6 @@
 <script setup>
-import illustrationJohn2 from '@/images/illustration-john-2.png';
-import { computed, onMounted, ref } from 'vue';
-
-// Apply 'auth' middleware only for this page
-definePageMeta({
-  middleware: 'auth-middleware',
-})
+import illustrationJohn2 from '@/images/illustration-john-2.png'
+import { computed, onMounted, ref } from 'vue'
 
 const selectedRoleToken = ref('')
 const tokenExpiration = ref('')
@@ -24,13 +19,15 @@ const tokenData = ref({
 // Load selectedRoleToken from localStorage, decode it, and set expiration time
 onMounted(() => {
   selectedRoleToken.value = localStorage.getItem('selectedRoleToken')
-  console.log('Retrieved selectedRoleToken:', selectedRoleToken.value)
+
+  // console.log('Retrieved selectedRoleToken:', selectedRoleToken.value)
 
   if (selectedRoleToken.value) {
     try {
       // Split the token and decode the payload
       const payload = selectedRoleToken.value.split('.')[1]
       const decoded = JSON.parse(atob(payload))
+
       console.log('Decoded token structure:', decoded) // Log to inspect structure
 
       tokenData.value = {
@@ -70,31 +67,37 @@ const remainingMinutes = computed(() => {
 <template>
   <VCard class="overflow-visible mt-sm-10 mt-md-0">
     <VRow no-gutters>
-      <VCol cols="12" sm="6" order="2" order-sm="1">
+      <VCol
+        cols="12"
+        sm="6"
+        order="2"
+        order-sm="1"
+      >
         <VCardItem>
-          <VCardTitle>
+          <!--
+            <VCardTitle>
             <h4 class="text-h4 text-wrap">
-              <strong>ARSIP</strong> 
+            <strong>ARSIP</strong>
             </h4>
-          </VCardTitle>
-          <VCardTitle>
+            </VCardTitle> 
+          -->
+          <!--
+            <VCardTitle>
             <h4 class="text-h4 text-wrap">
-              <strong>UNIVERSITAS DIPONEGORO</strong>
+            <strong>UNIVERSITAS DIPONEGORO</strong>
             </h4>
-          </VCardTitle>
-          <VCardTitle>
+            </VCardTitle> 
+          -->
+          <!--
+            <VCardTitle>
             <h4 class="text-h4 text-wrap">
-              Welcome, <strong>{{ tokenData.userId || 'Not available' }}</strong>
+            All Roles: <strong>{{ tokenData.roles.length ? tokenData.roles.join(', ') : 'Not available' }}</strong>
             </h4>
-          </VCardTitle>
+            </VCardTitle> 
+          -->
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
-              All Roles: <strong>{{ tokenData.roles.join(', ') || 'Not available' }}</strong>
-            </h4>
-          </VCardTitle>
-          <VCardTitle>
-            <h4 class="text-h4 text-wrap">
-              Selected Role: <strong>{{ tokenData.selectedRole.name || 'Not available' }}</strong>
+              Anda login sebagai <strong>{{ tokenData.selectedRole?.description || 'Not available' }}</strong>
             </h4>
           </VCardTitle>
           <VCardTitle>
@@ -110,7 +113,13 @@ const remainingMinutes = computed(() => {
         </VCardItem>
       </VCol>
 
-      <VCol cols="12" sm="6" order="1" order-sm="2" class="text-center">
+      <VCol
+        cols="12"
+        sm="6"
+        order="1"
+        order-sm="2"
+        class="text-center"
+      >
         <img
           :src="illustrationJohn2"
           :height="$vuetify.display.xs ? '165' : '200'"
@@ -121,6 +130,7 @@ const remainingMinutes = computed(() => {
     </VRow>
   </VCard>
 </template>
+
 
 <style lang="scss" scoped>
 .john-illustration {

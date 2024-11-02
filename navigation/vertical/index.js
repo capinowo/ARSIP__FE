@@ -15,10 +15,12 @@ export default [
       },
       {
         title: 'Role',
+        to: { name: 'management-role_manage' },
         icon: { icon: 'ri-circle-line' },  
       },
       {
         title: 'Unit',
+        to: { name: 'management-unit_manage' },
         icon: { icon: 'ri-circle-line' },
       },
     ],

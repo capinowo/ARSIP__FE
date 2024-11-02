@@ -9,7 +9,7 @@ definePageMeta({
   middleware: 'auth-middleware',
 })
 
-const authToken = ref('')
+const selectedRoleToken = ref('')
 
 const tokenData = ref({
   userId: null,
@@ -22,11 +22,11 @@ const tokenData = ref({
 
 // Muat token dari localStorage, decode, dan simpan data token
 onMounted(() => {
-  authToken.value = localStorage.getItem('authToken')
+  selectedRoleToken.value = localStorage.getItem('selectedRoleToken')
 
   // Decode token jika ada
-  if (authToken.value) {
-    const decoded = jwtDecode(authToken.value)
+  if (selectedRoleToken.value) {
+    const decoded = jwtDecode(selectedRoleToken.value)
 
     tokenData.value = {
       userId: decoded.userId,

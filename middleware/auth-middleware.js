@@ -1,5 +1,5 @@
 // middleware/authMiddleware.js
-import { clearSelectedRoleToken, getSelectedRoleToken } from '@/middleware/auth.js'
+import { clearSelectedRoleToken, getSelectedRoleToken } from '@/middleware/auth'
 import { jwtDecode } from 'jwt-decode'
 import { navigateTo, useState } from 'nuxt/app'
 
@@ -9,6 +9,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     
     if (!selectedRoleToken) {
       clearSelectedRoleToken()
+
       return navigateTo('/login')
     }
 
@@ -18,6 +19,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
       if (decodedRole.exp < currentTime) {
         clearSelectedRoleToken()
+
         return navigateTo('/login')
       }
 
@@ -25,6 +27,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
       
     } catch (error) {
       clearSelectedRoleToken()
+      
       return navigateTo('/login')
     }
   }

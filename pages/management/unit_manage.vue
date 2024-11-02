@@ -1,6 +1,5 @@
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth' // Import token retrieval function
-import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -10,37 +9,36 @@ definePageMeta({
 })
 
 const router = useRouter()
-const isAddNewUserDrawerVisible = ref(false)
 const searchQuery = ref('')
-const users = ref([])
+const units = ref([])
 const isLoading = ref(false)
-const totalUsers = ref(0)
+const totalUnits = ref(0)
 const itemsPerPage = ref(10)
 const currentPage = ref(1)
 
 // Konfigurasi headers tabel
 const headers = [
   { title: 'No', key: 'no', sortable: false },
-  { title: 'Nama', key: 'name' },
-  { title: 'Email', key: 'email' },
-  { title: 'Username', key: 'username' },
-  { title: 'Identity', key: 'identity' },
-  { title: 'Unit Name', key: 'eduk_unit_1_name' },
-  { title: 'Actions', key: 'actions', sortable: false }, // Ensure Actions is the last column
+  { title: 'Code Name', key: 'codename' },
+  { title: 'Name', key: 'name' },
+  { title: 'Description', key: 'description' },
+  { title: 'Created At', key: 'created_at' },
+  { title: 'Updated At', key: 'updated_at' },
+  { title: 'Actions', key: 'actions', sortable: false },
 ]
 
-// Query GraphQL untuk mendapatkan data pengguna
-const fetchUsers = async () => {
+// Query GraphQL untuk mendapatkan data units
+const fetchUnits = async () => {
   const query = `
-    query Query {
-      getUsers {
+    query GetUnits {
+      getUnits {
         data {
           id
+          codename
           name
-          username
-          identity
-          email
-          eduk_unit_1_name
+          description
+          created_at
+          updated_at
         }
       }
     }
@@ -61,31 +59,26 @@ const fetchUsers = async () => {
 
     const result = await response.json()
 
-    users.value = result.data.getUsers.data
-    totalUsers.value = users.value.length
+    units.value = result.data.getUnits.data
+    totalUnits.value = units.value.length
   } catch (error) {
-    console.error('Error fetching users:', error)
+    console.error('Error fetching units:', error)
   } finally {
     isLoading.value = false
   }
 }
 
 // Fungsi placeholder untuk tombol edit dan delete
-const editUser = item => {
-  console.log('Edit user:', item)
+const editUnit = item => {
+  console.log('Edit unit:', item)
 }
 
-const deleteUser = item => {
-  console.log('Delete user:', item)
-}
-
-// Fungsi untuk menambahkan pengguna baru
-const addNewUser = userData => {
-  console.log('Data user baru:', userData)
+const deleteUnit = item => {
+  console.log('Delete unit:', item)
 }
 
 onMounted(() => {
-  fetchUsers()
+  fetchUnits()
 })
 </script>
 
@@ -93,17 +86,17 @@ onMounted(() => {
   <section>
     <div class="mb-6">
       <VCard style="padding: 24px;">
-        <div class="app-user-search-filter d-flex align-center">
+        <div class="app-unit-search-filter d-flex align-center">
           <!-- Search Field -->
           <VTextField
             v-model="searchQuery"
-            placeholder="Search User"
+            placeholder="Search Unit"
             density="compact"
             class="me-4"
           />
-          <!-- Add User Button -->
-          <VBtn @click="isAddNewUserDrawerVisible = true">
-            Add New User
+          <!-- Add Unit Button -->
+          <VBtn @click="isAddNewUnitDrawerVisible = true">
+            Add New Unit
           </VBtn>
         </div>
       </VCard>
@@ -112,10 +105,10 @@ onMounted(() => {
       <VCard style="padding: 24px;">
         <VDataTable
           :headers="headers"
-          :items="users"
+          :items="units"
           :search="searchQuery"
           :loading="isLoading"
-          :total-items="totalUsers"
+          :total-items="totalUnits"
           :items-per-page="itemsPerPage"
           :page="currentPage"
           item-key="id"
@@ -129,17 +122,17 @@ onMounted(() => {
 
           <!-- Template slot for Actions column -->
           <template #item.actions="{ item }">
-            <div class="d-flex">
+            <div class="d-flex justify-end">
               <VBtn
                 icon
                 style="margin-inline-end: 6px;"
-                @click="editUser(item)"
+                @click="editUnit(item)"
               >
                 <VIcon>ri-edit-2-fill</VIcon>
               </VBtn>
               <VBtn
                 icon
-                @click="deleteUser(item)"
+                @click="deleteUnit(item)"
               >
                 <VIcon>ri-delete-bin-2-fill</VIcon>
               </VBtn>
@@ -148,10 +141,5 @@ onMounted(() => {
         </VDataTable>
       </VCard>
     </div>
-    <!-- Drawer untuk Tambah User Baru -->
-    <AddNewUserDrawer
-      v-model:isDrawerOpen="isAddNewUserDrawerVisible"
-      @user-data="addNewUser"
-    />
   </section>
 </template>
