@@ -1,4 +1,5 @@
 <script setup>
+import { defineEmits, defineProps, nextTick, ref } from 'vue'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 
 const props = defineProps({
@@ -8,24 +9,18 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits([
-  'update:isDrawerOpen',
-  'userData',
-])
+const emit = defineEmits(['update:isDrawerOpen', 'create-location'])
 
-const isFormValid = ref(false)
 const refForm = ref()
-const fullName = ref('')
-const userName = ref('')
-const email = ref('')
-const company = ref('')
-const country = ref()
-const contact = ref('')
-const role = ref()
-const unit = ref()
-const status = ref()
+const unit_id = ref(1) // Example unit ID
+const name = ref('')
+const description = ref('')
+const building_name = ref('')
+const room_name = ref('')
+const rack_name = ref('')
+const box_name = ref('')
 
-// 👉 drawer close
+// Close drawer function
 const closeNavigationDrawer = () => {
   emit('update:isDrawerOpen', false)
   nextTick(() => {
@@ -34,27 +29,20 @@ const closeNavigationDrawer = () => {
   })
 }
 
+// Form submission handler
 const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      emit('userData', {
-        id: 0,
-        fullName: fullName.value,
-        company: company.value,
-        role: role.value,
-        username: userName.value,
-        country: country.value,
-        contact: contact.value,
-        email: email.value,
-        currentunit: unit.value,
-        status: status.value,
-        avatar: '',
+      emit('create-location', {
+        unit_id: unit_id.value,
+        name: name.value,
+        description: description.value,
+        building_name: building_name.value,
+        room_name: room_name.value,
+        rack_name: rack_name.value,
+        box_name: box_name.value,
       })
-      emit('update:isDrawerOpen', false)
-      nextTick(() => {
-        refForm.value?.reset()
-        refForm.value?.resetValidation()
-      })
+      closeNavigationDrawer()
     }
   })
 }
@@ -73,129 +61,92 @@ const handleDrawerModelValueUpdate = val => {
     :model-value="props.isDrawerOpen"
     @update:model-value="handleDrawerModelValueUpdate"
   >
-    <!-- 👉 Title -->
+    <!-- Drawer Header -->
     <AppDrawerHeaderSection
-      title="Add Master Lokasi"
+      title="Add New Location"
       @cancel="closeNavigationDrawer"
     />
 
     <VDivider />
 
+    <!-- Scrollable Content -->
     <PerfectScrollbar :options="{ wheelPropagation: false }">
       <VCard flat>
         <VCardText>
-          <!-- 👉 Form -->
+          <!-- Form Section -->
           <VForm
             ref="refForm"
-            v-model="isFormValid"
             @submit.prevent="onSubmit"
           >
             <VRow>
-              <!-- 👉 Full name -->
-              <!--
-                <VCol cols="12">
-                <VTextField
-                v-model="fullName"
-                :rules="[requiredValidator]"
-                label="Full Name"
-                placeholder="John Doe"
-                />
-                </VCol> 
-              -->
-
-              <!-- 👉 Username -->
-              <!--
-                <VCol cols="12">
-                <VTextField
-                v-model="userName"
-                :rules="[requiredValidator]"
-                label="Username"
-                placeholder="Johndoe"
-                />
-                </VCol> 
-              -->
-
-              <!-- 👉 Email -->
+              <!-- Unit ID Field -->
               <VCol cols="12">
                 <VTextField
-                  v-model="email"
-                  :rules="[requiredValidator, emailValidator]"
-                  label="Email"
-                  placeholder="johndoe@email.com"
+                  v-model="unit_id"
+                  label="Unit ID"
+                  placeholder="Enter unit ID"
+                  type="number"
+                  required
                 />
               </VCol>
 
-              <!-- 👉 company -->
-              <!--
-                <VCol cols="12">
-                <VTextField
-                v-model="company"
-                :rules="[requiredValidator]"
-                label="Company"
-                placeholder="Themeselection"
-                />
-                </VCol> 
-              -->
-
-              <!-- 👉 Country -->
-              <!--
-                <VCol cols="12">
-                <VSelect
-                v-model="country"
-                label="Select Country"
-                placeholder="Select Country"
-                :rules="[requiredValidator]"
-                :items="['USA', 'UK', 'India', 'Australia']"
-                />
-                </VCol> 
-              -->
-              <!-- 👉 Contact -->
-              <!--
-                <VCol cols="12">
-                <VTextField
-                v-model="contact"
-                type="number"
-                :rules="[requiredValidator]"
-                label="Contact"
-                placeholder="+1-541-754-3010"
-                />
-                </VCol> 
-              -->
-              <!-- 👉 Role -->
+              <!-- Name Field -->
               <VCol cols="12">
-                <VSelect
-                  v-model="role"
-                  label="Select Role"
-                  placeholder="Select Role"
-                  :rules="[requiredValidator]"
-                  :items="['Admin', 'Author', 'Editor', 'Maintainer', 'Subscriber']"
+                <VTextField
+                  v-model="name"
+                  label="Location Name"
+                  placeholder="Enter location name"
+                  :rules="[v => !!v || 'Location name is required']"
+                  required
                 />
               </VCol>
 
-              <!-- 👉 unit -->
+              <!-- Description Field -->
               <VCol cols="12">
-                <VSelect
-                  v-model="unit"
-                  label="Select unit"
-                  placeholder="Select Unit"
-                  :rules="[requiredValidator]"
-                  :items="['Basic', 'Company', 'Enterprise', 'Team']"
+                <VTextField
+                  v-model="description"
+                  label="Description"
+                  placeholder="Enter description"
                 />
               </VCol>
 
-              <!-- 👉 Status -->
-              <!--
-                <VCol cols="12">
-                <VSelect
-                v-model="PermissionStatus"
-                label="Select Permission Status"
-                placeholder="Select PermissionStatus"
-                :rules="[requiredValidator]"
-                :items="[{ title: 'Active', value: 'active' }, { title: 'Inactive', value: 'inactive' }, { title: 'Pending', value: 'pending' }]"
+              <!-- Building Name Field -->
+              <VCol cols="12">
+                <VTextField
+                  v-model="building_name"
+                  label="Building Name"
+                  placeholder="Enter building name"
                 />
-                </VCol>  
-              -->
-              <!-- 👉 Submit and Cancel -->
+              </VCol>
+
+              <!-- Room Name Field -->
+              <VCol cols="12">
+                <VTextField
+                  v-model="room_name"
+                  label="Room Name"
+                  placeholder="Enter room name"
+                />
+              </VCol>
+
+              <!-- Rack Name Field -->
+              <VCol cols="12">
+                <VTextField
+                  v-model="rack_name"
+                  label="Rack Name"
+                  placeholder="Enter rack name"
+                />
+              </VCol>
+
+              <!-- Box Name Field -->
+              <VCol cols="12">
+                <VTextField
+                  v-model="box_name"
+                  label="Box Name"
+                  placeholder="Enter box name"
+                />
+              </VCol>
+
+              <!-- Submit and Cancel Buttons -->
               <VCol cols="12">
                 <VBtn
                   type="submit"

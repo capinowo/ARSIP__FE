@@ -1,14 +1,9 @@
 <script setup>
-import { getSelectedRoleToken } from '@/middleware/auth' // Import token retrieval function
+import { getSelectedRoleToken } from '@/middleware/auth'
+import AddUnit from '@/views/apps/management/unit/AddUnit.vue'
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
 
-// Middleware untuk auth pada halaman
-definePageMeta({
-  middleware: 'auth-middleware',
-})
-
-const router = useRouter()
+const isAddUnitDrawerOpen = ref(false)
 const searchQuery = ref('')
 const units = ref([])
 const isLoading = ref(false)
@@ -16,7 +11,7 @@ const totalUnits = ref(0)
 const itemsPerPage = ref(10)
 const currentPage = ref(1)
 
-// Konfigurasi headers tabel
+// Table headers
 const headers = [
   { title: 'No', key: 'no', sortable: false },
   { title: 'Code Name', key: 'codename' },
@@ -27,7 +22,7 @@ const headers = [
   { title: 'Actions', key: 'actions', sortable: false },
 ]
 
-// Query GraphQL untuk mendapatkan data units
+// Fetch units
 const fetchUnits = async () => {
   const query = `
     query GetUnits {
@@ -46,7 +41,7 @@ const fetchUnits = async () => {
 
   isLoading.value = true
   try {
-    const token = getSelectedRoleToken() // Get the selected role token
+    const token = getSelectedRoleToken()
 
     const response = await fetch('http://localhost:4000/graphql', {
       method: 'POST',
@@ -68,13 +63,50 @@ const fetchUnits = async () => {
   }
 }
 
-// Fungsi placeholder untuk tombol edit dan delete
-const editUnit = item => {
-  console.log('Edit unit:', item)
-}
+// Function to create a new unit
+const createUnit = async newUnitData => {
+  const mutation = `
+    mutation Mutation($data: UnitCreateInput!) {
+      createUnit(data: $data) {
+        id
+        codename
+        name
+        description
+        created_at
+        updated_at
+      }
+    }
+  `
 
-const deleteUnit = item => {
-  console.log('Delete unit:', item)
+  const variables = {
+    data: {
+      codename: newUnitData.codename,
+      name: newUnitData.name,
+      description: newUnitData.description,
+    },
+  }
+
+  try {
+    const token = getSelectedRoleToken()
+
+    const response = await fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query: mutation, variables }),
+    })
+
+    const result = await response.json()
+    const createdUnit = result.data.createUnit
+
+    // Add the new unit to the list
+    units.value.push(createdUnit)
+    totalUnits.value = units.value.length
+  } catch (error) {
+    console.error('Error creating unit:', error)
+  }
 }
 
 onMounted(() => {
@@ -84,23 +116,24 @@ onMounted(() => {
 
 <template>
   <section>
+    <!-- Main page content -->
     <div class="mb-6">
       <VCard style="padding: 24px;">
         <div class="app-unit-search-filter d-flex align-center">
-          <!-- Search Field -->
           <VTextField
             v-model="searchQuery"
             placeholder="Search Unit"
             density="compact"
             class="me-4"
           />
-          <!-- Add Unit Button -->
-          <VBtn @click="isAddNewUnitDrawerVisible = true">
+          <VBtn @click="isAddUnitDrawerOpen = true">
             Add New Unit
           </VBtn>
         </div>
       </VCard>
     </div>
+
+    <!-- Table to display units -->
     <div>
       <VCard style="padding: 24px;">
         <VDataTable
@@ -115,14 +148,12 @@ onMounted(() => {
           @update:page="currentPage = $event"
           @update:items-per-page="itemsPerPage = $event"
         >
-          <!-- Template slot untuk kolom No -->
           <template #item.no="{ index }">
             {{ (currentPage - 1) * itemsPerPage + index + 1 }}
           </template>
 
-          <!-- Template slot for Actions column -->
           <template #item.actions="{ item }">
-            <div class="d-flex justify-end">
+            <div class="d-flex">
               <VBtn
                 icon
                 style="margin-inline-end: 6px;"
@@ -141,5 +172,13 @@ onMounted(() => {
         </VDataTable>
       </VCard>
     </div>
+
+    <!-- AddUnit Drawer Component -->
+    <AddUnit
+      :is-drawer-open="isAddUnitDrawerOpen"
+      @update:is-drawer-open="isAddUnitDrawerOpen = $event"
+      @create-unit="createUnit"
+    />
   </section>
 </template>
+

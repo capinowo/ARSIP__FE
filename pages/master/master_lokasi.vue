@@ -1,43 +1,86 @@
 <script setup>
-import AddNewMasterLokasi from '@/views/apps/master-lokasi/AddNewMasterLokasi.vue'
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { getSelectedRoleToken } from '@/middleware/auth';
+import AddNewMasterLokasi from '@/views/apps/master-lokasi/AddNewMasterLokasi.vue';
+import EditLocation from '@/views/apps/master-lokasi/EditMasterLokasi.vue'; // New import for editing
+import { onMounted, ref } from 'vue';
 
-// Middleware untuk auth pada halaman
-definePageMeta({
-  middleware: 'auth-middleware',
-})
-
-const router = useRouter()
-const isAddNewMasterLokasiVisible = ref(false)
+const isAddLocationDrawerOpen = ref(false)
+const isEditLocationDrawerOpen = ref(false) // Track edit drawer
 const searchQuery = ref('')
-const users = ref([])
+const locations = ref([])
 const isLoading = ref(false)
-const totalUsers = ref(0)
+const totalLocations = ref(0)
 const itemsPerPage = ref(10)
 const currentPage = ref(1)
+const selectedLocation = ref(null) // Hold data for location to be edited
 
-// Konfigurasi headers tabel
+// Table headers
 const headers = [
-  { title: 'No', key: 'no', sortable: false },  // Kolom No
-  { title: 'Nama', key: 'name' },               // Kolom Nama
-  { title: 'Email', key: 'email' },             // Kolom Email
-  { title: 'Username', key: 'username' },       // Kolom Username
-  { title: 'NIP', key: 'sso_identity' },        // Kolom NIP
-  { title: 'Actions', key: 'actions', sortable: false }, // Kolom Actions
+  { title: 'No', key: 'no', sortable: false },
+  { title: 'Name', key: 'name' },
+  { title: 'Description', key: 'description' },
+  { title: 'Building Name', key: 'building_name' },
+  { title: 'Room Name', key: 'room_name' },
+  { title: 'Rack Name', key: 'rack_name' },
+  { title: 'Box Name', key: 'box_name' },
+  { title: 'Actions', key: 'actions', sortable: false },
 ]
+//CREATE LOCATION
+const createLocation = async (newLocationData) => {
+  const mutation = `
+    mutation CreateLocation($data: LocationCreateInput!) {
+      createLocation(data: $data) {
+        id
+        name
+        description
+        building_name
+        room_name
+        rack_name
+        box_name
+        unit_id
+        created_at
+        updated_at
+      }
+    }
+  `;
+  const variables = { data: newLocationData };
 
-// Query GraphQL untuk mendapatkan data pengguna
-const fetchUsers = async () => {
+  try {
+    const token = getSelectedRoleToken();
+    const response = await fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query: mutation, variables }),
+    });
+
+    const result = await response.json();
+    if (result.data.createLocation) {
+      locations.value.push(result.data.createLocation); // Tambahkan lokasi baru ke daftar
+    }
+  } catch (error) {
+    console.error('Error creating location:', error);
+  } finally {
+    isAddLocationDrawerOpen.value = false; // Tutup drawer setelah pembuatan lokasi
+  }
+};
+
+// Fetch locations
+const fetchLocations = async () => {
   const query = `
-    query UserGetList {
-      userGetList {
+    query GetLocations {
+      getLocations {
         data {
           id
           name
-          email
-          username
-          sso_identity
+          description
+          building_name
+          room_name
+          rack_name
+          box_name
+          unit_id
         }
       }
     }
@@ -45,90 +88,174 @@ const fetchUsers = async () => {
 
   isLoading.value = true
   try {
-    const response = await fetch('', {
+    const token = getSelectedRoleToken()
+    const response = await fetch('http://localhost:4000/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query }),
     })
 
     const result = await response.json()
-
-    users.value = result.data.userGetList.data
-    totalUsers.value = users.value.length
+    locations.value = result.data.getLocations.data
+    totalLocations.value = locations.value.length
   } catch (error) {
-    console.error('Error fetching users:', error)
+    console.error('Error fetching locations:', error)
   } finally {
     isLoading.value = false
   }
 }
 
-// Fungsi placeholder untuk tombol edit dan delete
-const editUser = item => {
-  console.log('Edit user:', item)
+// Function to open the edit drawer with the selected location
+const openEditLocation = (location) => {
+  selectedLocation.value = { ...location } // Clone to prevent direct mutations
+  isEditLocationDrawerOpen.value = true
 }
 
-const deleteUser = item => {
-  console.log('Delete user:', item)
+// Function to update a location
+const updateLocation = async (updatedLocationData) => {
+  const mutation = `
+    mutation UpdateLocation($data: LocationUpdateInput!, $updateLocationId: Int!) {
+      updateLocation(data: $data, id: $updateLocationId) {
+        box_name
+        building_name
+        description
+        name
+        rack_name
+        room_name
+        updated_at
+      }
+    }
+  `
+
+  const variables = {
+    data: {
+      box_name: updatedLocationData.box_name,
+      building_name: updatedLocationData.building_name,
+      description: updatedLocationData.description,
+      name: updatedLocationData.name,
+      rack_name: updatedLocationData.rack_name,
+      room_name: updatedLocationData.room_name,
+      unit_id: updatedLocationData.unit_id,
+    },
+    updateLocationId: updatedLocationData.id,
+  }
+
+  try {
+    const token = getSelectedRoleToken()
+    const response = await fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query: mutation, variables }),
+    })
+
+    const result = await response.json()
+    const updatedLocation = result.data.updateLocation
+
+    // Update the location in the list
+    const index = locations.value.findIndex(loc => loc.id === updatedLocationData.id)
+    if (index !== -1) {
+      locations.value[index] = { ...locations.value[index], ...updatedLocation }
+    }
+  } catch (error) {
+    console.error('Error updating location:', error)
+  } finally {
+    isEditLocationDrawerOpen.value = false // Close the edit drawer
+  }
 }
+
+// Delete a location
+const deleteLocation = async (locationId) => {
+  const mutation = `
+    mutation DeleteLocation($deleteLocationId: Int!) {
+      deleteLocation(id: $deleteLocationId) {
+        id
+      }
+    }
+  `;
+  const variables = { deleteLocationId: locationId };
+
+  try {
+    const token = getSelectedRoleToken();
+    const response = await fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query: mutation, variables }),
+    });
+
+    const result = await response.json();
+    if (result.data.deleteLocation) {
+      locations.value = locations.value.filter((loc) => loc.id !== locationId); // Hapus lokasi dari daftar
+      console.log(`Location with ID ${locationId} deleted successfully.`);
+    }
+  } catch (error) {
+    console.error('Error deleting location:', error);
+  }
+};
 
 onMounted(() => {
-  fetchUsers()
+  fetchLocations()
 })
 </script>
 
 <template>
   <section>
+    <!-- Main page content -->
     <div class="mb-6">
       <VCard style="padding: 24px;">
-        <div class="app-user-search-filter d-flex align-center">
-          <!-- Search Field -->
+        <div class="app-location-search-filter d-flex align-center">
           <VTextField
             v-model="searchQuery"
-            placeholder="Search User"
+            placeholder="Search Location"
             density="compact"
             class="me-4"
           />
-          <!-- Add User Button -->
-          <VBtn @click="isAddNewMasterLokasiVisible = true">
-            Add New Lokasi
+          <VBtn @click="isAddLocationDrawerOpen = true">
+            Add New Location
           </VBtn>
         </div>
       </VCard>
     </div>
+
+    <!-- Table to display locations -->
     <div>
       <VCard style="padding: 24px;">
         <VDataTable
           :headers="headers"
-          :items="users"
+          :items="locations"
           :search="searchQuery"
           :loading="isLoading"
-          :total-items="totalUsers"
+          :total-items="totalLocations"
           :items-per-page="itemsPerPage"
           :page="currentPage"
           item-key="id"
           @update:page="currentPage = $event"
           @update:items-per-page="itemsPerPage = $event"
         >
-          <!-- Template slot untuk kolom No -->
           <template #item.no="{ index }">
             {{ (currentPage - 1) * itemsPerPage + index + 1 }}
           </template>
 
-          <!-- Template slot untuk kolom Actions -->
           <template #item.actions="{ item }">
-            <div class="d-flex justify-end">
+            <div class="d-flex">
               <VBtn
                 icon
                 style="margin-inline-end: 6px;"
-                @click="editUser(item)"
+                @click="openEditLocation(item)"
               >
                 <VIcon>ri-edit-2-fill</VIcon>
               </VBtn>
               <VBtn
                 icon
-                @click="deleteUser(item)"
+                @click="deleteLocation(item.id)"
               >
                 <VIcon>ri-delete-bin-2-fill</VIcon>
               </VBtn>
@@ -137,10 +264,20 @@ onMounted(() => {
         </VDataTable>
       </VCard>
     </div>
-    <!-- Drawer untuk Tambah User Baru -->
-    <AddNewMasterLokasi v-model:isDrawerOpen="isAddNewMasterLokasiVisible" />
+
+    <!-- AddNewMasterLokasi Drawer Component -->
+    <AddNewMasterLokasi
+      :is-drawer-open="isAddLocationDrawerOpen"
+      @update:is-drawer-open="isAddLocationDrawerOpen = $event"
+      @create-location="createLocation"
+    />
+
+    <!-- EditLocation Drawer Component -->
+    <EditLocation
+      :is-drawer-open="isEditLocationDrawerOpen"
+      :location="selectedLocation"
+      @update:is-drawer-open="isEditLocationDrawerOpen = $event"
+      @update-location="updateLocation"
+    />
   </section>
 </template>
-
-
-
