@@ -12,7 +12,7 @@ const isLoading = ref(false)
 const totalLocations = ref(0)
 const itemsPerPage = ref(10)
 const currentPage = ref(1)
-const selectedLocation = ref(null) // Hold data for location to be edited
+const selectedLocation = ref({}) // Hold data for location to be edited
 
 // Table headers
 const headers = [

@@ -1,8 +1,8 @@
 <script setup>
-import { getSelectedRoleToken } from '@/middleware/auth' // Import token retrieval function
-import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { getSelectedRoleToken } from '@/middleware/auth'; // Import token retrieval function
+import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 // Middleware untuk auth pada halaman
 definePageMeta({
@@ -102,9 +102,9 @@ onMounted(() => {
             class="me-4"
           />
           <!-- Add User Button -->
-          <VBtn @click="isAddNewUserDrawerVisible = true">
+          <!-- <VBtn @click="isAddNewUserDrawerVisible = true">
             Add New User
-          </VBtn>
+          </VBtn> -->
         </div>
       </VCard>
     </div>
@@ -130,7 +130,7 @@ onMounted(() => {
           <!-- Template slot for Actions column -->
           <template #item.actions="{ item }">
             <div class="d-flex">
-              <VBtn
+              <!-- <VBtn
                 icon
                 style="margin-inline-end: 6px;"
                 @click="editUser(item)"
@@ -142,7 +142,7 @@ onMounted(() => {
                 @click="deleteUser(item)"
               >
                 <VIcon>ri-delete-bin-2-fill</VIcon>
-              </VBtn>
+              </VBtn> -->
             </div>
           </template>
         </VDataTable>

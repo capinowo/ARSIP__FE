@@ -1,7 +1,7 @@
 <script setup>
-import { getSelectedRoleToken } from '@/middleware/auth'
-import AddRole from '@/views/apps/management/role/AddRole.vue'
-import { onMounted, ref } from 'vue'
+import { getSelectedRoleToken } from '@/middleware/auth';
+import AddRole from '@/views/apps/management/role/AddRole.vue';
+import { onMounted, ref } from 'vue';
 
 const isAddRoleDrawerOpen = ref(false)
 const searchQuery = ref('')
@@ -123,9 +123,9 @@ onMounted(() => {
             density="compact"
             class="me-4"
           />
-          <VBtn @click="isAddRoleDrawerOpen = true">
+          <!-- <VBtn @click="isAddRoleDrawerOpen = true">
             Add New Role
-          </VBtn>
+          </VBtn> -->
         </div>
       </VCard>
     </div>
@@ -151,7 +151,7 @@ onMounted(() => {
 
           <template #item.actions="{ item }">
             <div class="d-flex">
-              <VBtn
+              <!-- <VBtn
                 icon
                 style="margin-inline-end: 6px;"
                 @click="editRole(item)"
@@ -163,7 +163,7 @@ onMounted(() => {
                 @click="deleteRole(item)"
               >
                 <VIcon>ri-delete-bin-2-fill</VIcon>
-              </VBtn>
+              </VBtn> -->
             </div>
           </template>
         </VDataTable>

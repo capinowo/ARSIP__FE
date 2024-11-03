@@ -4,7 +4,7 @@ import RolesCards from '@/views/apps/roles/RolesCards.vue';
 // Apply 'auth' middleware and use the 'blanks' layout
 definePageMeta({
   middleware: 'role-auth-middleware',
-  layout: 'blanks',
+  layout: 'blank',
 })
 </script>
 
