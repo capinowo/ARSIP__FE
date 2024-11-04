@@ -18,8 +18,8 @@ const headers = [
   { title: 'Name', key: 'name' },
   { title: 'Description', key: 'description' },
   { title: 'Created At', key: 'created_at' },
-  { title: 'Updated At', key: 'updated_at' },
-  { title: 'Actions', key: 'actions', sortable: false },
+  // { title: 'Updated At', key: 'updated_at' },
+  // { title: 'Actions', key: 'actions', sortable: false },
 ]
 
 // Fetch units

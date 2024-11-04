@@ -9,18 +9,23 @@ export default [
     icon: { icon: 'ri-computer-line' },
     children: [
       {
-        title: 'User',
+        title: 'Users',
         to: { name: 'management-user_manage' },
         icon: { icon: 'ri-circle-line' },
       },
       {
-        title: 'Role',
+        title: 'Roles',
         to: { name: 'management-role_manage' },
         icon: { icon: 'ri-circle-line' },  
       },
       {
-        title: 'Unit',
+        title: 'Units',
         to: { name: 'management-unit_manage' },
+        icon: { icon: 'ri-circle-line' },
+      },
+      {
+        title: 'Permissions',
+        to: { name: 'management-perm_manage' },
         icon: { icon: 'ri-circle-line' },
       },
     ],

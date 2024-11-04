@@ -25,8 +25,8 @@ const headers = [
   { title: 'Email', key: 'email' },
   { title: 'Username', key: 'username' },
   { title: 'Identity', key: 'identity' },
-  { title: 'Unit Name', key: 'eduk_unit_1_name' },
-  { title: 'Actions', key: 'actions', sortable: false }, // Ensure Actions is the last column
+  // { title: 'Unit Name', key: 'eduk_unit_1_name' },
+  // { title: 'Actions', key: 'actions', sortable: false }, // Ensure Actions is the last column
 ]
 
 // Query GraphQL untuk mendapatkan data pengguna

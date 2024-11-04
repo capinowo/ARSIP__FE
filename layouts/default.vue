@@ -1,34 +1,43 @@
 <script setup>
+import { useSkins } from '@core/composable/useSkins'; // Adjust path as needed
 import { useConfigStore } from '@core/stores/config';
-import { AppContentLayoutNav } from '@layouts/enums';
 import { switchToVerticalNavOnLtOverlayNavBreakpoint } from '@layouts/utils';
+import { computed, defineAsyncComponent } from 'vue';
 import { useRoute } from 'vue-router';
 
-const DefaultLayoutWithHorizontalNav = defineAsyncComponent(() => import('./components/DefaultLayoutWithHorizontalNav.vue'))
-const DefaultLayoutWithVerticalNav = defineAsyncComponent(() => import('./components/DefaultLayoutWithVerticalNav.vue'))
-const configStore = useConfigStore()
+const DefaultLayoutWithVerticalNav = defineAsyncComponent(() =>
+  import('./components/DefaultLayoutWithVerticalNav.vue')
+);
+const configStore = useConfigStore();
 
-switchToVerticalNavOnLtOverlayNavBreakpoint()
+switchToVerticalNavOnLtOverlayNavBreakpoint();
 
-const { layoutAttrs, injectSkinClasses } = useSkins()
-injectSkinClasses()
+// Import layoutAttrs from useSkins and make it reactive
+const { layoutAttrs, injectSkinClasses } = useSkins();
+injectSkinClasses();
 
-const route = useRoute()
+// Wrap layoutAttrs in a computed property for better reactivity
+const reactiveLayoutAttrs = computed(() => layoutAttrs.value || {});
+
+const route = useRoute();
 // Determine if current route is `/role` to skip navigation layout
-const isRolePage = route.path === '/role'
+const isRolePage = computed(() => route.path === '/role');
 </script>
 
 <template>
+  <!-- Render only slot content on /role page -->
   <div v-if="isRolePage">
-    <slot /> <!-- Render only slot content on /role page -->
+    <slot />
   </div>
-  <Component
+  
+  <!-- Render layout with vertical navigation for other pages -->
+  <component
     v-else
-    v-bind="layoutAttrs"
-    :is="configStore.appContentLayoutNav === AppContentLayoutNav.Vertical ? DefaultLayoutWithVerticalNav : DefaultLayoutWithHorizontalNav"
+    v-bind="reactiveLayoutAttrs"
+    :is="DefaultLayoutWithVerticalNav"
   >
     <slot />
-  </Component>
+  </component>
 </template>
 
 <style lang="scss">
