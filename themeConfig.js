@@ -1,21 +1,26 @@
-import { defineThemeConfig } from '@core'
-import { Skins } from '@core/enums'
-import { breakpointsVuetifyV3 } from '@vueuse/core'
-import { VIcon } from 'vuetify/components/VIcon'
+import { defineThemeConfig } from '@core';
+import { Skins } from '@core/enums';
+import { breakpointsVuetifyV3 } from '@vueuse/core';
+import { VIcon } from 'vuetify/components/VIcon';
 
-// ❗ Logo SVG must be imported with ?raw suffix
-import logo from '@images/logo.svg?raw'
-import { AppContentLayoutNav, ContentWidth, FooterType, NavbarType } from '@layouts/enums'
+import logo from '@/images/undiplogo2.png'; // Import your PNG logo
+import { AppContentLayoutNav, ContentWidth, FooterType, NavbarType } from '@layouts/enums';
 
 export const { themeConfig, layoutConfig } = defineThemeConfig({
   app: {
     title: 'arsip',
 
-    // ❗ if you have SVG logo and want it to adapt according to theme color, you have to apply color as `color: rgb(var(--v-global-theme-primary))`
-    logo: h('div', { innerHTML: logo, style: 'line-height:0; color: rgb(var(--v-global-theme-primary))' }),
+    // Set the logo as an <img> tag with the PNG source and custom styles
+    logo: h('img', { 
+      src: logo, 
+      alt: 'Logo', 
+      width: '30', 
+      height: '30', 
+    }),
+
     contentWidth: ContentWidth.Boxed,
     contentLayoutNav: AppContentLayoutNav.Vertical,
-    overlayNavFromBreakpoint: breakpointsVuetifyV3.lg - 1, // 1 for matching with vuetify breakpoint. Docs: https://next.vuetifyjs.com/en/features/display-and-platform/
+    overlayNavFromBreakpoint: breakpointsVuetifyV3.lg - 1, // Adjust for Vuetify breakpoints
     i18n: {
       enable: false,
       defaultLocale: 'en',
@@ -57,10 +62,6 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
     popoverOffset: 4,
   },
 
-  /*
-    // ℹ️  In below Icons section, you can specify icon for each component. Also you can use other props of v-icon component like `color` and `size` for each icon.
-    // Such as: chevronDown: { icon: 'ri-arrow-down-s-line', color:'primary', size: '24' },
-    */
   icons: {
     chevronDown: { icon: 'ri-arrow-down-s-line' },
     chevronRight: { icon: 'ri-arrow-right-s-line' },
@@ -69,4 +70,4 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
     verticalNavUnPinned: { icon: 'ri-circle-line', size: '20' },
     sectionTitlePlaceholder: { icon: 'ri-subtract-line' },
   },
-})
+});

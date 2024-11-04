@@ -1,67 +1,62 @@
 <script setup>
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { nextTick, ref } from 'vue';
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
 
 const props = defineProps({
   isDrawerOpen: {
     type: Boolean,
     required: true,
   },
-})
+});
 
 const emit = defineEmits([
   'update:isDrawerOpen',
-  'userData',
-])
+  'create-classification',
+]);
 
-const isFormValid = ref(false)
-const refForm = ref()
-const fullName = ref('')
-const userName = ref('')
-const email = ref('')
-const company = ref('')
-const country = ref()
-const contact = ref('')
-const role = ref()
-const unit = ref()
-const status = ref()
+const isFormValid = ref(false);
+const refForm = ref();
+const classificationCode = ref('');
+const description = ref('');
+const retentionActive = ref(null);
+const retentionInactive = ref(null);
+const retentionDispositionId = ref(null);
 
-// 👉 drawer close
+// Close drawer function
 const closeNavigationDrawer = () => {
-  emit('update:isDrawerOpen', false)
+  emit('update:isDrawerOpen', false);
   nextTick(() => {
-    refForm.value?.reset()
-    refForm.value?.resetValidation()
-  })
-}
+    refForm.value?.reset();
+    refForm.value?.resetValidation();
+  });
+};
 
+// Form submission
 const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      emit('userData', {
-        id: 0,
-        fullName: fullName.value,
-        company: company.value,
-        role: role.value,
-        username: userName.value,
-        country: country.value,
-        contact: contact.value,
-        email: email.value,
-        currentunit: unit.value,
-        status: status.value,
-        avatar: '',
-      })
-      emit('update:isDrawerOpen', false)
+      // Convert string values to integers
+      emit('create-classification', {
+        classification_code: classificationCode.value,
+        description: description.value,
+        retention_active: parseInt(retentionActive.value, 10),
+        retention_inactive: parseInt(retentionInactive.value, 10),
+        retention_disposition_id: parseInt(retentionDispositionId.value, 10),
+      });
+      emit('update:isDrawerOpen', false);
       nextTick(() => {
-        refForm.value?.reset()
-        refForm.value?.resetValidation()
-      })
+        refForm.value?.reset();
+        refForm.value?.resetValidation();
+      });
     }
-  })
-}
+  });
+};
 
-const handleDrawerModelValueUpdate = val => {
-  emit('update:isDrawerOpen', val)
-}
+
+// Update drawer visibility
+const handleDrawerModelValueUpdate = (val) => {
+  emit('update:isDrawerOpen', val);
+};
 </script>
 
 <template>
@@ -73,7 +68,7 @@ const handleDrawerModelValueUpdate = val => {
     :model-value="props.isDrawerOpen"
     @update:model-value="handleDrawerModelValueUpdate"
   >
-    <!-- 👉 Title -->
+    <!-- Drawer Title -->
     <AppDrawerHeaderSection
       title="Add Master JRA"
       @cancel="closeNavigationDrawer"
@@ -84,123 +79,69 @@ const handleDrawerModelValueUpdate = val => {
     <PerfectScrollbar :options="{ wheelPropagation: false }">
       <VCard flat>
         <VCardText>
-          <!-- 👉 Form -->
+          <!-- Form -->
           <VForm
             ref="refForm"
             v-model="isFormValid"
             @submit.prevent="onSubmit"
           >
             <VRow>
-              <!-- 👉 Full name -->
-              <!--
-                <VCol cols="12">
-                <VTextField
-                v-model="fullName"
-                :rules="[requiredValidator]"
-                label="Full Name"
-                placeholder="John Doe"
-                />
-                </VCol> 
-              -->
-
-              <!-- 👉 Username -->
-              <!--
-                <VCol cols="12">
-                <VTextField
-                v-model="userName"
-                :rules="[requiredValidator]"
-                label="Username"
-                placeholder="Johndoe"
-                />
-                </VCol> 
-              -->
-
-              <!-- 👉 Email -->
+              <!-- Classification Code -->
               <VCol cols="12">
                 <VTextField
-                  v-model="email"
-                  :rules="[requiredValidator, emailValidator]"
-                  label="Email"
-                  placeholder="johndoe@email.com"
-                />
-              </VCol>
-
-              <!-- 👉 company -->
-              <!--
-                <VCol cols="12">
-                <VTextField
-                v-model="company"
-                :rules="[requiredValidator]"
-                label="Company"
-                placeholder="Themeselection"
-                />
-                </VCol> 
-              -->
-
-              <!-- 👉 Country -->
-              <!--
-                <VCol cols="12">
-                <VSelect
-                v-model="country"
-                label="Select Country"
-                placeholder="Select Country"
-                :rules="[requiredValidator]"
-                :items="['USA', 'UK', 'India', 'Australia']"
-                />
-                </VCol> 
-              -->
-              <!-- 👉 Contact -->
-              <!--
-                <VCol cols="12">
-                <VTextField
-                v-model="contact"
-                type="number"
-                :rules="[requiredValidator]"
-                label="Contact"
-                placeholder="+1-541-754-3010"
-                />
-                </VCol> 
-              -->
-              <!-- 👉 Role -->
-              <VCol cols="12">
-                <VSelect
-                  v-model="role"
-                  label="Select Role"
-                  placeholder="Select Role"
+                  v-model="classificationCode"
                   :rules="[requiredValidator]"
-                  :items="['Admin', 'Author', 'Editor', 'Maintainer', 'Subscriber']"
+                  label="Classification Code"
+                  placeholder="Enter classification code"
                 />
               </VCol>
 
-              <!-- 👉 unit -->
+              <!-- Description -->
               <VCol cols="12">
-                <VSelect
-                  v-model="unit"
-                  label="Select unit"
-                  placeholder="Select Unit"
+                <VTextField
+                  v-model="description"
                   :rules="[requiredValidator]"
-                  :items="['Basic', 'Company', 'Enterprise', 'Team']"
+                  label="Description"
+                  placeholder="Enter description"
                 />
               </VCol>
 
-              <!-- 👉 Status -->
-              <!--
-                <VCol cols="12">
-                <VSelect
-                v-model="PermissionStatus"
-                label="Select Permission Status"
-                placeholder="Select PermissionStatus"
-                :rules="[requiredValidator]"
-                :items="[{ title: 'Active', value: 'active' }, { title: 'Inactive', value: 'inactive' }, { title: 'Pending', value: 'pending' }]"
-                />
-                </VCol>  
-              -->
-              <!-- 👉 Submit and Cancel -->
+              <!-- Retention Active -->
               <VCol cols="12">
-                <VBtn
-                  type="submit"
-                  class="me-4"
-                >
+                <VTextField
+                  v-model="retentionActive"
+                  type="number"
+                  :rules="[requiredValidator]"
+                  label="Retention Active"
+                  placeholder="Enter active retention period"
+                />
+              </VCol>
+
+              <!-- Retention Inactive -->
+              <VCol cols="12">
+                <VTextField
+                  v-model="retentionInactive"
+                  type="number"
+                  :rules="[requiredValidator]"
+                  label="Retention Inactive"
+                  placeholder="Enter inactive retention period"
+                />
+              </VCol>
+
+              <!-- Retention Disposition ID -->
+              <VCol cols="12">
+                <VTextField
+                  v-model="retentionDispositionId"
+                  type="number"
+                  :rules="[requiredValidator]"
+                  label="Retention Disposition ID"
+                  placeholder="Enter disposition ID"
+                />
+              </VCol>
+
+              <!-- Submit and Cancel buttons -->
+              <VCol cols="12">
+                <VBtn type="submit" class="me-4">
                   Submit
                 </VBtn>
                 <VBtn

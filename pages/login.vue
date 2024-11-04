@@ -6,6 +6,8 @@ import authV2LoginIllustrationDark from '@/images/pages/auth-v2-login-illustrati
 import authV2LoginIllustrationLight from '@/images/pages/auth-v2-login-illustration-light.png'
 import authV2MaskDark from '@/images/pages/mask-v2-dark.png'
 import authV2MaskLight from '@/images/pages/mask-v2-light.png'
+import undipLogo from '@/images/undiplogo2.png'; // Import the logo
+
 import { navigateTo } from 'nuxt/app'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -75,7 +77,7 @@ async function login() {
   <div>
     <a href="javascript:void(0)">
       <div class="auth-logo d-flex align-center gap-x-3">
-        <h1 class="auth-title">ARSIP</h1>
+        <h1 class="auth-title"></h1>
       </div>
     </a>
 
@@ -123,12 +125,16 @@ async function login() {
           class="mt-12 mt-sm-0 pa-4"
         >
           <VCardText>
-            <h4 class="text-h4 mb-1">
-              Welcome to <span class="text-capitalize">ARSIP!</span> 👋🏻
-            </h4>
-            <p class="mb-0">
-              Please sign-in to your account
-            </p>
+            <!-- Logo positioned above the welcome text -->
+            <img :src="undipLogo" alt="Undip Logo" class="mb-4" style=" display: block;inline-size: 100px; margin-block: 0; margin-inline: auto;" />
+            <div class="welcome-text text-center"> <!-- Center-aligned text container -->
+              <h4 class="text-h4 mb-1">
+                Welcome to <span class="text-capitalize">ARSIP</span>
+              </h4>
+              <p class="mb-0">
+                Please sign-in to your account
+              </p>
+            </div>
           </VCardText>
           <VCardText>
             <VForm @submit.prevent="login">
@@ -159,10 +165,10 @@ async function login() {
                       v-model="form.remember"
                       label="Remember me"
                     />
-                    <a
+                    <!-- <a
                       class="text-primary"
                       href="javascript:void(0)"
-                    >Forgot Password?</a>
+                    >Forgot Password?</a> -->
                   </div>
                   <VBtn
                     block
