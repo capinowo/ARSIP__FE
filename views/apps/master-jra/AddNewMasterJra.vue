@@ -18,9 +18,9 @@ const isFormValid = ref(false);
 const refForm = ref();
 const classificationCode = ref('');
 const description = ref('');
-const retentionActive = ref(null);
-const retentionInactive = ref(null);
-const retentionDispositionId = ref(null);
+const retentionActive = ref(1); // Default to 1 (Yes)
+const retentionInactive = ref(1); // Default to 1 (Yes)
+const retentionDispositionId = ref(1); // Default to 1 (Musnah)
 
 // Close drawer function
 const closeNavigationDrawer = () => {
@@ -35,7 +35,6 @@ const closeNavigationDrawer = () => {
 const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      // Convert string values to integers
       emit('create-classification', {
         classification_code: classificationCode.value,
         description: description.value,
@@ -51,7 +50,6 @@ const onSubmit = () => {
     }
   });
 };
-
 
 // Update drawer visibility
 const handleDrawerModelValueUpdate = (val) => {
@@ -108,34 +106,43 @@ const handleDrawerModelValueUpdate = (val) => {
 
               <!-- Retention Active -->
               <VCol cols="12">
-                <VTextField
+                <VSelect
                   v-model="retentionActive"
-                  type="number"
+                  :items="[
+                    { title: 'Yes', value: 1 },
+                    { title: 'No', value: 0 }
+                  ]"
                   :rules="[requiredValidator]"
                   label="Retention Active"
-                  placeholder="Enter active retention period"
+                  placeholder="Select Yes or No"
                 />
               </VCol>
 
               <!-- Retention Inactive -->
               <VCol cols="12">
-                <VTextField
+                <VSelect
                   v-model="retentionInactive"
-                  type="number"
+                  :items="[
+                    { title: 'Yes', value: 1 },
+                    { title: 'No', value: 0 }
+                  ]"
                   :rules="[requiredValidator]"
                   label="Retention Inactive"
-                  placeholder="Enter inactive retention period"
+                  placeholder="Select Yes or No"
                 />
               </VCol>
 
               <!-- Retention Disposition ID -->
               <VCol cols="12">
-                <VTextField
+                <VSelect
                   v-model="retentionDispositionId"
-                  type="number"
+                  :items="[
+                    { title: 'Musnah', value: 1 },
+                    { title: 'Permanen', value: 2 }
+                  ]"
                   :rules="[requiredValidator]"
                   label="Retention Disposition ID"
-                  placeholder="Enter disposition ID"
+                  placeholder="Select Disposition"
                 />
               </VCol>
 

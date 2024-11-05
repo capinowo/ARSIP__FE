@@ -1,33 +1,78 @@
 <script setup>
-import { defineEmits, defineProps, nextTick, ref } from 'vue'
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { getSelectedRoleToken } from '@/middleware/auth';
+import { defineEmits, defineProps, nextTick, onMounted, ref } from 'vue';
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
 
 const props = defineProps({
   isDrawerOpen: {
     type: Boolean,
     required: true,
   },
-})
+});
 
-const emit = defineEmits(['update:isDrawerOpen', 'create-location'])
+const emit = defineEmits(['update:isDrawerOpen', 'create-location']);
 
-const refForm = ref()
-const unit_id = ref(1) // Example unit ID
-const name = ref('')
-const description = ref('')
-const building_name = ref('')
-const room_name = ref('')
-const rack_name = ref('')
-const box_name = ref('')
+const refForm = ref();
+const unit_id = ref(null); // Selected unit ID
+const name = ref('');
+const description = ref('');
+const building_name = ref('');
+const room_name = ref('');
+const rack_name = ref('');
+const box_name = ref('');
+const units = ref([]); // Array to store units from API
+
+// Fetch list of units from API
+const fetchUnits = async () => {
+  const query = `
+    query GetUnits {
+      getUnits {
+        data {
+          id
+          name
+          description
+        }
+      }
+    }
+  `;
+
+  try {
+    const token = getSelectedRoleToken();
+    const response = await fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query }),
+    });
+
+    const result = await response.json();
+
+    // Check if result contains data and getUnits exists
+    if (result.data && result.data.getUnits && result.data.getUnits.data) {
+      units.value = result.data.getUnits.data.map(unit => ({
+        title: unit.name,
+        value: unit.id,
+      }));
+    } else if (result.errors) {
+      console.error('GraphQL errors:', result.errors);
+    } else {
+      console.error('Unexpected response structure:', result);
+    }
+  } catch (error) {
+    console.error('Error fetching units:', error);
+  }
+};
 
 // Close drawer function
 const closeNavigationDrawer = () => {
-  emit('update:isDrawerOpen', false)
+  emit('update:isDrawerOpen', false);
   nextTick(() => {
-    refForm.value?.reset()
-    refForm.value?.resetValidation()
-  })
-}
+    refForm.value?.reset();
+    refForm.value?.resetValidation();
+  });
+};
 
 // Form submission handler
 const onSubmit = () => {
@@ -41,15 +86,20 @@ const onSubmit = () => {
         room_name: room_name.value,
         rack_name: rack_name.value,
         box_name: box_name.value,
-      })
-      closeNavigationDrawer()
+      });
+      closeNavigationDrawer();
     }
-  })
-}
+  });
+};
 
-const handleDrawerModelValueUpdate = val => {
-  emit('update:isDrawerOpen', val)
-}
+const handleDrawerModelValueUpdate = (val) => {
+  emit('update:isDrawerOpen', val);
+};
+
+// Fetch units when component is mounted
+onMounted(() => {
+  fetchUnits();
+});
 </script>
 
 <template>
@@ -79,13 +129,14 @@ const handleDrawerModelValueUpdate = val => {
             @submit.prevent="onSubmit"
           >
             <VRow>
-              <!-- Unit ID Field -->
+              <!-- Unit ID Field as Select Dropdown -->
               <VCol cols="12">
-                <VTextField
+                <VSelect
                   v-model="unit_id"
-                  label="Unit ID"
-                  placeholder="Enter unit ID"
-                  type="number"
+                  :items="units"
+                  label="Unit"
+                  placeholder="Select a unit"
+                  :rules="[v => !!v || 'Unit is required']"
                   required
                 />
               </VCol>

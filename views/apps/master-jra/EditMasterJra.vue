@@ -83,31 +83,40 @@ const onSubmit = () => {
 
             <!-- Retention Active -->
             <VCol cols="12">
-              <VTextField
+              <VSelect
                 v-model="formData.retention_active"
+                :items="[
+                  { title: 'Yes', value: 1 },
+                  { title: 'No', value: 0 }
+                ]"
                 label="Retention Active"
-                type="number"
-                placeholder="Enter active retention period"
+                placeholder="Select Yes or No"
               />
             </VCol>
 
             <!-- Retention Inactive -->
             <VCol cols="12">
-              <VTextField
+              <VSelect
                 v-model="formData.retention_inactive"
+                :items="[
+                  { title: 'Yes', value: 1 },
+                  { title: 'No', value: 0 }
+                ]"
                 label="Retention Inactive"
-                type="number"
-                placeholder="Enter inactive retention period"
+                placeholder="Select Yes or No"
               />
             </VCol>
 
             <!-- Retention Disposition ID -->
             <VCol cols="12">
-              <VTextField
+              <VSelect
                 v-model="formData.retention_disposition_id"
+                :items="[
+                  { title: 'Musnah', value: 1 },
+                  { title: 'Permanen', value: 2 }
+                ]"
                 label="Retention Disposition ID"
-                type="number"
-                placeholder="Enter disposition ID"
+                placeholder="Select Disposition"
               />
             </VCol>
 

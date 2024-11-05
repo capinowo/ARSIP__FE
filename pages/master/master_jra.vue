@@ -20,7 +20,7 @@ const selectedClassification = ref({});
 // Table headers
 const headers = [
   { title: 'No', key: 'no', sortable: false },
-  { title: 'Classification Code', key: 'classification_code' },
+  { title: 'Code', key: 'classification_code' },
   { title: 'Description', key: 'description' },
   { title: 'Retention Active', key: 'retention_active' },
   { title: 'Retention Inactive', key: 'retention_inactive' },
@@ -261,10 +261,26 @@ onMounted(() => {
           @update:page="currentPage = $event"
           @update:items-per-page="itemsPerPage = $event"
         >
+          <!-- Displaying row numbers -->
           <template #item.no="{ index }">
             {{ (currentPage - 1) * itemsPerPage + index + 1 }}
           </template>
 
+          <!-- Custom rendering for Retention Active and Retention Inactive columns -->
+          <template #item.retention_active="{ item }">
+            {{ item.retention_active === 1 ? 'Yes' : 'No' }}
+          </template>
+          
+          <template #item.retention_inactive="{ item }">
+            {{ item.retention_inactive === 1 ? 'Yes' : 'No' }}
+          </template>
+          
+          <!-- Custom rendering for Retention Disposition ID column -->
+          <template #item.retention_disposition_id="{ item }">
+            {{ item.retention_disposition_id === 1 ? 'Musnah' : item.retention_disposition_id === 2 ? 'Permanen' : '' }}
+          </template>
+
+          <!-- Actions column with edit and delete buttons -->
           <template #item.actions="{ item }">
             <div class="d-flex">
               <VBtn
@@ -310,3 +326,4 @@ onMounted(() => {
     />
   </section>
 </template>
+

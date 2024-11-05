@@ -16,10 +16,12 @@ const totalLocations = ref(0);
 const itemsPerPage = ref(10);
 const currentPage = ref(1);
 const selectedLocation = ref({});
+const unitNames = ref({}); // Object to store unit names by id
 
 // Table headers
 const headers = [
   { title: 'No', key: 'no', sortable: false },
+  { title: 'Unit', key: 'unit_id' },
   { title: 'Name', key: 'name' },
   { title: 'Description', key: 'description' },
   { title: 'Building Name', key: 'building_name' },
@@ -29,66 +31,19 @@ const headers = [
   { title: 'Actions', key: 'actions', sortable: false },
 ];
 
-// Open delete confirmation dialog
-const openDeleteDialog = (locationId) => {
-  locationToDelete.value = locationId;
-  isDeleteDialogOpen.value = true;
-};
+// Fetch unit name based on unit_id and store it in unitNames
+const fetchUnit = async (unitId) => {
+  if (unitNames.value[unitId]) return; // Skip if unit already fetched
 
-// Handle confirmed delete action
-const handleDeleteLocation = async (locationId) => {
-  const mutation = `
-    mutation DeleteLocation($deleteLocationId: Int!) {
-      deleteLocation(id: $deleteLocationId) {
-        id
-      }
-    }
-  `;
-  const variables = { deleteLocationId: locationId };
-
-  try {
-    const token = getSelectedRoleToken();
-    const response = await fetch('http://localhost:4000/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ query: mutation, variables }),
-    });
-
-    const result = await response.json();
-    if (result.data.deleteLocation) {
-      locations.value = locations.value.filter((loc) => loc.id !== locationId);
-      console.log(`Location with ID ${locationId} deleted successfully.`);
-    }
-  } catch (error) {
-    console.error('Error deleting location:', error);
-  } finally {
-    isDeleteDialogOpen.value = false;
-    locationToDelete.value = null;
-  }
-};
-
-//CREATE LOCATION
-const createLocation = async (newLocationData) => {
-  const mutation = `
-    mutation CreateLocation($data: LocationCreateInput!) {
-      createLocation(data: $data) {
+  const query = `
+    query GetUnit($getUnitId: Int!) {
+      getUnit(id: $getUnitId) {
         id
         name
-        description
-        building_name
-        room_name
-        rack_name
-        box_name
-        unit_id
-        created_at
-        updated_at
       }
     }
   `;
-  const variables = { data: newLocationData };
+  const variables = { getUnitId: unitId };
 
   try {
     const token = getSelectedRoleToken();
@@ -98,21 +53,19 @@ const createLocation = async (newLocationData) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({ query: mutation, variables }),
+      body: JSON.stringify({ query, variables }),
     });
 
     const result = await response.json();
-    if (result.data.createLocation) {
-      locations.value.push(result.data.createLocation);
+    if (result.data && result.data.getUnit) {
+      unitNames.value[unitId] = result.data.getUnit.name;
     }
   } catch (error) {
-    console.error('Error creating location:', error);
-  } finally {
-    isAddLocationDrawerOpen.value = false;
+    console.error('Error fetching unit:', error);
   }
 };
 
-// Fetch locations
+// Fetch locations and their associated units
 const fetchLocations = async () => {
   const query = `
     query GetLocations {
@@ -146,6 +99,13 @@ const fetchLocations = async () => {
     const result = await response.json();
     locations.value = result.data.getLocations.data;
     totalLocations.value = locations.value.length;
+
+    // Fetch unit names for each location's unit_id
+    for (const location of locations.value) {
+      if (location.unit_id) {
+        fetchUnit(location.unit_id);
+      }
+    }
   } catch (error) {
     console.error('Error fetching locations:', error);
   } finally {
@@ -153,13 +113,96 @@ const fetchLocations = async () => {
   }
 };
 
-// Function to open the edit drawer with the selected location
+// Function to create a new location
+const createLocation = async (newLocationData) => {
+  const mutation = `
+    mutation CreateLocation($data: LocationCreateInput!) {
+      createLocation(data: $data) {
+        id
+        name
+        description
+        building_name
+        room_name
+        rack_name
+        box_name
+        unit_id
+        created_at
+        updated_at
+      }
+    }
+  `;
+  const variables = { data: newLocationData };
+
+  try {
+    const token = getSelectedRoleToken();
+    const response = await fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query: mutation, variables }),
+    });
+
+    const result = await response.json();
+    if (result.data.createLocation) {
+      locations.value.push(result.data.createLocation); // Tambahkan lokasi baru ke daftar
+      totalLocations.value += 1;
+    }
+  } catch (error) {
+    console.error('Error creating location:', error);
+  } finally {
+    isAddLocationDrawerOpen.value = false;
+  }
+};
+
+// Open delete confirmation dialog
+const openDeleteDialog = (locationId) => {
+  locationToDelete.value = locationId;
+  isDeleteDialogOpen.value = true;
+};
+
+// Handle confirmed delete action
+const handleDeleteLocation = async (locationId) => {
+  const mutation = `
+    mutation DeleteLocation($deleteLocationId: Int!) {
+      deleteLocation(id: $deleteLocationId) {
+        id
+      }
+    }
+  `;
+  const variables = { deleteLocationId: locationId };
+
+  try {
+    const token = getSelectedRoleToken();
+    const response = await fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query: mutation, variables }),
+    });
+
+    const result = await response.json();
+    if (result.data.deleteLocation) {
+      locations.value = locations.value.filter((loc) => loc.id !== locationId);
+    }
+  } catch (error) {
+    console.error('Error deleting location:', error);
+  } finally {
+    isDeleteDialogOpen.value = false;
+    locationToDelete.value = null;
+  }
+};
+
+// Open the edit drawer with the selected location
 const openEditLocation = (location) => {
   selectedLocation.value = { ...location };
   isEditLocationDrawerOpen.value = true;
 };
 
-// Function to update a location
+// Update location data
 const updateLocation = async (updatedLocationData) => {
   const mutation = `
     mutation UpdateLocation($data: LocationUpdateInput!, $updateLocationId: Int!) {
@@ -251,10 +294,17 @@ onMounted(() => {
           @update:page="currentPage = $event"
           @update:items-per-page="itemsPerPage = $event"
         >
+          <!-- Displaying row numbers -->
           <template #item.no="{ index }">
             {{ (currentPage - 1) * itemsPerPage + index + 1 }}
           </template>
 
+          <!-- Custom rendering for Unit column to show unit name -->
+          <template #item.unit_id="{ item }">
+            {{ unitNames[item.unit_id] || 'Loading...' }}
+          </template>
+
+          <!-- Actions column with edit and delete buttons -->
           <template #item.actions="{ item }">
             <div class="d-flex">
               <VBtn icon @click="openEditLocation(item)">
