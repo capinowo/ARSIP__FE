@@ -10,13 +10,13 @@ export default defineNuxtConfig({
     head: {
       titleTemplate: '%s - NuxtJS Admin Template',
       title: 'ARSIP',
-      // link: [
-      //   {
-      //     rel: 'icon',
-      //     type: 'image/x-icon',
-      //     href: '/favicon.ico', // Direct path to avoid undefined issue
-      //   },
-      // ],
+      link: [
+        {
+          rel: 'icon',
+          type: 'image/x-icon',
+          href: '/favicon.ico', // Direct path to avoid undefined issue
+        },
+      ],
     },
   },
 

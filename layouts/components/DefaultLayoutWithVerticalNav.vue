@@ -1,13 +1,13 @@
 <script setup>
-import navItems from '@/navigation/vertical'
+import navItems from '@/navigation/vertical';
 
 // Components
-import Footer from '@/layouts/components/Footer.vue'
-import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
-import UserProfile from '@/layouts/components/UserProfile.vue'
+import Footer from '@/layouts/components/Footer.vue';
+// import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
+import UserProfile from '@/layouts/components/UserProfile.vue';
 
 // @layouts plugin
-import { VerticalNavLayout } from '@layouts'
+import { VerticalNavLayout } from '@layouts';
 </script>
 
 <template>
@@ -23,7 +23,7 @@ import { VerticalNavLayout } from '@layouts'
           <VIcon icon="ri-menu-line" />
         </IconBtn>
 
-        <NavbarThemeSwitcher />
+        <!-- <NavbarThemeSwitcher /> -->
 
         <VSpacer />
 

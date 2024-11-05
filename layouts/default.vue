@@ -1,43 +1,45 @@
 <script setup>
-import { useSkins } from '@core/composable/useSkins'; // Adjust path as needed
-import { useConfigStore } from '@core/stores/config';
-import { switchToVerticalNavOnLtOverlayNavBreakpoint } from '@layouts/utils';
-import { computed, defineAsyncComponent } from 'vue';
-import { useRoute } from 'vue-router';
+import { useSkins } from '@core/composable/useSkins'
+import { useConfigStore } from '@core/stores/config'
+import { switchToVerticalNavOnLtOverlayNavBreakpoint } from '@layouts/utils'
+import { computed, defineAsyncComponent } from 'vue'
+import { useRoute } from 'vue-router'
 
 const DefaultLayoutWithVerticalNav = defineAsyncComponent(() =>
   import('./components/DefaultLayoutWithVerticalNav.vue')
-);
-const configStore = useConfigStore();
+)
+const configStore = useConfigStore()
 
-switchToVerticalNavOnLtOverlayNavBreakpoint();
+switchToVerticalNavOnLtOverlayNavBreakpoint()
 
-// Import layoutAttrs from useSkins and make it reactive
-const { layoutAttrs, injectSkinClasses } = useSkins();
-injectSkinClasses();
+// Import layoutAttrs from useSkins
+const { layoutAttrs, injectSkinClasses } = useSkins()
+injectSkinClasses()
 
-// Wrap layoutAttrs in a computed property for better reactivity
-const reactiveLayoutAttrs = computed(() => layoutAttrs.value || {});
+// Filter out the `wrapper` property (VNode) and use only `wrapperProps`
+const wrapperProps = computed(() => layoutAttrs.value.verticalNavAttrs.wrapperProps)
+const wrapperVNode = computed(() => layoutAttrs.value.verticalNavAttrs.wrapper)
 
-const route = useRoute();
-// Determine if current route is `/role` to skip navigation layout
-const isRolePage = computed(() => route.path === '/role');
+// Determine if the current route is `/role` to skip navigation layout
+const route = useRoute()
+const isRolePage = computed(() => route.path === '/role')
 </script>
 
 <template>
-  <!-- Render only slot content on /role page -->
-  <div v-if="isRolePage">
+  <div v-if="isRolePage && $slots.default">
     <slot />
   </div>
-  
-  <!-- Render layout with vertical navigation for other pages -->
-  <component
-    v-else
-    v-bind="reactiveLayoutAttrs"
-    :is="DefaultLayoutWithVerticalNav"
-  >
-    <slot />
-  </component>
+
+  <!-- Use wrapperProps for component binding and render VThemeProvider separately -->
+  <DefaultLayoutWithVerticalNav v-else v-bind="wrapperProps">
+    <template v-if="wrapperVNode">
+      <!-- Render the VThemeProvider wrapper here -->
+      <component :is="wrapperVNode">
+        <slot />
+      </component>
+    </template>
+    <slot v-else />
+  </DefaultLayoutWithVerticalNav>
 </template>
 
 <style lang="scss">

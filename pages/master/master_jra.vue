@@ -1,11 +1,14 @@
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth';
 import AddNewMasterJra from '@/views/apps/master-jra/AddNewMasterJra.vue';
+import DeleteMasterJra from '@/views/apps/master-jra/DeleteMasterJra.vue';
 import EditMasterJra from '@/views/apps/master-jra/EditMasterJra.vue';
 import { onMounted, ref } from 'vue';
 
 const isAddClassificationDrawerOpen = ref(false);
 const isEditClassificationDrawerOpen = ref(false);
+const isDeleteDialogOpen = ref(false); // Track delete confirmation dialog
+const classificationToDelete = ref(null); // Store classification ID to delete
 const searchQuery = ref('');
 const classifications = ref([]);
 const isLoading = ref(false);
@@ -107,12 +110,13 @@ const createClassification = async (newClassificationData) => {
   }
 };
 
+// Open edit drawer with selected classification
 const openEditClassification = (classification) => {
   selectedClassification.value = { ...classification }; // Clone to avoid direct mutations
   isEditClassificationDrawerOpen.value = true;
 };
 
-// Open edit drawer with selected classification
+// Update classification
 const updateClassification = async (updatedClassificationData) => {
   const mutation = `
     mutation UpdateClassification($updateClassificationId: Int!, $data: ClassificationUpdateInput!) {
@@ -175,8 +179,14 @@ const updateClassification = async (updatedClassificationData) => {
   }
 };
 
-// Delete a classification
-const deleteClassification = async (classificationId) => {
+// Open delete confirmation dialog
+const openDeleteDialog = (classificationId) => {
+  classificationToDelete.value = classificationId;
+  isDeleteDialogOpen.value = true;
+};
+
+// Handle confirmed delete action
+const handleDeleteClassification = async (classificationId) => {
   const mutation = `
     mutation DeleteClassification($deleteClassificationId: Int!) {
       deleteClassification(id: $deleteClassificationId) {
@@ -206,6 +216,9 @@ const deleteClassification = async (classificationId) => {
     }
   } catch (error) {
     console.error('Error deleting classification:', error);
+  } finally {
+    isDeleteDialogOpen.value = false;
+    classificationToDelete.value = null;
   }
 };
 
@@ -263,7 +276,7 @@ onMounted(() => {
               </VBtn>
               <VBtn
                 icon
-                @click="deleteClassification(item.id)"
+                @click="openDeleteDialog(item.id)"
               >
                 <VIcon>ri-delete-bin-2-fill</VIcon>
               </VBtn>
@@ -273,19 +286,27 @@ onMounted(() => {
       </VCard>
     </div>
 
-    <!-- AddNewClassification Drawer Component -->
+    <!-- AddNewMasterJra Drawer Component -->
     <AddNewMasterJra
       :is-drawer-open="isAddClassificationDrawerOpen"
       @update:is-drawer-open="isAddClassificationDrawerOpen = $event"
       @create-classification="createClassification"
     />
 
-    <!-- EditClassification Drawer Component -->
+    <!-- EditMasterJra Drawer Component -->
     <EditMasterJra
       :is-drawer-open="isEditClassificationDrawerOpen"
       :classification="selectedClassification"
       @update:is-drawer-open="isEditClassificationDrawerOpen = $event"
       @update-classification="updateClassification"
+    />
+
+    <!-- Delete Confirmation Dialog Component -->
+    <DeleteMasterJra
+      :isOpen="isDeleteDialogOpen"
+      :classificationId="classificationToDelete"
+      @confirm="handleDeleteClassification"
+      @close="isDeleteDialogOpen = false"
     />
   </section>
 </template>
