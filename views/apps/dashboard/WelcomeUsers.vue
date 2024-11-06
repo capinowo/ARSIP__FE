@@ -1,6 +1,6 @@
 <script setup>
-import illustrationJohn2 from '@/images/illustration-john-2.png'
-import { computed, onMounted, ref } from 'vue'
+import illustrationJohn2 from '@/images/illustration-john-2.png';
+import { computed, onMounted, ref } from 'vue';
 
 const selectedRoleToken = ref('')
 const tokenExpiration = ref('')
@@ -28,7 +28,7 @@ onMounted(() => {
       const payload = selectedRoleToken.value.split('.')[1]
       const decoded = JSON.parse(atob(payload))
 
-      console.log('Decoded token structure:', decoded) // Log to inspect structure
+      // console.log('Decoded token structure:', decoded) // Log to inspect structure
 
       tokenData.value = {
         userId: decoded.userId,
@@ -40,7 +40,7 @@ onMounted(() => {
         exp: decoded.exp ? new Date(decoded.exp * 1000).toLocaleString() : null,
       }
 
-      console.log('Populated tokenData:', tokenData.value)
+      // console.log('Populated tokenData:', tokenData.value)
 
     } catch (error) {
       console.error('Error decoding token:', error)

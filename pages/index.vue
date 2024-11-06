@@ -1,15 +1,16 @@
 <script setup>
-import GrafikArsip from '@/views/apps/dashboard/GrafikArsip.vue'
-import WelcomeUsers from '@/views/apps/dashboard/WelcomeUsers.vue'
-import { jwtDecode } from 'jwt-decode' // Import jwtDecode secara langsung
-import { computed, onMounted, ref } from 'vue'
+import { getSelectedRoleToken } from '@/middleware/auth'; // Import getSelectedRoleToken dari auth.js
+import GrafikArsip from '@/views/apps/dashboard/GrafikArsip.vue';
+import WelcomeUsers from '@/views/apps/dashboard/WelcomeUsers.vue';
+import { jwtDecode } from 'jwt-decode'; // Import jwtDecode secara langsung
+import { computed, onMounted, ref, watch } from 'vue';
 
 // Terapkan middleware 'auth' hanya untuk halaman ini
 definePageMeta({
   middleware: 'auth-middleware',
 })
 
-const selectedRoleToken = ref('')
+const selectedRoleToken = ref(getSelectedRoleToken() || '');
 
 const tokenData = ref({
   userId: null,
@@ -18,39 +19,44 @@ const tokenData = ref({
   selectedRole: '',
   iat: null,
   exp: null,
-})
+});
 
-// Muat token dari localStorage, decode, dan simpan data token
-onMounted(() => {
-  selectedRoleToken.value = localStorage.getItem('selectedRoleToken')
-
-  // Decode token jika ada
+// Fungsi untuk decode token dan simpan data token
+const decodeToken = () => {
   if (selectedRoleToken.value) {
-    const decoded = jwtDecode(selectedRoleToken.value)
+    const decoded = jwtDecode(selectedRoleToken.value);
 
     tokenData.value = {
       userId: decoded.userId,
-      username: decoded.username || '', // Gunakan username
-      sessionRoles: decoded.roles || [], // Ubah ke `roles` sesuai data token
+      username: decoded.username || '',
+      sessionRoles: decoded.roles || [],
       selectedRole: decoded.selectedRole || '',
-      iat: decoded.iat ? new Date(decoded.iat * 1000).toLocaleString() : null, // Konversi iat ke tanggal
-      exp: decoded.exp ? new Date(decoded.exp * 1000).toLocaleString() : null,  // Konversi exp ke tanggal
-    }
+      iat: decoded.iat ? new Date(decoded.iat * 1000).toLocaleString() : null,
+      exp: decoded.exp ? new Date(decoded.exp * 1000).toLocaleString() : null,
+    };
   }
-})
+};
 
-// Variable computed untuk menghitung waktu sisa dalam menit
+// Inisialisasi data token ketika komponen dimuat
+onMounted(() => {
+  decodeToken();
+});
+
+// Watch perubahan pada selectedRoleToken di localStorage
+watch(() => getSelectedRoleToken(), (newToken) => {
+  selectedRoleToken.value = newToken;
+  decodeToken(); // Update data token setelah perubahan
+}, { immediate: true });
+
 const remainingMinutes = computed(() => {
-  if (!tokenData.value.exp) return null
-  
-  const expirationTime = new Date(tokenData.value.exp).getTime()
-  const currentTime = Date.now()
-  const remainingTime = expirationTime - currentTime
-
-  // Konversi milidetik ke menit
-  return remainingTime > 0 ? Math.floor(remainingTime / 1000 / 60) : 0
-})
+  if (!tokenData.value.exp) return null;
+  const expirationTime = new Date(tokenData.value.exp).getTime();
+  const currentTime = Date.now();
+  const remainingTime = expirationTime - currentTime;
+  return remainingTime > 0 ? Math.floor(remainingTime / 1000 / 60) : 0;
+});
 </script>
+
 
 <template>
   <div>

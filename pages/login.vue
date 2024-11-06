@@ -64,7 +64,7 @@ async function login() {
       const authToken = data.data.login // Ambil token dan beri nama authToken
 
       localStorage.setItem('authToken', authToken) // Simpan authToken di localStorage
-      console.log('Token saved to localStorage:', authToken) // Verifikasi bahwa token telah disimpan
+      // console.log('Token saved to localStorage:', authToken) // Verifikasi bahwa token telah disimpan
       navigateTo('/role')
     }
   } catch (error) {

@@ -1,13 +1,58 @@
 <script setup>
-import navItems from '@/navigation/vertical';
-
-// Components
+import { usePermissions } from '@/composables/usePermission';
 import Footer from '@/layouts/components/Footer.vue';
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue';
 import UserProfile from '@/layouts/components/UserProfile.vue';
-
-// @layouts plugin
+import filterMenuByPermissions from '@/utils/filterMenuByPermissions';
 import { VerticalNavLayout } from '@layouts';
+import { ref, watchEffect } from 'vue';
+
+// Data menu statis
+const menuItems = [
+  {
+    title: 'Dashboard',
+    to: { name: 'index' },
+    icon: { icon: 'ri-home-smile-line' },
+  },
+  {
+    title: 'Management',
+    icon: { icon: 'ri-computer-line' },
+    children: [
+      { title: 'Users', to: { name: 'management-user_manage' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Roles', to: { name: 'management-role_manage' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Units', to: { name: 'management-unit_manage' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Permissions', to: { name: 'management-perm_manage' }, icon: { icon: 'ri-circle-line' } },
+    ],
+  },
+  {
+    title: 'Master',
+    icon: { icon: 'ri-bank-line' },
+    children: [
+      { title: 'Master Lokasi', to: { name: 'master-master_lokasi' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Master JRA', to: { name: 'master-master_jra' }, icon: { icon: 'ri-circle-line' } },
+    ],
+  },
+  {
+    title: 'Arsip',
+    icon: { icon: 'ri-book-shelf-line' },
+    children: [
+      { title: 'List Arsip', to: { name: 'arsip-list_arsip' }, icon: { icon: 'ri-circle-line' } },
+    ],
+  },
+];
+
+// Ambil permissions secara reaktif dari composable
+const userPermissions = usePermissions();
+
+// Buat reactive ref untuk menu yang terfilter
+const navItems = ref([]);
+
+// watchEffect untuk memperbarui menu setiap kali permissions berubah
+watchEffect(() => {
+  navItems.value = filterMenuByPermissions(menuItems, userPermissions.value);
+  // console.log("Updated nav items based on permissions:", navItems.value); // Debug log untuk memastikan perubahan
+});
+
 </script>
 
 <template>
@@ -27,8 +72,6 @@ import { VerticalNavLayout } from '@layouts';
 
         <VSpacer />
 
-        <!-- Remove NavBarI18n if i18n is not needed -->
-        
         <UserProfile />
       </div>
     </template>
@@ -40,9 +83,5 @@ import { VerticalNavLayout } from '@layouts';
     <template #footer>
       <Footer />
     </template>
-
-    <!-- 👉 Customizer -->
-    <!-- <TheCustomizer /> -->
   </VerticalNavLayout>
 </template>
-
