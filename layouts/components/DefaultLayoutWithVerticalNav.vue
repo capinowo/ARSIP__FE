@@ -3,7 +3,7 @@ import navItems from '@/navigation/vertical';
 
 // Components
 import Footer from '@/layouts/components/Footer.vue';
-// import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
+import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue';
 import UserProfile from '@/layouts/components/UserProfile.vue';
 
 // @layouts plugin
@@ -23,7 +23,7 @@ import { VerticalNavLayout } from '@layouts';
           <VIcon icon="ri-menu-line" />
         </IconBtn>
 
-        <!-- <NavbarThemeSwitcher /> -->
+        <NavbarThemeSwitcher />
 
         <VSpacer />
 

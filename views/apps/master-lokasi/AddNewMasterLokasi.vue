@@ -10,7 +10,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:isDrawerOpen', 'create-location']);
+const emit = defineEmits(['update:isDrawerOpen', 'create-location', 'refresh-locations']);
 
 const refForm = ref();
 const unit_id = ref(null); // Selected unit ID
@@ -38,7 +38,7 @@ const fetchUnits = async () => {
 
   try {
     const token = getSelectedRoleToken();
-    const response = await fetch('http://localhost:4000/graphql', {
+    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -88,9 +88,13 @@ const onSubmit = () => {
         box_name: box_name.value,
       });
       closeNavigationDrawer();
+      
+      // Emit event untuk memuat ulang data di halaman master_lokasi
+      emit('refresh-locations');  // Tambahkan emit untuk refresh data
     }
   });
 };
+
 
 const handleDrawerModelValueUpdate = (val) => {
   emit('update:isDrawerOpen', val);

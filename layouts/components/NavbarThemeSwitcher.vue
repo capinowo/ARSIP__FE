@@ -16,5 +16,6 @@ const themes = [
 </script>
 
 <template>
-  <ThemeSwitcher :themes="themes" />
+  <ThemeSwitcher v-if="themes && themes.length" :themes="themes" />
 </template>
+

@@ -22,6 +22,19 @@ const retentionActive = ref(1); // Default to 1 (Yes)
 const retentionInactive = ref(1); // Default to 1 (Yes)
 const retentionDispositionId = ref(1); // Default to 1 (Musnah)
 
+// Custom validation rule for classification code
+const classificationCodeValidator = (value) => {
+  if (!value) {
+    return 'Classification code is required';
+  }
+  return value.length === 6 || 'Classification code must be exactly 6 characters';
+};
+
+// Required field validator
+const requiredValidator = value => {
+  return !!value || 'This field is required';
+};
+
 // Close drawer function
 const closeNavigationDrawer = () => {
   emit('update:isDrawerOpen', false);
@@ -88,7 +101,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="12">
                 <VTextField
                   v-model="classificationCode"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator, classificationCodeValidator]"
                   label="Classification Code"
                   placeholder="Enter classification code"
                 />
