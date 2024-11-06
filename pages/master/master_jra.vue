@@ -22,9 +22,9 @@ const headers = [
   { title: 'No', key: 'no', sortable: false },
   { title: 'Code', key: 'classification_code' },
   { title: 'Description', key: 'description' },
-  { title: 'Retention Active', key: 'retention_active' },
-  { title: 'Retention Inactive', key: 'retention_inactive' },
-  { title: 'Retention Disposition ID', key: 'retention_disposition_id' },
+  { title: 'Active', key: 'retention_active' },
+  { title: 'Inactive', key: 'retention_inactive' },
+  { title: 'Disposition', key: 'retention_disposition_id' },
   { title: 'Actions', key: 'actions', sortable: false },
 ];
 
@@ -84,8 +84,15 @@ const createClassification = async (newClassificationData) => {
       }
     }
   `;
-  
-  const variables = { data: newClassificationData };
+
+  // Convert `retention_active` and `retention_inactive` to integers
+  const variables = {
+    data: {
+      ...newClassificationData,
+      retention_active: parseInt(newClassificationData.retention_active, 10),
+      retention_inactive: parseInt(newClassificationData.retention_inactive, 10),
+    },
+  };
 
   try {
     const token = getSelectedRoleToken();
@@ -130,13 +137,14 @@ const updateClassification = async (updatedClassificationData) => {
     }
   `;
 
+  // Convert `retention_active` and `retention_inactive` to integers
   const variables = {
     updateClassificationId: updatedClassificationData.id,
     data: {
       classification_code: updatedClassificationData.classification_code,
       description: updatedClassificationData.description,
-      retention_active: updatedClassificationData.retention_active,
-      retention_inactive: updatedClassificationData.retention_inactive,
+      retention_active: parseInt(updatedClassificationData.retention_active, 10),
+      retention_inactive: parseInt(updatedClassificationData.retention_inactive, 10),
       retention_disposition_id: updatedClassificationData.retention_disposition_id,
     },
   };
@@ -266,13 +274,14 @@ onMounted(() => {
             {{ (currentPage - 1) * itemsPerPage + index + 1 }}
           </template>
 
-          <!-- Custom rendering for Retention Active and Retention Inactive columns -->
+          <!-- Custom rendering for Retention Active column -->
           <template #item.retention_active="{ item }">
-            {{ item.retention_active === 1 ? 'Yes' : 'No' }}
+            {{ item.retention_active }} Tahun
           </template>
           
+          <!-- Custom rendering for Retention Inactive column -->
           <template #item.retention_inactive="{ item }">
-            {{ item.retention_inactive === 1 ? 'Yes' : 'No' }}
+            {{ item.retention_inactive }} Tahun
           </template>
           
           <!-- Custom rendering for Retention Disposition ID column -->
@@ -326,4 +335,3 @@ onMounted(() => {
     />
   </section>
 </template>
-

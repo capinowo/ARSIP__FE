@@ -116,35 +116,27 @@ const handleDrawerModelValueUpdate = (val) => {
                   placeholder="Enter description"
                 />
               </VCol>
-
               <!-- Retention Active -->
-              <VCol cols="12">
-                <VSelect
-                  v-model="retentionActive"
-                  :items="[
-                    { title: 'Yes', value: 1 },
-                    { title: 'No', value: 0 }
-                  ]"
-                  :rules="[requiredValidator]"
-                  label="Retention Active"
-                  placeholder="Select Yes or No"
-                />
-              </VCol>
-
-              <!-- Retention Inactive -->
-              <VCol cols="12">
-                <VSelect
-                  v-model="retentionInactive"
-                  :items="[
-                    { title: 'Yes', value: 1 },
-                    { title: 'No', value: 0 }
-                  ]"
-                  :rules="[requiredValidator]"
-                  label="Retention Inactive"
-                  placeholder="Select Yes or No"
-                />
-              </VCol>
-
+             <!-- Retention Active -->
+          <VCol cols="12">
+            <VTextField
+              v-model="retentionActive"
+              type="number"
+              :rules="[requiredValidator, value => value >= 0 || 'Must be a positive number']"
+              label="Retention Active (in years)"
+              placeholder="Enter number of years"
+            />
+          </VCol>
+          <!-- Retention Inactive -->
+          <VCol cols="12">
+            <VTextField
+              v-model="retentionInactive"
+              type="number"
+              :rules="[requiredValidator, value => value >= 0 || 'Must be a positive number']"
+              label="Retention Inactive (in years)"
+              placeholder="Enter number of years"
+            />
+          </VCol>
               <!-- Retention Disposition ID -->
               <VCol cols="12">
                 <VSelect

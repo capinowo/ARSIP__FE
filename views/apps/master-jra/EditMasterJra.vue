@@ -41,6 +41,9 @@ const onSubmit = () => {
   emit('update-classification', formData.value); // Emit updated classification data
   closeDrawer();
 };
+
+// Required validator for the form
+const requiredValidator = value => !!value || 'This field is required';
 </script>
 
 <template>
@@ -83,27 +86,23 @@ const onSubmit = () => {
 
             <!-- Retention Active -->
             <VCol cols="12">
-              <VSelect
+              <VTextField
                 v-model="formData.retention_active"
-                :items="[
-                  { title: 'Yes', value: 1 },
-                  { title: 'No', value: 0 }
-                ]"
-                label="Retention Active"
-                placeholder="Select Yes or No"
+                type="number"
+                :rules="[requiredValidator, value => value >= 0 || 'Must be a positive number']"
+                label="Retention Active (in years)"
+                placeholder="Enter number of years"
               />
             </VCol>
 
             <!-- Retention Inactive -->
             <VCol cols="12">
-              <VSelect
+              <VTextField
                 v-model="formData.retention_inactive"
-                :items="[
-                  { title: 'Yes', value: 1 },
-                  { title: 'No', value: 0 }
-                ]"
-                label="Retention Inactive"
-                placeholder="Select Yes or No"
+                type="number"
+                :rules="[requiredValidator, value => value >= 0 || 'Must be a positive number']"
+                label="Retention Inactive (in years)"
+                placeholder="Enter number of years"
               />
             </VCol>
 
@@ -111,7 +110,7 @@ const onSubmit = () => {
             <VCol cols="12">
               <VSelect
                 v-model="formData.retention_disposition_id"
-                :items="[
+                :items="[ 
                   { title: 'Musnah', value: 1 },
                   { title: 'Permanen', value: 2 }
                 ]"

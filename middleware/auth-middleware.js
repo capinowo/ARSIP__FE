@@ -36,9 +36,9 @@ export default defineNuxtRouteMiddleware((to, from) => {
       // Define access by permission names for specific pages
       const permissionAccess = {
         'lokasi-dashboard': ['/', 'index', 'master-master_lokasi'],
-        'dashboard-arsip': ['/', 'index', 'arsip-list_arsip'],
+        'dashboard-arsip': ['/', 'index', 'arsip-list_arsip','arsip-arsip_inactive','arsip-arsip_usul_musnah','arsip-arsip_musnah'],
         'lokasi-dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'master-master_lokasi'],
-        'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip']
+        'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip','arsip-arsip_inactive','arsip-arsip_usul_musnah','arsip-arsip_musnah']
       };
 
       // Get user's permissions from the token

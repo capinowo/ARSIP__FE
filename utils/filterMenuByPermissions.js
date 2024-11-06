@@ -3,8 +3,8 @@
 // Define permissionAccess map untuk menentukan route yang diizinkan untuk setiap permission
 const permissionAccess = {
     'lokasi-dashboard': ['/', 'index', 'master-master_lokasi'],
-    'dashboard-arsip': ['/', 'index', 'arsip-list_arsip'],
-    'lokasi-dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'master-master_lokasi'],
+    'dashboard-arsip': ['/', 'index', 'arsip-list_arsip','arsip-arsip_inactive','arsip-arsip_usul_musnah','arsip-arsip_musnah'],
+    'lokasi-dashboard-arsip': ['/', 'index', 'arsip-list_arsip','arsip-arsip_inactive','arsip-arsip_usul_musnah','arsip-arsip_musnah', 'master-master_lokasi'],
     'access-control': [
       '/',
       'index',
@@ -14,7 +14,10 @@ const permissionAccess = {
       'management-unit_manage',
       'master-master_jra',
       'master-master_lokasi',
-      'arsip-list_arsip'
+      'arsip-list_arsip',
+      'arsip-arsip_inactive',
+      'arsip-arsip_usul_musnah',
+      'arsip-arsip_musnah'
     ]
   };
   

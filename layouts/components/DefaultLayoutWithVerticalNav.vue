@@ -36,7 +36,10 @@ const menuItems = [
     title: 'Arsip',
     icon: { icon: 'ri-book-shelf-line' },
     children: [
-      { title: 'List Arsip', to: { name: 'arsip-list_arsip' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Daftar Arsip', to: { name: 'arsip-list_arsip' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Daftar Arsip Inactive', to: { name: 'arsip-arsip_inactive' }, icon: { icon: 'ri-circle-line' } }, //ketika selesai masa inactive
+      { title: 'Arsip Usul Musnah', to: { name: 'arsip-arsip_usul_musnah' }, icon: { icon: 'ri-circle-line' } }, //ketika selesai masa inactive
+      { title: 'Arsip Musnah', to: { name: 'arsip-arsip_musnah' }, icon: { icon: 'ri-circle-line' } }, //daftar arsip yang sudah dimusnahkan
     ],
   },
 ];
