@@ -107,7 +107,7 @@ const requiredValidator = value => !!value || 'This field is required';
             </VCol>
 
             <!-- Retention Disposition ID -->
-            <VCol cols="12">
+            <!-- <VCol cols="12">
               <VSelect
                 v-model="formData.retention_disposition_id"
                 :items="[ 
@@ -116,6 +116,19 @@ const requiredValidator = value => !!value || 'This field is required';
                 ]"
                 label="Retention Disposition ID"
                 placeholder="Select Disposition"
+              />
+            </VCol> -->
+
+            <!-- Security Classification ID -->
+            <VCol cols="12">
+              <VSelect
+                v-model="formData.security_classification_id"
+                :items="[ 
+                  { title: 'Terbuka', value: 1 },
+                  { title: 'Terbatas', value: 2 }
+                ]"
+                label="Security Classification ID"
+                placeholder="Select Classification"
               />
             </VCol>
 

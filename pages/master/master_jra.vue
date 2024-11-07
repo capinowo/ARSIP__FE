@@ -25,6 +25,7 @@ const headers = [
   { title: 'Active', key: 'retention_active' },
   { title: 'Inactive', key: 'retention_inactive' },
   { title: 'Disposition', key: 'retention_disposition_id' },
+  { title: 'Security', key: 'security_classification_id' },
   { title: 'Actions', key: 'actions', sortable: false },
 ];
 
@@ -40,6 +41,7 @@ const fetchClassifications = async () => {
           retention_active
           retention_inactive
           retention_disposition_id
+          security_classification_id
           created_at
           updated_at
         }
@@ -81,6 +83,7 @@ const createClassification = async (newClassificationData) => {
         retention_active
         retention_disposition_id
         retention_inactive
+        security_classification_id
       }
     }
   `;
@@ -133,6 +136,7 @@ const updateClassification = async (updatedClassificationData) => {
         retention_active
         retention_disposition_id
         retention_inactive
+        security_classification_id
       }
     }
   `;
@@ -145,7 +149,7 @@ const updateClassification = async (updatedClassificationData) => {
       description: updatedClassificationData.description,
       retention_active: parseInt(updatedClassificationData.retention_active, 10),
       retention_inactive: parseInt(updatedClassificationData.retention_inactive, 10),
-      retention_disposition_id: updatedClassificationData.retention_disposition_id,
+      security_classification_id: updatedClassificationData.security_classification_id
     },
   };
 
@@ -287,6 +291,10 @@ onMounted(() => {
           <!-- Custom rendering for Retention Disposition ID column -->
           <template #item.retention_disposition_id="{ item }">
             {{ item.retention_disposition_id === 1 ? 'Musnah' : item.retention_disposition_id === 2 ? 'Permanen' : '' }}
+          </template>
+
+          <template #item.security_classification_id="{ item }">
+            {{ item.security_classification_id === 1 ? 'Biasa/Terbuka' : item.security_classification_id === 2 ? 'Terbatas' : '' }}
           </template>
 
           <!-- Actions column with edit and delete buttons -->

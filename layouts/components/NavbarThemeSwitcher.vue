@@ -4,7 +4,7 @@ import { useTheme } from '@/composables/useTheme';
 const { theme, setTheme } = useTheme()
 
 const themes = [
-  { name: 'system', icon: 'ri-macbook-line' },
+  // { name: 'system', icon: 'ri-macbook-line' },
   { name: 'light', icon: 'ri-sun-line' },
   { name: 'dark', icon: 'ri-moon-clear-line' },
 ]

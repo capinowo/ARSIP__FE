@@ -21,6 +21,7 @@ const description = ref('');
 const retentionActive = ref(1); // Default to 1 (Yes)
 const retentionInactive = ref(1); // Default to 1 (Yes)
 const retentionDispositionId = ref(1); // Default to 1 (Musnah)
+const securityClassificationId = ref(1); // Default to 1 (Terbuka)
 
 // Custom validation rule for classification code
 const classificationCodeValidator = (value) => {
@@ -54,6 +55,7 @@ const onSubmit = () => {
         retention_active: parseInt(retentionActive.value, 10),
         retention_inactive: parseInt(retentionInactive.value, 10),
         retention_disposition_id: parseInt(retentionDispositionId.value, 10),
+        security_classification_id: parseInt(securityClassificationId.value, 10),
       });
       emit('update:isDrawerOpen', false);
       nextTick(() => {
@@ -148,6 +150,20 @@ const handleDrawerModelValueUpdate = (val) => {
                   :rules="[requiredValidator]"
                   label="Retention Disposition ID"
                   placeholder="Select Disposition"
+                />
+              </VCol>
+
+              <!-- Security Classification ID -->
+              <VCol cols="12">
+                <VSelect
+                  v-model="securityClassificationId"
+                  :items="[
+                    { title: 'Terbuka', value: 1 },
+                    { title: 'Terbatas', value: 2 }
+                  ]"
+                  :rules="[requiredValidator]"
+                  label="Security Classification ID"
+                  placeholder="Select Classification"
                 />
               </VCol>
 
