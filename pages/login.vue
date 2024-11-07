@@ -7,6 +7,7 @@ import authV2LoginIllustrationLight from '@/images/pages/auth-v2-login-illustrat
 import authV2MaskDark from '@/images/pages/mask-v2-dark.png'
 import authV2MaskLight from '@/images/pages/mask-v2-light.png'
 import undipLogo from '@/images/undiplogo2.png'; // Import the logo
+import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 
 import { navigateTo } from 'nuxt/app'
 import { ref } from 'vue'
@@ -77,7 +78,7 @@ async function login() {
   <div>
     <a href="javascript:void(0)">
       <div class="auth-logo d-flex align-center gap-x-3">
-        <h1 class="auth-title"></h1>
+        <NavbarThemeSwitcher />
       </div>
     </a>
 
