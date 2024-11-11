@@ -1,12 +1,15 @@
 <script setup>
 import avatar1 from '@/images/avatars/avatar-1.png';
-import { clearAuthToken, clearSelectedRoleToken, getSelectedRoleToken } from '@/middleware/auth'; // Corrected import
+import { clearAuthToken, clearSelectedRoleToken, getSelectedRoleToken } from '@/middleware/auth';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
+import { VSkeletonLoader } from 'vuetify/components';
+
 
 const router = useRouter();
 const userRole = ref(''); // Store the decoded role name here
+const isLoading = ref(false);  // Flag to control loading state
 
 // Decode the role from `selectedRoleToken`
 onMounted(() => {
@@ -32,9 +35,24 @@ const userProfileList = [
   // Additional menu items can be added here if needed
 ];
 
-// Navigate to the route specified in each menu item
-function navigateTo(path) {
-  router.push(path);
+// Navigate to the route specified in each menu item with 3 seconds delay
+async function navigateTo(path) {
+  if (path === '/role') {
+    // Start loading state
+    isLoading.value = true;
+
+    // First, navigate to /arsip/list_arsip
+    await router.push('/arsip/list_arsip');
+
+    // Simulate 3-second delay before navigating to /role
+    setTimeout(() => {
+      isLoading.value = false;  // Stop loading state
+      router.push('/role');  // After 3 seconds, navigate to /role
+    }, 100);
+  } else {
+    // For other paths, navigate directly
+    router.push(path);
+  }
 }
 
 // Handle logout
@@ -142,11 +160,24 @@ function logout() {
       <!-- !SECTION -->
     </VAvatar>
   </VBadge>
+
+  <!-- Optional: Display a loading overlay while waiting -->
+  <div v-if="isLoading" class="loading-overlay">
+    <VSkeletonLoader size="64" color="primary" />
+    <span>Loading...</span>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-.john-illustration {
-  inset-block-end: -0.0625rem;
-  inset-inline-end: 0;
+.loading-overlay {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 80%);
+  block-size: 100%;
+  inline-size: 100%;
+  inset-block-start: 0;
+  inset-inline-start: 0;
 }
 </style>

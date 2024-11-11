@@ -78,7 +78,7 @@ const fetchArchives = async () => {
         result.data.getArchives.data.map(async (archive) => {
           const classification = await fetchClassification(archive.classification_id);
           const status = await fetchArsipStatus(archive.archive_status_id);
-          console.log(`Classification fetched for ID ${archive.classification_id}:`, classification); // Debugging line
+          // console.log(`Classification fetched for ID ${archive.classification_id}:`, classification); // Debugging line
           return {
             ...archive,
             classification_description: classification?.description || 'N/A',

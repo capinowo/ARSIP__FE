@@ -1,9 +1,8 @@
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth';
-import AddUnit from '@/views/apps/management/unit/AddUnit.vue';
 import { onMounted, ref } from 'vue';
 
-const isAddUnitDrawerOpen = ref(false)
+// const isAddUnitDrawerOpen = ref(false)
 const searchQuery = ref('')
 const units = ref([])
 const isLoading = ref(false)
@@ -174,11 +173,11 @@ onMounted(() => {
     </div>
 
     <!-- AddUnit Drawer Component -->
-    <AddUnit
+    <!-- <AddUnit
       :is-drawer-open="isAddUnitDrawerOpen"
       @update:is-drawer-open="isAddUnitDrawerOpen = $event"
       @create-unit="createUnit"
-    />
+    /> -->
   </section>
 </template>
 

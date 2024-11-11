@@ -7,7 +7,7 @@ export default function useArsipStatus() {
   const error = ref(null);
 
   const fetchArsipStatus = async (archiveStatusId) => {
-    console.log('Fetching archive status for ID:', archiveStatusId); // Debugging line
+    // console.log('Fetching archive status for ID:', archiveStatusId); // Debugging line
 
     const query = `
       query GetApprovalStatus($getApprovalStatusId: Int!) {
@@ -33,7 +33,7 @@ export default function useArsipStatus() {
       });
 
       const result = await response.json();
-      console.log('API Response for Archive Status:', result); // Debugging line
+      // console.log('API Response for Archive Status:', result); // Debugging line
 
       if (result.errors) {
         console.error('GraphQL errors:', result.errors);

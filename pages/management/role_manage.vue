@@ -1,9 +1,8 @@
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth';
-import AddRole from '@/views/apps/management/role/AddRole.vue';
 import { onMounted, ref } from 'vue';
 
-const isAddRoleDrawerOpen = ref(false)
+// const isAddRoleDrawerOpen = ref(false)
 const searchQuery = ref('')
 const roles = ref([])
 const isLoading = ref(false)
@@ -171,11 +170,11 @@ onMounted(() => {
     </div>
 
     <!-- AddRole Drawer Component -->
-    <AddRole
+    <!-- <AddRole
       :is-drawer-open="isAddRoleDrawerOpen"
       @update:is-drawer-open="isAddRoleDrawerOpen = $event"
       @create-role="createRole"
-    />
+    /> -->
   </section>
 </template>
 

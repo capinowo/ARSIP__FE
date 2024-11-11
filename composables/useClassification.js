@@ -7,7 +7,7 @@ export default function useClassification() {
   const error = ref(null);
 
   const fetchClassification = async (classificationId) => {
-    console.log('Fetching classification for ID:', classificationId);  // Log to confirm ID
+    // console.log('Fetching classification for ID:', classificationId);  // Log to confirm ID
 
     const query = `
       query GetClassification($getClassificationId: Int!) {
@@ -32,7 +32,7 @@ export default function useClassification() {
       });
 
       const result = await response.json();
-      console.log('API Response for Classification:', result);  // Log full API response
+      // console.log('API Response for Classification:', result);  // Log full API response
 
       if (result.errors) {
         console.error('GraphQL errors:', result.errors);
