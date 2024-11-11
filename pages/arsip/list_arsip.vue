@@ -2,7 +2,6 @@
 import useArsipStatus from '@/composables/useArsipStatus.js';
 import useClassification from '@/composables/useClassification.js';
 import { getSelectedRoleToken } from '@/middleware/auth.js';
-import AddListArsip from '@/views/apps/list-arsip/AddListArsip.vue';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -12,7 +11,6 @@ definePageMeta({
 })
 
 const router = useRouter()
-const isAddListArsipVisible = ref(false)
 const searchQuery = ref('')
 const archives = ref([])
 const isLoading = ref(false)
@@ -78,7 +76,6 @@ const fetchArchives = async () => {
         result.data.getArchives.data.map(async (archive) => {
           const classification = await fetchClassification(archive.classification_id);
           const status = await fetchArsipStatus(archive.archive_status_id);
-          // console.log(`Classification fetched for ID ${archive.classification_id}:`, classification); // Debugging line
           return {
             ...archive,
             classification_description: classification?.description || 'N/A',
@@ -97,13 +94,7 @@ const fetchArchives = async () => {
   }
 };
 
-
-
 // Placeholder functions for edit and delete buttons
-// const editArchive = item => {
-//   console.log('Edit archive:', item)
-// }
-
 const deleteArchive = item => {
   console.log('Delete archive:', item)
 }
@@ -130,7 +121,7 @@ onMounted(() => {
             class="me-4"
           />
           <!-- Add New Archive Button -->
-          <VBtn @click="isAddListArsipVisible = true">
+          <VBtn @click="router.push('/arsip/add')">
             Add New Arsip
           </VBtn>
         </div>
@@ -174,13 +165,6 @@ onMounted(() => {
               >
               <VIcon>ri-todo-line</VIcon>
               </VBtn>
-              <!-- <VBtn
-                icon
-                style="margin-inline-end: 6px;"
-                @click="editArchive(item)"
-              >
-                <VIcon>ri-edit-2-fill</VIcon>
-              </VBtn> -->
               <VBtn
                 icon
                 @click="deleteArchive(item)"
@@ -192,8 +176,5 @@ onMounted(() => {
         </VDataTable>
       </VCard>
     </div>
-    <!-- Drawer for adding new archive -->
-    <AddListArsip v-model:isDrawerOpen="isAddListArsipVisible" />
   </section>
 </template>
-
