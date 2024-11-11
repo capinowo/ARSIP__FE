@@ -1,6 +1,6 @@
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth';
-import { defineEmits, defineProps, nextTick, onMounted, ref } from 'vue';
+import { defineProps, nextTick, onMounted, ref } from 'vue';
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
 
 const props = defineProps({
@@ -149,7 +149,7 @@ onMounted(() => {
               <VCol cols="12">
                 <VTextField
                   v-model="name"
-                  label="Location Name"
+                  label="Nama Lokasi"
                   placeholder="Enter location name"
                   :rules="[v => !!v || 'Location name is required']"
                   required
@@ -160,7 +160,7 @@ onMounted(() => {
               <VCol cols="12">
                 <VTextField
                   v-model="description"
-                  label="Description"
+                  label="Deskripsi"
                   placeholder="Enter description"
                 />
               </VCol>
@@ -169,7 +169,7 @@ onMounted(() => {
               <VCol cols="12">
                 <VTextField
                   v-model="building_name"
-                  label="Building Name"
+                  label="Nama Gedung"
                   placeholder="Enter building name"
                 />
               </VCol>
@@ -178,7 +178,7 @@ onMounted(() => {
               <VCol cols="12">
                 <VTextField
                   v-model="room_name"
-                  label="Room Name"
+                  label="Nama Ruangan"
                   placeholder="Enter room name"
                 />
               </VCol>
@@ -187,7 +187,7 @@ onMounted(() => {
               <VCol cols="12">
                 <VTextField
                   v-model="rack_name"
-                  label="Rack Name"
+                  label="Nama Loker"
                   placeholder="Enter rack name"
                 />
               </VCol>
@@ -196,7 +196,7 @@ onMounted(() => {
               <VCol cols="12">
                 <VTextField
                   v-model="box_name"
-                  label="Box Name"
+                  label="Nama Kotak"
                   placeholder="Enter box name"
                 />
               </VCol>

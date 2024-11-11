@@ -20,13 +20,13 @@ const selectedClassification = ref({});
 // Table headers
 const headers = [
   { title: 'No', key: 'no', sortable: false },
-  { title: 'Code', key: 'classification_code' },
-  { title: 'Description', key: 'description' },
-  { title: 'Active', key: 'retention_active' },
-  { title: 'Inactive', key: 'retention_inactive' },
-  { title: 'Disposition', key: 'retention_disposition_id' },
-  { title: 'Security', key: 'security_classification_id' },
-  { title: 'Actions', key: 'actions', sortable: false },
+  { title: 'Kode', key: 'classification_code' },
+  { title: 'Deskripsi', key: 'description' },
+  { title: 'Aktif', key: 'retention_active' },
+  { title: 'Inaktif', key: 'retention_inactive' },
+  { title: 'Disposisi', key: 'retention_disposition_id' },
+  { title: 'Keamanan', key: 'security_classification_id' },
+  { title: 'Aksi', key: 'actions', sortable: false },
 ];
 
 // Fetch classifications

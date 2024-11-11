@@ -31,7 +31,7 @@ const menuItems = [
     icon: { icon: 'ri-bank-line' },
     children: [
       { title: 'Master Lokasi', to: { name: 'master-master_lokasi' }, icon: { icon: 'ri-circle-line' } },
-      { title: 'Master JRA', to: { name: 'master-master_jra' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Master Klasifikasi', to: { name: 'master-master_jra' }, icon: { icon: 'ri-circle-line' } },
     ],
   },
   {

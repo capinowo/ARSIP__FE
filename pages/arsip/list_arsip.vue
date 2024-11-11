@@ -25,11 +25,11 @@ const { fetchArsipStatus } = useArsipStatus();
 // Configure table headers
 const headers = [
   { title: 'No', key: 'no', sortable: false },
-  { title: 'Title', key: 'title' },
-  { title: 'Description', key: 'description' },
-  { title: 'Classification', key: 'classification_description' },
+  { title: 'Judul', key: 'title' },
+  { title: 'Deskripsi', key: 'description' },
+  { title: 'Klasifikasi', key: 'classification_description' },
   { title: 'Document Path', key: 'document_path' },
-  { title: 'Archive Status ID', key: 'archive_status_name' },
+  { title: 'Status', key: 'archive_status_name' },
   { title: 'Actions', key: 'actions', sortable: false },
 ]
 
@@ -100,12 +100,16 @@ const fetchArchives = async () => {
 
 
 // Placeholder functions for edit and delete buttons
-const editArchive = item => {
-  console.log('Edit archive:', item)
-}
+// const editArchive = item => {
+//   console.log('Edit archive:', item)
+// }
 
 const deleteArchive = item => {
   console.log('Delete archive:', item)
+}
+
+const detailArchive = item => {
+  console.log('Detail archive:', item)
 }
 
 onMounted(() => {
@@ -162,14 +166,21 @@ onMounted(() => {
 
           <!-- Slot for Actions column -->
           <template #item.actions="{ item }">
-            <div class="d-flex justify-end">
+            <div class="d-flex">
               <VBtn
+                icon
+                style="margin-inline-end: 6px;"
+                @click="detailArchive(item)"
+              >
+              <VIcon>ri-todo-line</VIcon>
+              </VBtn>
+              <!-- <VBtn
                 icon
                 style="margin-inline-end: 6px;"
                 @click="editArchive(item)"
               >
                 <VIcon>ri-edit-2-fill</VIcon>
-              </VBtn>
+              </VBtn> -->
               <VBtn
                 icon
                 @click="deleteArchive(item)"

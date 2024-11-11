@@ -22,13 +22,13 @@ const unitNames = ref({}); // Object to store unit names by id
 const headers = [
   { title: 'No', key: 'no', sortable: false },
   { title: 'Unit', key: 'unit_id' },
-  { title: 'Name', key: 'name' },
-  { title: 'Description', key: 'description' },
-  { title: 'Building Name', key: 'building_name' },
-  { title: 'Room Name', key: 'room_name' },
-  { title: 'Rack Name', key: 'rack_name' },
-  { title: 'Box Name', key: 'box_name' },
-  { title: 'Actions', key: 'actions', sortable: false },
+  { title: 'Nama', key: 'name' },
+  { title: 'Deskripsi', key: 'description' },
+  { title: 'Gedung', key: 'building_name' },
+  { title: 'Ruangan', key: 'room_name' },
+  { title: 'Loker', key: 'rack_name' },
+  { title: 'Kotak', key: 'box_name' },
+  { title: 'Aksi', key: 'actions', sortable: false },
 ];
 
 // Fetch unit name based on unit_id and store it in unitNames
@@ -307,7 +307,9 @@ onMounted(() => {
           <!-- Actions column with edit and delete buttons -->
           <template #item.actions="{ item }">
             <div class="d-flex">
-              <VBtn icon @click="openEditLocation(item)">
+              <VBtn icon
+              style="margin-inline-end: 6px;"
+               @click="openEditLocation(item)">
                 <VIcon>ri-edit-2-fill</VIcon>
               </VBtn>
               <VBtn icon @click="openDeleteDialog(item.id)">

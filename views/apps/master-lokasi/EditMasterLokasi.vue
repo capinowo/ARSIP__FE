@@ -1,6 +1,6 @@
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth';
-import { defineEmits, defineProps, onMounted, ref, watch } from 'vue';
+import { defineProps, onMounted, ref, watch } from 'vue';
 
 const props = defineProps({
   isDrawerOpen: {
@@ -110,60 +110,6 @@ const onSubmit = () => {
       <VCardText>
         <VForm ref="refForm" @submit.prevent="onSubmit">
           <VRow>
-            <!-- Location Name Field -->
-            <VCol cols="12">
-              <VTextField
-                v-model="formData.name"
-                label="Name"
-                placeholder="Enter location name"
-                required
-              />
-            </VCol>
-
-            <!-- Description Field -->
-            <VCol cols="12">
-              <VTextField
-                v-model="formData.description"
-                label="Description"
-                placeholder="Enter description"
-              />
-            </VCol>
-
-            <!-- Building Name Field -->
-            <VCol cols="12">
-              <VTextField
-                v-model="formData.building_name"
-                label="Building Name"
-                placeholder="Enter building name"
-              />
-            </VCol>
-
-            <!-- Room Name Field -->
-            <VCol cols="12">
-              <VTextField
-                v-model="formData.room_name"
-                label="Room Name"
-                placeholder="Enter room name"
-              />
-            </VCol>
-
-            <!-- Rack Name Field -->
-            <VCol cols="12">
-              <VTextField
-                v-model="formData.rack_name"
-                label="Rack Name"
-                placeholder="Enter rack name"
-              />
-            </VCol>
-
-            <!-- Box Name Field -->
-            <VCol cols="12">
-              <VTextField
-                v-model="formData.box_name"
-                label="Box Name"
-                placeholder="Enter box name"
-              />
-            </VCol>
 
             <!-- Unit ID Field as Select Dropdown -->
             <VCol cols="12">
@@ -176,6 +122,63 @@ const onSubmit = () => {
                 required
               />
             </VCol>
+
+            <!-- Location Name Field -->
+            <VCol cols="12">
+              <VTextField
+                v-model="formData.name"
+                label="Nama Lokasi"
+                placeholder="Enter location name"
+                required
+              />
+            </VCol>
+
+            <!-- Description Field -->
+            <VCol cols="12">
+              <VTextField
+                v-model="formData.description"
+                label="Deskripsi"
+                placeholder="Enter description"
+              />
+            </VCol>
+
+            <!-- Building Name Field -->
+            <VCol cols="12">
+              <VTextField
+                v-model="formData.building_name"
+                label="Nama Gedung"
+                placeholder="Enter building name"
+              />
+            </VCol>
+
+            <!-- Room Name Field -->
+            <VCol cols="12">
+              <VTextField
+                v-model="formData.room_name"
+                label="Nama Ruangan"
+                placeholder="Enter room name"
+              />
+            </VCol>
+
+            <!-- Rack Name Field -->
+            <VCol cols="12">
+              <VTextField
+                v-model="formData.rack_name"
+                label="Nama Loker"
+                placeholder="Enter rack name"
+              />
+            </VCol>
+
+            <!-- Box Name Field -->
+            <VCol cols="12">
+              <VTextField
+                v-model="formData.box_name"
+                label="Nama Kotak"
+                placeholder="Enter box name"
+              />
+            </VCol>
+
+            
 
             <!-- Submit and Cancel Buttons -->
             <VCol cols="12" class="d-flex justify-end">
