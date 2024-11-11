@@ -8,6 +8,7 @@ import authV2MaskDark from '@/images/pages/mask-v2-dark.png'
 import authV2MaskLight from '@/images/pages/mask-v2-light.png'
 import undipLogo from '@/images/undiplogo2.png'; // Import the logo
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
+import { setAuthToken } from '@/middleware/auth'
 
 import { navigateTo } from 'nuxt/app'
 import { ref } from 'vue'
@@ -62,10 +63,8 @@ async function login() {
     if (!response.ok || data.errors) {
       console.error('Error:', data.errors) // Tampilkan pesan error jika ada
     } else {
-      const authToken = data.data.login // Ambil token dan beri nama authToken
-
-      localStorage.setItem('authToken', authToken) // Simpan authToken di localStorage
-      // console.log('Token saved to localStorage:', authToken) // Verifikasi bahwa token telah disimpan
+      // console.log('Login success:', data.data.login)
+      setAuthToken(data.data.login)
       navigateTo('/role')
     }
   } catch (error) {

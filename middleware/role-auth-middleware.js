@@ -32,8 +32,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         setSelectedRoleToken(userState.value.selectedRole);
 
         // Clear all localStorage items before reload
-        localStorage.clear();
-
+        clearAuthToken();
        // Delay to ensure state changes are processed
         setTimeout(() => {
           location.reload(true); // Equivalent to "Ctrl + Shift + R" for full reload

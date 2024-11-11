@@ -1,6 +1,6 @@
 import "./chunk-BSPL5VGI.js";
 
-// node_modules/.pnpm/is-https@4.0.0/node_modules/is-https/dist/index.mjs
+// node_modules/is-https/dist/index.mjs
 function isHTTPS(req, trustProxy = true) {
   const _xForwardedProto = trustProxy && req.headers ? req.headers["x-forwarded-proto"] : void 0;
   const protoCheck = typeof _xForwardedProto === "string" ? _xForwardedProto.includes("https") : void 0;

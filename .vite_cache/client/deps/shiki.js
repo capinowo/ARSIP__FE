@@ -27,7 +27,7 @@ var bundledLanguagesInfo = [
   {
     "id": "angular-ts",
     "name": "Angular TypeScript",
-    "import": () => import("./angular-ts-3Q2UHLWJ.js")
+    "import": () => import("./angular-ts-BLNNU5VU.js")
   },
   {
     "id": "apache",
@@ -42,7 +42,7 @@ var bundledLanguagesInfo = [
   {
     "id": "apl",
     "name": "APL",
-    "import": () => import("./apl-Z25QAUU7.js")
+    "import": () => import("./apl-M74QHG3N.js")
   },
   {
     "id": "applescript",
@@ -60,7 +60,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "adoc"
     ],
-    "import": () => import("./asciidoc-JL5JDT5A.js")
+    "import": () => import("./asciidoc-VUNGV3UJ.js")
   },
   {
     "id": "asm",
@@ -70,7 +70,7 @@ var bundledLanguagesInfo = [
   {
     "id": "astro",
     "name": "Astro",
-    "import": () => import("./astro-ERA37DZE.js")
+    "import": () => import("./astro-VXMJT2TP.js")
   },
   {
     "id": "awk",
@@ -116,7 +116,7 @@ var bundledLanguagesInfo = [
   {
     "id": "blade",
     "name": "Blade",
-    "import": () => import("./blade-TATWR76M.js")
+    "import": () => import("./blade-ZKTUZYWO.js")
   },
   {
     "id": "c",
@@ -152,7 +152,7 @@ var bundledLanguagesInfo = [
   {
     "id": "cobol",
     "name": "COBOL",
-    "import": () => import("./cobol-3AH2JWGC.js")
+    "import": () => import("./cobol-XQFEATSI.js")
   },
   {
     "id": "codeowners",
@@ -292,7 +292,7 @@ var bundledLanguagesInfo = [
   {
     "id": "erb",
     "name": "ERB",
-    "import": () => import("./erb-ZZMDYDSZ.js")
+    "import": () => import("./erb-IYQIGIXA.js")
   },
   {
     "id": "erlang",
@@ -428,7 +428,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "gql"
     ],
-    "import": () => import("./graphql-PDHOGAC5.js")
+    "import": () => import("./graphql-2W6WWTMU.js")
   },
   {
     "id": "groovy",
@@ -443,7 +443,7 @@ var bundledLanguagesInfo = [
   {
     "id": "haml",
     "name": "Ruby Haml",
-    "import": () => import("./haml-PXC2YEGE.js")
+    "import": () => import("./haml-OMVTPYVV.js")
   },
   {
     "id": "handlebars",
@@ -494,7 +494,7 @@ var bundledLanguagesInfo = [
   {
     "id": "http",
     "name": "HTTP",
-    "import": () => import("./http-IV4M7IJH.js")
+    "import": () => import("./http-W2O5UZOB.js")
   },
   {
     "id": "hxml",
@@ -586,7 +586,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "jl"
     ],
-    "import": () => import("./julia-WYDHZNVQ.js")
+    "import": () => import("./julia-SYRBXNCJ.js")
   },
   {
     "id": "kotlin",
@@ -608,7 +608,7 @@ var bundledLanguagesInfo = [
   {
     "id": "latex",
     "name": "LaTeX",
-    "import": () => import("./latex-CAOZFBBH.js")
+    "import": () => import("./latex-AR7J6MAO.js")
   },
   {
     "id": "lean",
@@ -723,7 +723,7 @@ var bundledLanguagesInfo = [
   {
     "id": "nim",
     "name": "Nim",
-    "import": () => import("./nim-CNMKWMAP.js")
+    "import": () => import("./nim-HNESHTZM.js")
   },
   {
     "id": "nix",
@@ -764,12 +764,12 @@ var bundledLanguagesInfo = [
   {
     "id": "perl",
     "name": "Perl",
-    "import": () => import("./perl-J27VNYAY.js")
+    "import": () => import("./perl-SQ6FFR2F.js")
   },
   {
     "id": "php",
     "name": "PHP",
-    "import": () => import("./php-WHZ55AAO.js")
+    "import": () => import("./php-SB7OWLFI.js")
   },
   {
     "id": "plsql",
@@ -825,7 +825,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "jade"
     ],
-    "import": () => import("./pug-CJVG3OYD.js")
+    "import": () => import("./pug-GDIOZVHY.js")
   },
   {
     "id": "puppet",
@@ -909,7 +909,7 @@ var bundledLanguagesInfo = [
   {
     "id": "rst",
     "name": "reStructuredText",
-    "import": () => import("./rst-HSE7FJFR.js")
+    "import": () => import("./rst-PAMOESWK.js")
   },
   {
     "id": "ruby",
@@ -917,7 +917,7 @@ var bundledLanguagesInfo = [
     "aliases": [
       "rb"
     ],
-    "import": () => import("./ruby-DGVSBBP5.js")
+    "import": () => import("./ruby-LRLGNT2U.js")
   },
   {
     "id": "rust",
@@ -1036,7 +1036,7 @@ var bundledLanguagesInfo = [
   {
     "id": "svelte",
     "name": "Svelte",
-    "import": () => import("./svelte-NYQQ67KU.js")
+    "import": () => import("./svelte-F2GOCF2F.js")
   },
   {
     "id": "swift",
@@ -1105,7 +1105,7 @@ var bundledLanguagesInfo = [
   {
     "id": "twig",
     "name": "Twig",
-    "import": () => import("./twig-RCPUNGNA.js")
+    "import": () => import("./twig-R4VTU7XH.js")
   },
   {
     "id": "typescript",
@@ -1171,12 +1171,12 @@ var bundledLanguagesInfo = [
   {
     "id": "vue",
     "name": "Vue",
-    "import": () => import("./vue-UGCMDVPN.js")
+    "import": () => import("./vue-UMCRUTWP.js")
   },
   {
     "id": "vue-html",
     "name": "Vue HTML",
-    "import": () => import("./vue-html-2OLROWYM.js")
+    "import": () => import("./vue-html-6M2KHV7Y.js")
   },
   {
     "id": "vyper",
@@ -1211,7 +1211,7 @@ var bundledLanguagesInfo = [
       "mediawiki",
       "wiki"
     ],
-    "import": () => import("./wikitext-U64NDR3M.js")
+    "import": () => import("./wikitext-HAVRGKHQ.js")
   },
   {
     "id": "wolfram",

@@ -1,34 +1,41 @@
 // utils/auth.js
+import { useCookie } from 'nuxt/app';
 
-const AUTH_TOKEN_KEY = 'authToken'
-const ROLE_TOKEN_KEY = 'selectedRoleToken'
+const AUTH_TOKEN_KEY = 'auth_token';
+const ROLE_TOKEN_KEY = 'role_token';
 
-// Store auth token
+// Store auth token in a cookie
 export function setAuthToken(token) {
-  localStorage.setItem(AUTH_TOKEN_KEY, token)
+  const authToken = useCookie(AUTH_TOKEN_KEY);
+  authToken.value = token;
 }
 
-// Retrieve auth token
+// Retrieve auth token from cookie
 export function getAuthToken() {
-  return localStorage.getItem(AUTH_TOKEN_KEY)
+  const authToken = useCookie(AUTH_TOKEN_KEY);
+  return authToken.value;
 }
 
-// Clear auth token
+// Clear auth token from cookie
 export function clearAuthToken() {
-  localStorage.removeItem(AUTH_TOKEN_KEY)
+  const authToken = useCookie(AUTH_TOKEN_KEY);
+  authToken.value = null;
 }
 
-// Store selected role token
+// Store selected role token in a cookie
 export function setSelectedRoleToken(token) {
-  localStorage.setItem(ROLE_TOKEN_KEY, token)
+  const roleToken = useCookie(ROLE_TOKEN_KEY);
+  roleToken.value = token;
 }
 
-// Retrieve selected role token
+// Retrieve selected role token from cookie
 export function getSelectedRoleToken() {
-  return localStorage.getItem(ROLE_TOKEN_KEY)
+  const roleToken = useCookie(ROLE_TOKEN_KEY);
+  return roleToken.value;
 }
 
-// Clear selected role token
+// Clear selected role token from cookie
 export function clearSelectedRoleToken() {
-  localStorage.removeItem(ROLE_TOKEN_KEY)
+  const roleToken = useCookie(ROLE_TOKEN_KEY);
+  roleToken.value = null;
 }

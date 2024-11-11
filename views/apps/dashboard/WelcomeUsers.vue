@@ -1,9 +1,9 @@
 <script setup>
 import illustrationJohn2 from '@/images/illustration-john-2.png';
+import { getSelectedRoleToken } from '@/middleware/auth'; // Corrected the import for named export
 import { computed, onMounted, ref } from 'vue';
 
-const selectedRoleToken = ref('')
-const tokenExpiration = ref('')
+const selectedRoleToken = ref('');
 
 // Adjusted tokenData to match the selectedRoleToken structure
 const tokenData = ref({
@@ -14,21 +14,17 @@ const tokenData = ref({
   selectedUnit: null,
   iat: null,
   exp: null,
-})
+});
 
 // Load selectedRoleToken from localStorage, decode it, and set expiration time
 onMounted(() => {
-  selectedRoleToken.value = localStorage.getItem('selectedRoleToken')
-
-  // console.log('Retrieved selectedRoleToken:', selectedRoleToken.value)
+  selectedRoleToken.value = getSelectedRoleToken();
 
   if (selectedRoleToken.value) {
     try {
       // Split the token and decode the payload
-      const payload = selectedRoleToken.value.split('.')[1]
-      const decoded = JSON.parse(atob(payload))
-
-      // console.log('Decoded token structure:', decoded) // Log to inspect structure
+      const payload = selectedRoleToken.value.split('.')[1];
+      const decoded = JSON.parse(atob(payload));
 
       tokenData.value = {
         userId: decoded.userId,
@@ -38,30 +34,33 @@ onMounted(() => {
         selectedUnit: decoded.selectedUnit || 'None',
         iat: decoded.iat ? new Date(decoded.iat * 1000).toLocaleString() : null,
         exp: decoded.exp ? new Date(decoded.exp * 1000).toLocaleString() : null,
+      };
+
+      // Store expiration time in a separate variable
+      if (decoded.exp) {
+        tokenExpiration.value = decoded.exp * 1000; // Store the expiration as a timestamp
       }
 
-      // console.log('Populated tokenData:', tokenData.value)
-
     } catch (error) {
-      console.error('Error decoding token:', error)
+      console.error('Error decoding token:', error);
     }
   } else {
-    console.warn('selectedRoleToken is not available in localStorage.')
+    console.warn('selectedRoleToken is not available.')
   }
-})
+});
 
-
+const tokenExpiration = ref('');
 
 // Computed variable to calculate remaining time in minutes
 const remainingMinutes = computed(() => {
-  if (!tokenExpiration.value) return null
-  const expirationTime = Number(tokenExpiration.value)
-  const currentTime = Date.now()
-  const remainingTime = expirationTime - currentTime
+  if (!tokenExpiration.value) return null;
+  const expirationTime = Number(tokenExpiration.value);
+  const currentTime = Date.now();
+  const remainingTime = expirationTime - currentTime;
 
   // Convert milliseconds to minutes
-  return remainingTime > 0 ? Math.floor(remainingTime / 1000 / 60) : 0
-})
+  return remainingTime > 0 ? Math.floor(remainingTime / 1000 / 60) : 0;
+});
 </script>
 
 <template>
@@ -74,27 +73,6 @@ const remainingMinutes = computed(() => {
         order-sm="1"
       >
         <VCardItem>
-          <!--
-            <VCardTitle>
-            <h4 class="text-h4 text-wrap">
-            <strong>ARSIP</strong>
-            </h4>
-            </VCardTitle> 
-          -->
-          <!--
-            <VCardTitle>
-            <h4 class="text-h4 text-wrap">
-            <strong>UNIVERSITAS DIPONEGORO</strong>
-            </h4>
-            </VCardTitle> 
-          -->
-          <!--
-            <VCardTitle>
-            <h4 class="text-h4 text-wrap">
-            All Roles: <strong>{{ tokenData.roles.length ? tokenData.roles.join(', ') : 'Not available' }}</strong>
-            </h4>
-            </VCardTitle> 
-          -->
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
               Anda login sebagai <strong>{{ tokenData.selectedRole?.description || 'Not available' }}</strong>
@@ -108,6 +86,11 @@ const remainingMinutes = computed(() => {
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
               Selected Unit: <strong>{{ tokenData.selectedUnit || 'Not available' }}</strong>
+            </h4>
+          </VCardTitle>
+          <VCardTitle>
+            <h4 class="text-h4 text-wrap">
+              Remaining Time: <strong>{{ remainingMinutes }} minutes</strong>
             </h4>
           </VCardTitle>
         </VCardItem>
@@ -130,7 +113,6 @@ const remainingMinutes = computed(() => {
     </VRow>
   </VCard>
 </template>
-
 
 <style lang="scss" scoped>
 .john-illustration {

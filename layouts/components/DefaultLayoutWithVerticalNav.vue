@@ -1,11 +1,13 @@
 <script setup>
-import { usePermissions } from '@/composables/usePermission';
 import Footer from '@/layouts/components/Footer.vue';
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue';
 import UserProfile from '@/layouts/components/UserProfile.vue';
+import { getSelectedRoleToken } from '@/middleware/auth'; // Adjust the path based on where auth.js is located
 import filterMenuByPermissions from '@/utils/filterMenuByPermissions';
 import { VerticalNavLayout } from '@layouts';
+import { jwtDecode } from 'jwt-decode';
 import { ref, watchEffect } from 'vue';
+
 
 // Data menu statis
 const menuItems = [
@@ -45,15 +47,25 @@ const menuItems = [
 ];
 
 // Ambil permissions secara reaktif dari composable
-const userPermissions = usePermissions();
+const userPermissions = ref([]);
 
 // Buat reactive ref untuk menu yang terfilter
 const navItems = ref([]);
 
 // watchEffect untuk memperbarui menu setiap kali permissions berubah
 watchEffect(() => {
-  navItems.value = filterMenuByPermissions(menuItems, userPermissions.value);
-  // console.log("Updated nav items based on permissions:", navItems.value); // Debug log untuk memastikan perubahan
+  const selectedRoleToken = getSelectedRoleToken();
+  if (selectedRoleToken) {
+    try {
+      const decodedRole = jwtDecode(selectedRoleToken);
+      const permissions = decodedRole.permissions || [];
+      userPermissions.value = permissions; // Update the permissions correctly
+
+      navItems.value = filterMenuByPermissions(menuItems, permissions); // Filter the menu based on permissions
+    } catch (error) {
+      console.error('Error decoding the selectedRoleToken:', error);
+    }
+  }
 });
 
 </script>

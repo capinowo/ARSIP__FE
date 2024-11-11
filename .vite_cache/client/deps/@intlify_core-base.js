@@ -24,10 +24,10 @@ import {
   toDisplayString,
   warn,
   warnOnce
-} from "./chunk-ITRAVXLC.js";
+} from "./chunk-AQFEVKXZ.js";
 import "./chunk-BSPL5VGI.js";
 
-// node_modules/.pnpm/@intlify+message-compiler@9.13.1/node_modules/@intlify/message-compiler/dist/message-compiler.mjs
+// node_modules/@intlify/message-compiler/dist/message-compiler.mjs
 function createPosition(line, column, offset) {
   return { line, column, offset };
 }
@@ -1566,7 +1566,7 @@ function baseCompile(source, options = {}) {
   }
 }
 
-// node_modules/.pnpm/@intlify+core-base@9.13.1/node_modules/@intlify/core-base/dist/core-base.mjs
+// node_modules/@intlify/core-base/dist/core-base.mjs
 function initFeatureFlags() {
   if (typeof __INTLIFY_PROD_DEVTOOLS__ !== "boolean") {
     getGlobalThis().__INTLIFY_PROD_DEVTOOLS__ = false;
@@ -2299,7 +2299,7 @@ function appendItemToChain(chain, target, blocks) {
   }
   return follow;
 }
-var VERSION = "9.13.1";
+var VERSION = "9.14.1";
 var NOT_REOSLVED = -1;
 var DEFAULT_LOCALE = "en-US";
 var MISSING_RESOLVE_VALUE = "";
@@ -3279,14 +3279,14 @@ export {
 
 @intlify/message-compiler/dist/message-compiler.mjs:
   (*!
-    * message-compiler v9.13.1
+    * message-compiler v9.14.1
     * (c) 2024 kazuya kawaguchi
     * Released under the MIT License.
     *)
 
 @intlify/core-base/dist/core-base.mjs:
   (*!
-    * core-base v9.13.1
+    * core-base v9.14.1
     * (c) 2024 kazuya kawaguchi
     * Released under the MIT License.
     *)

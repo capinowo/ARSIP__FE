@@ -1,45 +1,47 @@
 <script setup>
-import avatar1 from '@/images/avatars/avatar-1.png'
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import avatar1 from '@/images/avatars/avatar-1.png';
+import { clearAuthToken, clearSelectedRoleToken, getSelectedRoleToken } from '@/middleware/auth'; // Corrected import
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
 
-const router = useRouter()
-const userRole = ref('') // Store the decoded role name here
+const router = useRouter();
+const userRole = ref(''); // Store the decoded role name here
 
 // Decode the role from `selectedRoleToken`
 onMounted(() => {
-  const selectedRoleToken = localStorage.getItem('selectedRoleToken')
+  const selectedRoleToken = getSelectedRoleToken();
   if (selectedRoleToken) {
     try {
-      const payload = JSON.parse(atob(selectedRoleToken.split('.')[1]))
-
-      userRole.value = payload?.selectedRole?.name || 'Unknown Role'
+      // Decode and parse the token payload
+      const payload = JSON.parse(atob(selectedRoleToken.split('.')[1]));
+      userRole.value = payload?.selectedRole?.name || 'Unknown Role';
     } catch (error) {
-      console.error('Error decoding selectedRoleToken:', error)
-      userRole.value = 'Unknown Role'
+      console.error('Error decoding selectedRoleToken:', error);
+      userRole.value = 'Unknown Role';
     }
+  } else {
+    userRole.value = 'Unknown Role'; // Default value if no token is found
   }
-})
+});
 
 // Add the "Role" navigation item to `userProfileList`
 const userProfileList = [
   { type: 'navItem', title: 'Select Role', icon: 'ri-shield-user-line', value: '/role' },
   { type: 'divider' },
-
   // Additional menu items can be added here if needed
-]
+];
 
 // Navigate to the route specified in each menu item
 function navigateTo(path) {
-  router.push(path)
+  router.push(path);
 }
 
+// Handle logout
 function logout() {
-  localStorage.removeItem('authToken')
-  localStorage.removeItem('tokenExpiration')
-  localStorage.removeItem('selectedRoleToken')
-  router.push('/login')
+  clearAuthToken();
+  clearSelectedRoleToken();
+  router.push('/login');
 }
 </script>
 
@@ -141,3 +143,10 @@ function logout() {
     </VAvatar>
   </VBadge>
 </template>
+
+<style lang="scss" scoped>
+.john-illustration {
+  inset-block-end: -0.0625rem;
+  inset-inline-end: 0;
+}
+</style>
