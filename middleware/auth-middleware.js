@@ -59,11 +59,11 @@ export default defineNuxtRouteMiddleware((to, from) => {
       // console.log("Attempting to access:", to.name || to.path);
 
       // Check if the requested page is in allowed pages
-      const requestedPage = to.name || to.path; // Check both name and path
-      if (!allowedPages.has(requestedPage)) {
-        console.log("Access denied to this page.");
-        return navigateTo('/unauthorized');
-      }
+      // const requestedPage = to.name || to.path;
+      // if (!allowedPages.has(requestedPage)) {
+      //   console.log("Access denied to this page.");
+      //   return navigateTo('/unauthorized');
+      // }
 
     } catch (error) {
       // console.error("Error decoding token:", error); // Log specific decoding error
