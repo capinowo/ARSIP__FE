@@ -10,8 +10,8 @@ export default function useArsipStatus() {
     // console.log('Fetching archive status for ID:', archiveStatusId); // Debugging line
 
     const query = `
-      query GetApprovalStatus($getApprovalStatusId: Int!) {
-        getApprovalStatus(id: $getApprovalStatusId) {
+      query GetArchiveStatus($getArchiveStatusId: Int!) {
+        getArchiveStatus(id: $getArchiveStatusId) {
           id
           name
         }
@@ -28,7 +28,7 @@ export default function useArsipStatus() {
         },
         body: JSON.stringify({
           query,
-          variables: { getApprovalStatusId: archiveStatusId },
+          variables: { getArchiveStatusId: archiveStatusId },
         }),
       });
 
@@ -41,7 +41,7 @@ export default function useArsipStatus() {
         return null;
       }
 
-      return result.data?.getApprovalStatus || null;
+      return result.data?.getArchiveStatus  || null;
     } catch (err) {
       console.error('Error fetching archive status:', err);
       error.value = err;

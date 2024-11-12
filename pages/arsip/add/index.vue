@@ -1,12 +1,36 @@
 <script setup>
 import { useClassificationStore } from '@/stores/classificationStore';
+import { useFormStore } from '@/stores/formStoreArsip';
 import { useLocationStore } from '@/stores/locationStore';
+import { saveArsip } from '@/stores/saveArsip';
 import { useStatusStore } from '@/stores/statusStore';
 import { useUnitStore } from '@/stores/unitStore';
 import { computed, onMounted, ref } from 'vue';
 
+definePageMeta({
+  middleware: 'auth-middleware',
+})
+
 const locationStore = useLocationStore();
 const selectedLocation = ref(null);
+const formStore = useFormStore();
+const content = ref(null);
+
+
+const typeOptions = computed(() => [
+      { id: 1, name: 'Subtantif' },
+      { id: 2, name: 'Fasilitatif' },
+    ]);
+
+const clearDraft = () => {
+  formStore.clearDraft();
+};
+
+const snackbar = ref({
+  show: false,
+  message: '',
+  color: 'success',  // Set warna snackbar (success/error)
+});
 
 // Mendapatkan options lokasi dari store
 const locationOptions = computed(() => {
@@ -79,8 +103,46 @@ const statusOptions = computed(() => {
   }));
 });
 
+// Validasi dan simpan arsip
+const handleSave = () => {
+  // Validasi form sebelum menyimpan
+  if (!formStore.namaArsip || !formStore.selectedUnit || !formStore.selectedLocation || !formStore.selectedClassification || !formStore.selectedStatus) {
+    formStore.isFormValid = false;
+    return; // Tidak lanjutkan jika ada field yang kosong
+  }
+
+  formStore.isFormValid = true;
+
+  const data = {
+    archive_status_id: formStore.selectedStatus,
+    archive_type_id: formStore.selectedType,
+    classification_id: formStore.selectedClassification,
+    description: formStore.content,
+    document_path: "path/to/document", // Ganti dengan path yang sesuai
+    location_id: formStore.selectedLocation,
+    title: formStore.namaArsip,
+    unit_id: formStore.selectedUnit,
+    user_id: 1, // Ganti dengan user ID yang sesuai
+  };
+
+  saveArsip(data).then(() => {
+    clearDraft(); // Menghapus draft setelah berhasil disimpan
+    showSnackbar('Save Arsip berhasil!'); // Menampilkan snackbar
+    setTimeout(() => {
+      navigateTo('/arsip/list_arsip'); // Navigasi setelah 3 detik untuk memberi waktu pada snackbar
+    }, 2000); // Navigasi setelah 3 detik
+  });
+};
+
+const showSnackbar = (message) => {
+  snackbar.value.message = message;
+  snackbar.value.show = true;
+  setTimeout(() => {
+    snackbar.value.show = false;
+  }, 2000); // Snackbar akan hilang setelah 3 detik
+};
+
 // Konten deskripsi arsip
-const content = ref(`<p>...</p>`);
 </script>
 
 <template>
@@ -94,19 +156,18 @@ const content = ref(`<p>...</p>`);
       </div>
 
       <div class="d-flex gap-4 align-center flex-wrap">
-        <VBtn
+        <!-- <VBtn
           variant="outlined"
           color="secondary"
         >
           Buang
+        </VBtn> -->
+        <VBtn @click="clearDraft" variant="outlined" color="primary">
+          Clear Draft
+        </VBtn >
+        <VBtn @click="handleSave" color="primary">
+          Simpan Arsip
         </VBtn>
-        <VBtn
-          variant="outlined"
-          color="primary"
-        >
-          Simpan Sebagai Draft
-        </VBtn>
-        <VBtn>Simpan Arsip</VBtn>
       </div>
     </div>
 
@@ -123,6 +184,8 @@ const content = ref(`<p>...</p>`);
                 <VTextField
                   label="Nama Arsip"
                   placeholder="Nama Arsip"
+                  v-model="formStore.namaArsip"
+                  :rules="[value => !!value || 'Nama Arsip wajib diisi']"
                 />
               </VCol>
               <VCol cols="12">
@@ -132,7 +195,8 @@ const content = ref(`<p>...</p>`);
                   :items="unitOptions"
                   item-title="name"
                   item-value="id"
-                  v-model="selectedUnit"
+                  v-model="formStore.selectedUnit"
+                  :rules="[value => !!value || 'Unit wajib dipilih']"
                 />
               </VCol>
               <VCol cols="12">
@@ -142,7 +206,8 @@ const content = ref(`<p>...</p>`);
                     :items="locationOptions"
                     item-title="name"
                     item-value="id"
-                    v-model="selectedLocation"
+                    v-model="formStore.selectedLocation"
+                    :rules="[value => !!value || 'Lokasi Arsip wajib dipilih']"
                   />
               </VCol>
               <VCol>
@@ -150,7 +215,7 @@ const content = ref(`<p>...</p>`);
                   Deskripsi Arsip
                 </VLabel>
                 <ProductDescriptionEditor
-                  v-model="content"
+                  v-model="formStore.content"
                   placeholder="Deskripsi Arsip"
                   class="border mt-1 rounded"
                 />
@@ -194,15 +259,26 @@ const content = ref(`<p>...</p>`);
                 :items="classificationOptions"
                 item-title="text" 
                 item-value="value" 
-                v-model="selectedClassification"
+                v-model="formStore.selectedClassification"
+                :rules="[value => !!value || 'Klasifikasi wajib dipilih']"
               />
               <VSelect
                 label="Select Status"
-                v-model="selectedStatus"
                 :items="statusOptions"
                 item-title="name"  
                 item-value="id"   
                 placeholder="Select Status"
+                v-model="formStore.selectedStatus"
+                :rules="[value => !!value || 'Status wajib dipilih']"
+              />
+              <VSelect
+                label="Select Type"
+                :items="typeOptions"
+                item-title="name"
+                item-value="id"
+                placeholder="Select Type"
+                v-model="formStore.selectedType"
+                :rules="[value => !!value || 'Type wajib dipilih']"
               />
               <VTextField
                 label="Tanggal Arsip Masuk"
@@ -214,7 +290,8 @@ const content = ref(`<p>...</p>`);
                 label="Periode Retensi"
                 prepend-icon="ri-calendar-schedule-line"
                 placeholder="Masukkan jumlah tahun"
-                v-model="retentionPeriod"
+                v-model="formStore.retentionPeriod"
+                :rules="[value => !!value || 'Periode Retensi wajib diisi']"
                 type="number"
                 min="1"
                 suffix="Tahun" 
@@ -224,6 +301,16 @@ const content = ref(`<p>...</p>`);
         </VCard>
       </VCol>
     </VRow>
+    <!-- Snackbar Notification -->
+    <VSnackbar
+      v-model="snackbar.show"
+      :color="snackbar.color"
+      top
+      :timeout="2000"
+      multi-line
+    >
+      {{ snackbar.message }}
+    </VSnackbar>
   </div>
 </template>
 

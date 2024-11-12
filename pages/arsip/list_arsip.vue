@@ -20,6 +20,23 @@ const currentPage = ref(1)
 const { fetchClassification } = useClassification()
 const { fetchArsipStatus } = useArsipStatus();
 
+const isDialogOpen = ref(false);  // Track dialog visibility
+const archiveToDelete = ref(null);  // Store the archive item to be deleted
+const openDeleteDialog = (item) => {
+  archiveToDelete.value = item;  // Set the archive item to be deleted
+  isDialogOpen.value = true;     // Open the dialog
+};
+const closeDialog = () => {
+  isDialogOpen.value = false;   // Close the dialog
+};
+// Confirm deletion and send mutation to delete the archive
+const confirmDeletion = async () => {
+  if (archiveToDelete.value && archiveToDelete.value.id) {
+    await deleteArchive(archiveToDelete.value.id);
+    closeDialog();
+  }
+};
+
 // Configure table headers
 const headers = [
   { title: 'No', key: 'no', sortable: false },
@@ -94,10 +111,50 @@ const fetchArchives = async () => {
   }
 };
 
-// Placeholder functions for edit and delete buttons
-const deleteArchive = item => {
-  console.log('Delete archive:', item)
-}
+// Function to delete the archive
+const deleteArchive = async (id) => {
+  const mutation = `
+    mutation DeleteArchive($id: Int!) {
+      deleteArchive(id: $id) {
+        id
+      }
+    }
+  `;
+
+  try {
+    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getSelectedRoleToken()}`,
+      },
+      body: JSON.stringify({
+        query: mutation,
+        variables: { id },
+      }),
+    });
+
+    const result = await response.json();
+
+    if (result.errors) {
+      console.error('GraphQL errors:', result.errors);
+      return;
+    }
+
+    if (result.data && result.data.deleteArchive) {
+      // Remove the deleted archive from the list
+      archives.value = archives.value.filter((archive) => archive.id !== id);
+      totalArchives.value -= 1; // Update total count
+      console.log(`Archive with ID ${id} deleted successfully.`);
+    } else {
+      console.error('Error: Archive not deleted');
+    }
+  } catch (error) {
+    console.error('Error deleting archive:', error);
+  } finally {
+    isDialogOpen.value = false; // Close dialog after deletion
+  }
+};
 
 const detailArchive = item => {
   console.log('Detail archive:', item)
@@ -166,15 +223,29 @@ onMounted(() => {
               <VIcon>ri-todo-line</VIcon>
               </VBtn>
               <VBtn
-                icon
-                @click="deleteArchive(item)"
-              >
-                <VIcon>ri-delete-bin-2-fill</VIcon>
-              </VBtn>
+          icon
+          @click="openDeleteDialog(item)"
+        >
+          <VIcon>ri-delete-bin-2-fill</VIcon>
+        </VBtn>
             </div>
           </template>
         </VDataTable>
       </VCard>
     </div>
+    <!-- Confirmation Dialog for Deletion -->
+    <VDialog v-model="isDialogOpen" max-width="400">
+      <VCard>
+        <VCardTitle>Confirm Deletion</VCardTitle>
+        <VCardText>
+          Are you sure you want to delete this archive?
+        </VCardText>
+        <VCardActions>
+          <VSpacer />
+          <VBtn color="error" @click="confirmDeletion">Yes</VBtn>
+          <VBtn @click="closeDialog">No</VBtn>
+        </VCardActions>
+      </VCard>
+    </VDialog>
   </section>
 </template>
