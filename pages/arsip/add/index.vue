@@ -1,64 +1,86 @@
 <script setup>
-import { ref } from 'vue';
+import { useClassificationStore } from '@/stores/classificationStore';
+import { useLocationStore } from '@/stores/locationStore';
+import { useStatusStore } from '@/stores/statusStore';
+import { useUnitStore } from '@/stores/unitStore';
+import { computed, onMounted, ref } from 'vue';
 
-const optionCounter = ref(1)
+const locationStore = useLocationStore();
+const selectedLocation = ref(null);
 
-const content = ref(`<p>
-    </p>`)
+// Mendapatkan options lokasi dari store
+const locationOptions = computed(() => {
+  return locationStore.locations.map(item => ({
+    id: item.id,
+    name: `${item.name} - ${item.building_name}`,  // Menampilkan nama dan building name
+  }));
+});
 
-const activeTab = ref('Restock')
+// Ambil data lokasi saat komponen di-mount
+onMounted(() => {
+  locationStore.fetchLocations(); // Memanggil fetchLocations untuk mengambil data
+});
 
-const shippingList = [
-  {
-    desc: 'You\'ll be responsible for product delivery.Any damage or delay during shipping may cost you a Damage fee',
-    title: 'Fulfilled by Seller',
-    value: 'Fulfilled by Seller',
-  },
-  {
-    desc: 'Your product, Our responsibility.For a measly fee, we will handle the delivery process for you.',
-    title: 'Fulfilled by Company name',
-    value: 'Fulfilled by Company name',
-  },
-]
+// Menggunakan store untuk mengambil unit
+const unitStore = useUnitStore();
+const selectedUnit = ref(null);
 
-const shippingType = ref('Fulfilled by Company name')
-const deliveryType = ref('Worldwide delivery')
+// Mendapatkan options unit dari store
+const unitOptions = computed(() => {
+  return unitStore.units.map(item => ({
+    id: item.id,
+    name: item.name,
+  }));
+});
 
-const selectedAttrs = ref([
-  'Biodegradable',
-  'Expiry Date',
-])
+// Ambil data unit saat komponen di-mount
+onMounted(() => {
+  unitStore.fetchUnits(); // Memanggil fetchUnits untuk mengambil data
+});
 
-// const inventoryTabsData = [
-//   {
-//     icon: 'ri-add-line',
-//     title: 'Restock',
-//     value: 'Restock',
-//   },
-//   {
-//     icon: 'ri-flight-takeoff-line',
-//     title: 'Shipping',
-//     value: 'Shipping',
-//   },
-//   {
-//     icon: 'ri-map-pin-line',
-//     title: 'Global Delivery',
-//     value: 'Global Delivery',
-//   },
-//   {
-//     icon: 'ri-attachment-2',
-//     title: 'Attributes',
-//     value: 'Attributes',
-//   },
-//   {
-//     icon: 'ri-lock-unlock-line',
-//     title: 'Advanced',
-//     value: 'Advanced',
-//   },
-// ]
+const retentionPeriod = ref(null);
+const currentDate = ref(''); // Variabel untuk menyimpan tanggal saat ini
 
-const inStock = ref(true)
-const isTaxable = ref(true)
+onMounted(() => {
+  const date = new Date();
+  const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long' };
+  currentDate.value = date.toLocaleDateString('id-ID', options); // Format dalam bahasa Indonesia
+});
+
+// Mengambil data dari classificationStore
+const classificationStore = useClassificationStore();
+onMounted(() => {
+  classificationStore.fetchClassifications();
+});
+
+const selectedClassification = ref(null);
+
+// Format options untuk klasifikasi
+const classificationOptions = computed(() => {
+  return classificationStore.classifications.map(item => ({
+    text: `${item.classification_code} - ${item.description}`,  // Properti 'text' yang akan ditampilkan
+    value: item.id,  // ID sebagai nilai
+  }));
+});
+
+// Mengambil data dari statusStore
+const statusStore = useStatusStore();
+const selectedStatus = ref(null);
+
+onMounted(() => {
+  statusStore.fetchStatuses();
+});
+
+// Format options untuk status
+const statusOptions = computed(() => {
+  return statusStore.statuses.map(item => ({
+    name: item.name,  // Properti 'name' yang akan ditampilkan
+    id: item.id,      // ID sebagai nilai
+  }));
+});
+
+// Konten deskripsi arsip
+const content = ref(`<p>...</p>`);
 </script>
 
 <template>
@@ -76,15 +98,15 @@ const isTaxable = ref(true)
           variant="outlined"
           color="secondary"
         >
-          Discard
+          Buang
         </VBtn>
         <VBtn
           variant="outlined"
           color="primary"
         >
-          Save Draft
+          Simpan Sebagai Draft
         </VBtn>
-        <VBtn>Publish Arsip</VBtn>
+        <VBtn>Simpan Arsip</VBtn>
       </div>
     </div>
 
@@ -100,425 +122,102 @@ const isTaxable = ref(true)
               <VCol cols="12">
                 <VTextField
                   label="Nama Arsip"
-                  placeholder="..."
+                  placeholder="Nama Arsip"
                 />
               </VCol>
-              <!-- <VCol
-                cols="12"
-                md="6"
-              >
-                <VTextField
-                  label="SKU"
-                  placeholder="FXSK123U"
+              <VCol cols="12">
+                <VAutocomplete
+                  label="Unit"
+                  placeholder="Unit"
+                  :items="unitOptions"
+                  item-title="name"
+                  item-value="id"
+                  v-model="selectedUnit"
                 />
               </VCol>
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <VTextField
-                  label="Barcode"
-                  placeholder="0123-4567"
-                />
-              </VCol> -->
+              <VCol cols="12">
+                <VAutocomplete
+                    label="Lokasi Arsip"
+                    placeholder="Select Lokasi"
+                    :items="locationOptions"
+                    item-title="name"
+                    item-value="id"
+                    v-model="selectedLocation"
+                  />
+              </VCol>
               <VCol>
                 <VLabel>
                   Deskripsi Arsip
                 </VLabel>
                 <ProductDescriptionEditor
                   v-model="content"
-                  placeholder="..."
+                  placeholder="Deskripsi Arsip"
                   class="border mt-1 rounded"
                 />
               </VCol>
             </VRow>
           </VCardText>
         </VCard>
-
-        <!-- 👉 Product Image -->
-        <VCard class="mb-6">
-          <VCardItem>
-            <template #title>
-              Upload Dokumen
-            </template>
-            <template #append>
-              <div class="text-primary font-weight-medium cursor-pointer">
-              </div>
-            </template>
-          </VCardItem>
-
-          <VCardText>
-            <DropZone />
-          </VCardText>
-        </VCard>
-
-        <!-- 👉 Variants -->
-        <!-- <VCard
-          title="Variants"
-          class="mb-6"
-        >
-          <VCardText>
-            <template
-              v-for="i in optionCounter"
-              :key="i"
-            >
-              <VRow>
-                <VCol
-                  cols="12"
-                  md="4"
-                >
-                  <VSelect
-                    :items="['Size', 'Color', 'Weight']"
-                    placeholder="Select Variant"
-                    label="Select Variant"
-                  />
-                </VCol>
-                <VCol
-                  cols="12"
-                  md="8"
-                >
-                  <VTextField
-                    label="Variant Value"
-                    type="number"
-                    placeholder="Enter Variant Value"
-                  />
-                </VCol>
-              </VRow>
-            </template>
-
-            <VBtn
-              class="mt-6"
-              @click="optionCounter++"
-            >
-              Add another option
-            </VBtn>
-          </VCardText>
-        </VCard> -->
-
-        <!-- 👉 Inventory -->
-        <!-- <VCard
-          title="Inventory"
-          class="inventory-card"
-        >
-          <VCardText>
-            <VRow>
-              <VCol
-                cols="12"
-                md="4"
-              >
-                <VTabs
-                  v-model="activeTab"
-                  direction="vertical"
-                  color="primary"
-                  class="v-tabs-pill"
-                >
-                  <VTab
-                    v-for="(tab, index) in inventoryTabsData"
-                    :key="index"
-                    :value="tab.value"
-                  >
-                    <VIcon
-                      :icon="tab.icon"
-                      class="me-2"
-                    />
-                    <span>{{ tab.title }}</span>
-                  </VTab>
-                </VTabs>
-              </VCol>
-
-              <VDivider
-                :vertical="$vuetify.display.mdAndUp ? true : false"
-                inset
-              />
-
-              <VCol
-                cols="12"
-                md="8"
-              >
-                <VWindow
-                  v-model="activeTab"
-                  class="w-100"
-                  :touch="false"
-                >
-                  <VWindowItem value="Restock">
-                    <div class="d-flex flex-column gap-y-4">
-                      <div class="text-body-1 font-weight-medium">
-                        Options
-                      </div>
-                      <div class="d-flex gap-x-4 align-center">
-                        <VTextField
-                          label="Add to stock"
-                          placeholder="100"
-                          density="compact"
-                        />
-                        <VBtn prepend-icon="ri-check-line">
-                          Confirm
-                        </VBtn>
-                      </div>
-                      <div class="d-flex flex-column gap-2 text-high-emphasis">
-                        <div>
-                          Product in stock now: 54
-                        </div>
-                        <div>
-                          Product in transit: 390
-                        </div>
-                        <div>
-                          Last time restocked: 24th June, 2022
-                        </div>
-                        <div>
-                          Total stock over lifetime: 2,430
-                        </div>
-                      </div>
-                    </div>
-                  </VWindowItem>
-
-                  <VWindowItem value="Shipping">
-                    <VRadioGroup v-model="shippingType">
-                      <template #label>
-                        <span class="font-weight-medium mb-1">Shipping Type</span>
-                      </template>
-                      <VRadio
-                        v-for="item in shippingList"
-                        :key="item.value"
-                        :value="item.value"
-                        class="mb-4 ps-1"
-                        inline
-                      >
-                        <template #label>
-                          <div>
-                            <div class="text-high-emphasis font-weight-medium mb-1">
-                              {{ item.title }}
-                            </div>
-                            <div class="text-sm">
-                              {{ item.desc }}
-                            </div>
-                          </div>
-                        </template>
-                      </VRadio>
-                    </VRadioGroup>
-                  </VWindowItem>
-
-                  <VWindowItem value="Global Delivery">
-                    <div>
-                      <VRadioGroup v-model="deliveryType">
-                        <template #label>
-                          <span class="font-weight-medium mb-1">Global Delivery</span>
-                        </template>
-
-                        <VRadio
-                          value="Worldwide delivery"
-                          class="mb-4 ps-1"
-                        >
-                          <template #label>
-                            <div>
-                              <div class="text-high-emphasis font-weight-medium mb-1">
-                                Worldwide delivery
-                              </div>
-                              <div class="text-sm">
-                                Only available with Shipping method:
-                                <span class="text-primary">
-                                  Fulfilled by Company name
-                                </span>
-                              </div>
-                            </div>
-                          </template>
-                        </VRadio>
-
-                        <VRadio
-                          value="Selected Countries"
-                          class="mb-4 ps-1"
-                        >
-                          <template #label>
-                            <div>
-                              <div class="text-high-emphasis font-weight-medium mb-1">
-                                Selected Countries
-                              </div>
-                              <VTextField
-                                placeholder="USA"
-                                style="min-inline-size: 200px;"
-                              />
-                            </div>
-                          </template>
-                        </VRadio>
-
-                        <VRadio>
-                          <template #label>
-                            <div>
-                              <div class="text-high-emphasis font-weight-medium mb-1">
-                                Local delivery
-                              </div>
-                              <div class="text-sm">
-                                Deliver to your country of residence
-                                <span class="text-primary">
-                                  Change profile address
-                                </span>
-                              </div>
-                            </div>
-                          </template>
-                        </VRadio>
-                      </VRadioGroup>
-                    </div>
-                  </VWindowItem>
-
-                  <VWindowItem value="Attributes">
-                    <div class="ps-3">
-                      <div class="mb-6 text-h6">
-                        Attributes
-                      </div>
-                      <div>
-                        <VCheckbox
-                          v-model="selectedAttrs"
-                          label="Fragile Product"
-                          value="Fragile Product"
-                        />
-                        <VCheckbox
-                          v-model="selectedAttrs"
-                          value="Biodegradable"
-                          label="Biodegradable"
-                        />
-                        <VCheckbox
-                          v-model="selectedAttrs"
-                          value="Frozen Product"
-                        >
-                          <template #label>
-                            <div class="d-flex flex-column mb-1">
-                              <div>Frozen Product</div>
-                              <VTextField
-                                placeholder="40 C"
-                                type="number"
-                              />
-                            </div>
-                          </template>
-                        </VCheckbox>
-                        <VCheckbox
-                          v-model="selectedAttrs"
-                          value="Expiry Date"
-                        >
-                          <template #label>
-                            <div class="d-flex flex-column mb-1">
-                              <div>Expiry Date of Product</div>
-                              <AppDateTimePicker
-                                model-value="2025-06-14"
-                                placeholder="Select a Date"
-                                density="compact"
-                              />
-                            </div>
-                          </template>
-                        </VCheckbox>
-                      </div>
-                    </div>
-                  </VWindowItem>
-
-                  <VWindowItem value="Advanced">
-                    <div class="mb-3 text-base font-weight-medium">
-                      Advanced
-                    </div>
-                    <VRow>
-                      <VCol
-                        cols="12"
-                        sm="6"
-                        md="7"
-                      >
-                        <VSelect
-                          style="min-inline-size: 200px;"
-                          label="Product ID Type"
-                          placeholder="Select Product Type"
-                          :items="['ISBN', 'UPC', 'EAN', 'JAN']"
-                        />
-                      </VCol>
-
-                      <VCol
-                        cols="12"
-                        sm="6"
-                        md="5"
-                      >
-                        <VTextField
-                          label="Product Id"
-                          placeholder="100023"
-                          type="number"
-                        />
-                      </VCol>
-                    </VRow>
-                  </VWindowItem>
-                </VWindow>
-              </VCol>
-            </VRow>
-          </VCardText>
-        </VCard> -->
       </VCol>
 
       <VCol
         md="4"
         cols="12"
       >
-        <!-- 👉 Pricing -->
-        <!-- <VCard
-          title="Pricing"
+        <!-- 👉 Upload -->
+        <VCard
+          title="Upload Dokumen"
           class="mb-6"
         >
           <VCardText>
-            <VTextField
-              label="Base Price"
-              placeholder="iPhone 14"
-              class="mb-6"
-            />
-            <VTextField
-              label="Discounted Price"
-              placeholder="$499"
+            <VFileInput
+              show-size
+              label="Upload Softcopy"
+              prepend-icon="ri-camera-line"
               class="mb-4"
             />
-            <VCheckbox
-              v-model="isTaxable"
-              label="Charge Tax on this product"
+            <VFileInput
+              show-size
+              label="Upload Lampiran"
+              class="mb-4"
             />
-
-            <VDivider class="my-2" />
-
-            <div class="d-flex flex-raw align-center justify-space-between ">
-              <span>In stock</span>
-              <VSwitch
-                v-model="inStock"
-                density="compact"
-              />
-            </div>
           </VCardText>
-        </VCard> -->
+        </VCard>
 
-        <!-- 👉 Organize -->
+        <!-- 👉 Select Classification -->
         <VCard title="Arsip Berdasarkan">
           <VCardText>
             <div class="d-flex flex-column gap-y-4">
-              <VSelect
-                placeholder="Select Klasifikasi"
+              <VAutocomplete
                 label="Klasifikasi"
-                :items="['Men\'s Clothing', 'Women\'s Clothing', 'Kid\'s Clothing']"
-              />
-              <!-- <div class="d-flex gap-x-4 align-center">
-                <VSelect
-                  placeholder="Select Category"
-                  label="Category"
-                  :items="['Household', 'Office', 'Electronics', 'Management', 'Automotive']"
-                />
-                <IconBtn
-                  icon="ri-add-line"
-                  variant="outlined"
-                  color="primary"
-                  rounded
-                />
-              </div> -->
-              <VSelect
-                label="Lokasi Arsip"
-                placeholder="Select Lokasi"
-                :items="['Men\'s Clothing', 'Women\'s Clothing', 'Kid\'s Clothing']"
+                placeholder="Select Klasifikasi"
+                :items="classificationOptions"
+                item-title="text" 
+                item-value="value" 
+                v-model="selectedClassification"
               />
               <VSelect
+                label="Select Status"
+                v-model="selectedStatus"
+                :items="statusOptions"
+                item-title="name"  
+                item-value="id"   
                 placeholder="Select Status"
-                label="Status"
-                :items="['Published', 'Inactive', 'Scheduled']"
+              />
+              <VTextField
+                label="Tanggal Arsip Masuk"
+                prepend-icon="ri-calendar-schedule-line"
+                :placeholder="currentDate" 
+                readonly
               />
               <VTextField
                 label="Periode Retensi"
-                placeholder="Fashion, Trending, Summer"
+                prepend-icon="ri-calendar-schedule-line"
+                placeholder="Masukkan jumlah tahun"
+                v-model="retentionPeriod"
+                type="number"
+                min="1"
+                suffix="Tahun" 
               />
             </div>
           </VCardText>

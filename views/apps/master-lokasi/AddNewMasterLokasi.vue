@@ -1,6 +1,6 @@
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth';
-import { defineProps, nextTick, onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
 
 const props = defineProps({

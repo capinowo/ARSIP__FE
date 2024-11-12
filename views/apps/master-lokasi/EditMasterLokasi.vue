@@ -1,6 +1,6 @@
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth';
-import { defineProps, onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps({
   isDrawerOpen: {
