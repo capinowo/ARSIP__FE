@@ -162,6 +162,7 @@ onMounted(() => {
                   v-model="description"
                   label="Deskripsi"
                   placeholder="Enter description"
+                  :rules="[v => !!v || 'Description is required']"
                 />
               </VCol>
 
@@ -171,6 +172,7 @@ onMounted(() => {
                   v-model="building_name"
                   label="Nama Gedung"
                   placeholder="Enter building name"
+                  :rules="[v => !!v || 'Building name is required']"
                 />
               </VCol>
 
@@ -180,6 +182,7 @@ onMounted(() => {
                   v-model="room_name"
                   label="Nama Ruangan"
                   placeholder="Enter room name"
+                  :rules="[v => !!v || 'Room name is required']"
                 />
               </VCol>
 
@@ -189,6 +192,7 @@ onMounted(() => {
                   v-model="rack_name"
                   label="Nama Loker"
                   placeholder="Enter rack name"
+                  :rules="[v => !!v || 'Rack name is required']"
                 />
               </VCol>
 
@@ -198,6 +202,7 @@ onMounted(() => {
                   v-model="box_name"
                   label="Nama Kotak"
                   placeholder="Enter box name"
+                  :rules="[v => !!v || 'Box name is required']"
                 />
               </VCol>
 

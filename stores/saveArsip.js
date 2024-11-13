@@ -39,14 +39,16 @@ export async function saveArsip(data) {
 
     const result = await response.json();
     
-    // Cek jika ada error dari server GraphQL
+    // Cek jika ada error dari server GraphQL dan lempar error ke komponen pemanggil
     if (result.errors) {
       console.error('Error saving archive:', result.errors);
-    } else {
-      console.log('Archive saved successfully:', result.data.createArchive);
-      return result.data.createArchive; // Jika diperlukan untuk diproses lebih lanjut
+      throw result.errors; // Lempar error dari server ke komponen
     }
+
+    console.log('Archive saved successfully:', result.data.createArchive);
+    return result.data.createArchive; // Jika diperlukan untuk diproses lebih lanjut
   } catch (error) {
     console.error('Error during API request:', error);
+    throw error; // Lempar error ke komponen pemanggil
   }
 }

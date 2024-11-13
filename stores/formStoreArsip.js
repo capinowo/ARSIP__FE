@@ -27,23 +27,26 @@ export const useFormStore = defineStore('form', () => {
     localStorage.setItem('draftForm', JSON.stringify(draftData));
   };
 
-  // Fungsi untuk memuat data dari localStorage saat store diinisialisasi
   const loadDraft = () => {
-    const savedData = JSON.parse(localStorage.getItem('draftForm'));
-    if (savedData) {
-      selectedType.value = savedData.selectedType;
-      namaArsip.value = savedData.namaArsip;
-      retentionPeriod.value = savedData.retentionPeriod;
-      selectedUnit.value = savedData.selectedUnit;
-      selectedLocation.value = savedData.selectedLocation;
-      selectedClassification.value = savedData.selectedClassification;
-      selectedStatus.value = savedData.selectedStatus;
-      content.value = savedData.content;
+    if (typeof window !== 'undefined') { // Pastikan localStorage hanya diakses di klien
+      const savedData = JSON.parse(localStorage.getItem('draftForm'));
+      if (savedData) {
+        selectedType.value = savedData.selectedType;
+        namaArsip.value = savedData.namaArsip;
+        retentionPeriod.value = savedData.retentionPeriod;
+        selectedUnit.value = savedData.selectedUnit;
+        selectedLocation.value = savedData.selectedLocation;
+        selectedClassification.value = savedData.selectedClassification;
+        selectedStatus.value = savedData.selectedStatus;
+        content.value = savedData.content;
+      }
     }
   };
 
-  // Memuat data saat pertama kali diakses
-  loadDraft();
+  // Muat draft saat komponen di-mount
+  onMounted(() => {
+    loadDraft();
+  });
 
   // Menggunakan watch untuk menyimpan data setiap kali ada perubahan
   watch(

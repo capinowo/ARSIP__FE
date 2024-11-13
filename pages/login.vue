@@ -10,6 +10,7 @@ import undipLogo from '@/images/undiplogo2.png'; // Import the logo
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import { setAuthToken } from '@/middleware/auth'
 
+import Snackbar from '@/components/Snackbar.vue'
 import { navigateTo } from 'nuxt/app'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -23,6 +24,8 @@ definePageMeta({
   layout: 'blank',
   public: true,
 })
+const snackbarRef = ref(null)
+// Define showSnackbar function
 
 // State untuk form login
 const form = ref({
@@ -32,12 +35,12 @@ const form = ref({
 })
 
 const isPasswordVisible = ref(false)
-const errorMessage = ref('')
+const errorMessage = ref('') // State untuk error message
 const router = useRouter()
 
 // Fungsi untuk submit form login dan panggil API
 async function login() {
-  errorMessage.value = '' // Reset pesan error
+  errorMessage.value = ''; // Reset pesan error
 
   try {
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
@@ -47,28 +50,35 @@ async function login() {
       },
       body: JSON.stringify({
         query: `
-        mutation($username: String!, $password: String!) {
-          login(username: $username, password: $password)
-        }
-      `,
+          mutation($username: String!, $password: String!) {
+            login(username: $username, password: $password)
+          }
+        `,
         variables: {
           username: form.value.username,
           password: form.value.password,
         },
       }),
-    })
-  
-    const data = await response.json()
-  
+    });
+
+    const data = await response.json();
+
     if (!response.ok || data.errors) {
-      console.error('Error:', data.errors) // Tampilkan pesan error jika ada
+      // Ambil error message dari response
+      const errorMessages = data.errors
+        ? data.errors.map(err => err.message).join(', ') 
+        : 'Terjadi kesalahan saat login';
+        
+      // Menampilkan error di snackbar
+      snackbarRef.value.showSnackbar(errorMessages, 'error')
     } else {
-      // console.log('Login success:', data.data.login)
-      setAuthToken(data.data.login)
-      navigateTo('/role')
+      // Jika login berhasil, set token dan navigasi ke halaman selanjutnya
+      setAuthToken(data.data.login);
+      navigateTo('/role');
     }
   } catch (error) {
-    console.error('Fetch error:', error)
+    console.error('Fetch error:', error);
+    snackbarRef.value.showSnackbar('Network error. Please try again later.', 'error')
   }
 }
 </script>
@@ -147,6 +157,7 @@ async function login() {
                     label="Username"
                     type="text"
                     placeholder="johndoe"
+                    :rules="[v => !!v || 'Username is required']"
                   />
                 </VCol>
 
@@ -158,6 +169,7 @@ async function login() {
                     placeholder="············"
                     :type="isPasswordVisible ? 'text' : 'password'"
                     :append-inner-icon="isPasswordVisible ? 'ri-eye-off-line' : 'ri-eye-line'"
+                    :rules="[v => !!v || 'Password is required']"
                     @click:append-inner="isPasswordVisible = !isPasswordVisible"
                   />
                   <div class="d-flex align-center flex-wrap justify-space-between my-5 gap-2">
@@ -165,10 +177,6 @@ async function login() {
                       v-model="form.remember"
                       label="Remember me"
                     />
-                    <!-- <a
-                      class="text-primary"
-                      href="javascript:void(0)"
-                    >Forgot Password?</a> -->
                   </div>
                   <VBtn
                     block
@@ -178,21 +186,17 @@ async function login() {
                   </VBtn>
 
                   <!-- Tampilkan pesan error jika ada -->
-                  <div
-                    v-if="errorMessage"
-                    class="text-danger mt-3"
-                  >
-                    {{ errorMessage }}
-                  </div>
-                </VCol>
-              </VRow>
-            </VForm>
-          </VCardText>
-        </VCard>
-      </VCol>
-    </VRow>
-  </div>
-</template>
+                  <Snackbar ref="snackbarRef" />
+                  </VCol>
+                </VRow>
+              </VForm>
+            </VCardText>
+          </VCard>
+        </VCol>
+      </VRow>
+    </div>
+  </template>
+
 
 <style lang="scss">
 @use "@core/scss/template/pages/page-auth";

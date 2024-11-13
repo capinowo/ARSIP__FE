@@ -19,7 +19,7 @@ const itemsPerPage = ref(10)
 const currentPage = ref(1)
 const { fetchClassification } = useClassification()
 const { fetchArsipStatus } = useArsipStatus();
-
+const snackbarRef = ref(null);
 const isDialogOpen = ref(false);  // Track dialog visibility
 const archiveToDelete = ref(null);  // Store the archive item to be deleted
 const openDeleteDialog = (item) => {
@@ -106,6 +106,7 @@ const fetchArchives = async () => {
     }
   } catch (error) {
     console.error('Error fetching archives:', error);
+    snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives');
   } finally {
     isLoading.value = false;
   }
@@ -151,6 +152,7 @@ const deleteArchive = async (id) => {
     }
   } catch (error) {
     console.error('Error deleting archive:', error);
+    snackbarRef.value.showSnackbar('This is an error message', 'error delete archive');
   } finally {
     isDialogOpen.value = false; // Close dialog after deletion
   }
@@ -167,6 +169,7 @@ onMounted(() => {
 
 <template>
   <section>
+    <Snackbar ref="snackbarRef" />
     <div class="mb-6">
       <VCard style="padding: 24px;">
         <div class="app-user-search-filter d-flex align-center">

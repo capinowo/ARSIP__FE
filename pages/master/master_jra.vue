@@ -1,8 +1,11 @@
 <script setup>
+import Snackbar from '@/components/Snackbar.vue';
 import { getSelectedRoleToken } from '@/middleware/auth';
 import AddNewMasterJra from '@/views/apps/master-jra/AddNewMasterJra.vue';
 import DeleteMasterJra from '@/views/apps/master-jra/DeleteMasterJra.vue';
 import EditMasterJra from '@/views/apps/master-jra/EditMasterJra.vue';
+
+
 import { onMounted, ref } from 'vue';
 
 const isAddClassificationDrawerOpen = ref(false);
@@ -16,6 +19,8 @@ const totalClassifications = ref(0);
 const itemsPerPage = ref(10);
 const currentPage = ref(1);
 const selectedClassification = ref({});
+const snackbarRef = ref(null);
+
 
 // Table headers
 const headers = [
@@ -115,6 +120,7 @@ const createClassification = async (newClassificationData) => {
     }
   } catch (error) {
     console.error('Error creating classification:', error);
+    snackbarRef.value.showSnackbar('This is an error message', 'error');
   } finally {
     isAddClassificationDrawerOpen.value = false;
   }
@@ -168,6 +174,7 @@ const updateClassification = async (updatedClassificationData) => {
 
     if (result.errors) {
       console.error('GraphQL Errors:', result.errors);
+      snackbarRef.value.showSnackbar('This is an error message', 'error');
       return;
     }
 
@@ -186,6 +193,7 @@ const updateClassification = async (updatedClassificationData) => {
     }
   } catch (error) {
     console.error('Error updating classification:', error);
+    snackbarRef.value.showSnackbar('This is an error message', 'error');
   } finally {
     isEditClassificationDrawerOpen.value = false; // Close the drawer after updating
   }
@@ -228,6 +236,7 @@ const handleDeleteClassification = async (classificationId) => {
     }
   } catch (error) {
     console.error('Error deleting classification:', error);
+    snackbarRef.value.showSnackbar('This is an error message', 'error');
   } finally {
     isDeleteDialogOpen.value = false;
     classificationToDelete.value = null;
@@ -318,6 +327,7 @@ onMounted(() => {
         </VDataTable>
       </VCard>
     </div>
+    <Snackbar ref="snackbarRef" />
 
     <!-- AddNewMasterJra Drawer Component -->
     <AddNewMasterJra

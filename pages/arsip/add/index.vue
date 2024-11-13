@@ -103,12 +103,11 @@ const statusOptions = computed(() => {
   }));
 });
 
-// Validasi dan simpan arsip
-const handleSave = () => {
+const handleSave = async () => { // Tambahkan `async` di sini
   // Validasi form sebelum menyimpan
   if (!formStore.namaArsip || !formStore.selectedUnit || !formStore.selectedLocation || !formStore.selectedClassification || !formStore.selectedStatus) {
     formStore.isFormValid = false;
-    return; // Tidak lanjutkan jika ada field yang kosong
+    return;
   }
 
   formStore.isFormValid = true;
@@ -125,17 +124,25 @@ const handleSave = () => {
     user_id: 1, // Ganti dengan user ID yang sesuai
   };
 
-  saveArsip(data).then(() => {
-    clearDraft(); // Menghapus draft setelah berhasil disimpan
-    showSnackbar('Save Arsip berhasil!'); // Menampilkan snackbar
-    setTimeout(() => {
-      navigateTo('/arsip/list_arsip'); // Navigasi setelah 3 detik untuk memberi waktu pada snackbar
-    }, 2000); // Navigasi setelah 3 detik
-  });
+  try {
+  await saveArsip(data);
+  clearDraft();
+  showSnackbar('Save Arsip berhasil!', 'success');
+  setTimeout(() => {
+    navigateTo('/arsip/list_arsip');
+  }, 2000);
+} catch (error) {
+  // Ambil semua pesan error dari backend GraphQL
+  const errorMessages = error.map(err => err.message).join(', ') 
+    || 'Terjadi kesalahan saat menyimpan arsip';
+  
+  showSnackbar(errorMessages, 'error');
+}
 };
 
-const showSnackbar = (message) => {
+const showSnackbar = (message, color = 'success') => {
   snackbar.value.message = message;
+  snackbar.value.color = color;
   snackbar.value.show = true;
   setTimeout(() => {
     snackbar.value.show = false;
@@ -146,6 +153,16 @@ const showSnackbar = (message) => {
 </script>
 
 <template>
+    <!-- Snackbar Notification -->
+    <VSnackbar
+    v-model="snackbar.show"
+    :color="snackbar.color"
+    top
+    :timeout="2000"
+    multi-line
+  >
+    {{ snackbar.message }}
+  </VSnackbar>
   <div>
     <div class="d-flex flex-wrap justify-center justify-md-space-between gap-4 mb-6">
       <div class="d-flex flex-column justify-center">
@@ -210,14 +227,12 @@ const showSnackbar = (message) => {
                     :rules="[value => !!value || 'Lokasi Arsip wajib dipilih']"
                   />
               </VCol>
-              <VCol>
-                <VLabel>
-                  Deskripsi Arsip
-                </VLabel>
-                <ProductDescriptionEditor
-                  v-model="formStore.content"
+              <VCol cols="12">
+                <VTextField
+                  label="Deskripsi Arsip"
                   placeholder="Deskripsi Arsip"
-                  class="border mt-1 rounded"
+                  v-model="formStore.content"
+                  :rules="[value => !!value || 'Deskripsi Arsip wajib diisi']"
                 />
               </VCol>
             </VRow>
@@ -301,16 +316,7 @@ const showSnackbar = (message) => {
         </VCard>
       </VCol>
     </VRow>
-    <!-- Snackbar Notification -->
-    <VSnackbar
-      v-model="snackbar.show"
-      :color="snackbar.color"
-      top
-      :timeout="2000"
-      multi-line
-    >
-      {{ snackbar.message }}
-    </VSnackbar>
+
   </div>
 </template>
 

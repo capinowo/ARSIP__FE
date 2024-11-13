@@ -1,4 +1,5 @@
 <script setup>
+import Snackbar from '@/components/Snackbar.vue';
 import { getSelectedRoleToken } from '@/middleware/auth';
 import AddNewMasterLokasi from '@/views/apps/master-lokasi/AddNewMasterLokasi.vue';
 import DeleteLokasi from '@/views/apps/master-lokasi/DeleteMasterLokasi.vue';
@@ -17,6 +18,7 @@ const itemsPerPage = ref(10);
 const currentPage = ref(1);
 const selectedLocation = ref({});
 const unitNames = ref({}); // Object to store unit names by id
+const snackbarRef = ref(null);
 
 // Table headers
 const headers = [
@@ -108,6 +110,7 @@ const fetchLocations = async () => {
     }
   } catch (error) {
     console.error('Error fetching locations:', error);
+    snackbarRef.value.showSnackbar('This is an error message', 'error');
   } finally {
     isLoading.value = false;
   }
@@ -151,6 +154,7 @@ const createLocation = async (newLocationData) => {
     }
   } catch (error) {
     console.error('Error creating location:', error);
+    snackbarRef.value.showSnackbar('This is an error message', 'error');
   } finally {
     isAddLocationDrawerOpen.value = false;
   }
@@ -190,6 +194,7 @@ const handleDeleteLocation = async (locationId) => {
     }
   } catch (error) {
     console.error('Error deleting location:', error);
+    snackbarRef.value.showSnackbar('This is an error message', 'error');
   } finally {
     isDeleteDialogOpen.value = false;
     locationToDelete.value = null;
@@ -252,6 +257,7 @@ const updateLocation = async (updatedLocationData) => {
     }
   } catch (error) {
     console.error('Error updating location:', error);
+    snackbarRef.value.showSnackbar('This is an error message', 'error');
   } finally {
     isEditLocationDrawerOpen.value = false;
   }
@@ -320,6 +326,7 @@ onMounted(() => {
         </VDataTable>
       </VCard>
     </div>
+    <Snackbar ref="snackbarRef" />
 
     <AddNewMasterLokasi
       :is-drawer-open="isAddLocationDrawerOpen"
