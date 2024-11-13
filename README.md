@@ -10,3 +10,5 @@ NUXT_PUBLIC_API_BASE_URL=https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip
 NODE_ENV=development
 
 - npm run dev
+
+user = super / 12345678
