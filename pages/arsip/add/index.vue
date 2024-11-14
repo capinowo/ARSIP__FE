@@ -10,7 +10,7 @@ import { computed, onMounted, ref } from 'vue';
 definePageMeta({
   middleware: 'auth-middleware',
 })
-
+const route = useRoute();
 const locationStore = useLocationStore();
 const selectedLocation = ref(null);
 const formStore = useFormStore();

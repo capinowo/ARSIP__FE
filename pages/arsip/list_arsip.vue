@@ -158,9 +158,10 @@ const deleteArchive = async (id) => {
   }
 };
 
-const detailArchive = item => {
-  console.log('Detail archive:', item)
-}
+const detailArchive = (item) => {
+  router.push(`/arsip/${item.id}/detail`); // Mengarahkan ke halaman detail dengan ID dinamis
+};
+
 
 onMounted(() => {
   fetchArchives()
@@ -218,19 +219,21 @@ onMounted(() => {
           <!-- Slot for Actions column -->
           <template #item.actions="{ item }">
             <div class="d-flex">
+              <!-- Tombol untuk melihat detail -->
               <VBtn
                 icon
                 style="margin-inline-end: 6px;"
                 @click="detailArchive(item)"
               >
-              <VIcon>ri-todo-line</VIcon>
+                <VIcon>ri-todo-line</VIcon>
               </VBtn>
+              <!-- Tombol untuk menghapus -->
               <VBtn
-          icon
-          @click="openDeleteDialog(item)"
-        >
-          <VIcon>ri-delete-bin-2-fill</VIcon>
-        </VBtn>
+                icon
+                @click="openDeleteDialog(item)"
+              >
+                <VIcon>ri-delete-bin-2-fill</VIcon>
+              </VBtn>
             </div>
           </template>
         </VDataTable>
