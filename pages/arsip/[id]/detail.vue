@@ -220,10 +220,10 @@ const isConfirmDialogVisible = ref(false);
           <hr class="mb-6">
 
           <!-- Menampilkan data dari lokasi -->
-          <p><strong>Nama Lokasi:</strong> {{ archiveDetail.location?.name }}</p>
-          <p><strong>Nama Rak:</strong> {{ archiveDetail.location?.rack_name }}</p>
-          <p><strong>Nama Ruangan:</strong> {{ archiveDetail.location?.room_name }}</p>
           <p><strong>Nama Gedung:</strong> {{ archiveDetail.location?.building_name }}</p>
+          <p><strong>Nama Lokasi:</strong> {{ archiveDetail.location?.name }}</p>
+          <p><strong>Nama Ruangan:</strong> {{ archiveDetail.location?.room_name }}</p>
+          <p><strong>Nama Rak:</strong> {{ archiveDetail.location?.rack_name }}</p>
           <p><strong>Nama Box:</strong> {{ archiveDetail.location?.box_name }}</p>
 
           <h5>Pengguna</h5>

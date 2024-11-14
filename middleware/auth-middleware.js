@@ -14,9 +14,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
     if (!selectedRoleToken) {
       clearSelectedRoleToken();
-      navigateTo('/login', { replace: true }).then(() => {
-        window.location.reload();
-      });
+      return navigateTo('/login');
     }
 
     try {
@@ -30,9 +28,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
       if (decodedRole.exp < currentTime) {
         console.log("Token expired.");
         clearSelectedRoleToken();
-        navigateTo('/login', { replace: true }).then(() => {
-          window.location.reload();
-        });
+        return navigateTo('/login');
       }
 
       useState('selectedRole', () => decodedRole);
@@ -42,10 +38,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
         'lokasi-dashboard': ['/', 'index', 'master-master_lokasi'],
         'dashboard-arsip': ['/', 'index', 'arsip-list_arsip','arsip-arsip_inactive','arsip-arsip_usul_musnah','arsip-arsip_musnah'],
         'lokasi-dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'master-master_lokasi'],
-        'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'master-master_jra',
-           'master-master_lokasi', 'arsip-list_arsip','arsip-arsip_inactive','arsip-arsip_usul_musnah','arsip-arsip_musnah','arsip-add',
-          'arsip-[id]-detail'
-          ]
+        'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip','arsip-arsip_inactive','arsip-arsip_usul_musnah','arsip-arsip_musnah','arsip-add']
       };
 
       // Get user's permissions from the token
@@ -79,3 +72,4 @@ export default defineNuxtRouteMiddleware((to, from) => {
     }
   }
 });
+
