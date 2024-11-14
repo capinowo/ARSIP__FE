@@ -118,7 +118,7 @@ const handleError = () => clearError({ redirect: '/' })
 @use "@core/scss/template/pages/misc";
 
 .misc-footer-tree,
- .misc-footer-tree-1 {
+.misc-footer-tree-1 {
   position: absolute;
 }
 
