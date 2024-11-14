@@ -13,6 +13,13 @@ const archiveDetail = ref(null);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 
+// Fungsi untuk memformat tanggal
+const formatDate = (dateStr) => {
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('id-ID', options); // Menggunakan 'id-ID' untuk format Indonesia
+};
+
 
 const fetchArchiveDetail = async () => {
   const query = `
@@ -75,6 +82,7 @@ const fetchArchiveDetail = async () => {
       id
       name
     }
+    created_at
   }
 }
   `;
@@ -194,6 +202,7 @@ const isConfirmDialogVisible = ref(false);
           <!-- <p><strong>Lokasi ID:</strong> {{ archiveDetail.location_id }}</p> -->
           <p><strong>Jenis Arsip:</strong> {{ archiveDetail.archiveType?.name }}</p>
           <p><strong>Status Arsip:</strong> {{ archiveDetail.archiveStatus?.name }}</p>
+          <p><strong>Di buat pada:</strong> {{ formatDate(archiveDetail.created_at) }}</p>
 
           <!-- tolong kasih garis dan judul  -->
           <h5>Klasifikasi</h5>
