@@ -1,6 +1,6 @@
 import "./chunk-BSPL5VGI.js";
 
-// node_modules/.pnpm/pinia@2.1.7_typescript@5.5.4_vue@3.3.13_typescript@5.5.4_/node_modules/pinia/dist/pinia.mjs
+// node_modules/pinia/dist/pinia.mjs
 import { hasInjectionContext, inject, toRaw, watch, unref, markRaw, effectScope, ref, isVue2, isRef, isReactive, set, getCurrentScope, onScopeDispose, getCurrentInstance, reactive, toRef, del, nextTick, computed, toRefs } from "vue-demi";
 import { setupDevtoolsPlugin } from "@vue/devtools-api";
 var activePinia;

@@ -1,9 +1,9 @@
 import "./chunk-BSPL5VGI.js";
 
-// node_modules/.pnpm/@casl+vue@2.2.2_@casl+ability@6.7.1_vue@3.3.13_typescript@5.5.4_/node_modules/@casl/vue/dist/es6m/index.mjs
+// node_modules/@casl/vue/dist/es6m/index.mjs
 import { ref as t3, inject as i4, provide as n3, defineComponent as r2 } from "vue";
 
-// node_modules/.pnpm/@ucast+core@1.10.2/node_modules/@ucast/core/dist/es6m/index.mjs
+// node_modules/@ucast/core/dist/es6m/index.mjs
 var t = class {
   constructor(t4, e4) {
     this.operator = t4, this.value = e4, Object.defineProperty(this, "t", { writable: true });
@@ -147,7 +147,7 @@ function v(t4, e4) {
 }
 var x = j.prototype.parseInstruction;
 
-// node_modules/.pnpm/@ucast+mongo@2.4.3/node_modules/@ucast/mongo/dist/es6m/index.mjs
+// node_modules/@ucast/mongo/dist/es6m/index.mjs
 function s2(e4, t4) {
   if (!Array.isArray(t4)) throw new Error(`"${e4.name}" expects value to be an array`);
 }
@@ -210,7 +210,7 @@ var P = class extends j {
 };
 var z = N;
 
-// node_modules/.pnpm/@ucast+js@3.0.4/node_modules/@ucast/js/dist/es6m/index.mjs
+// node_modules/@ucast/js/dist/es6m/index.mjs
 function n2(r3, t4, n4) {
   for (let e4 = 0, o3 = r3.length; e4 < o3; e4++) if (0 === n4(r3[e4], t4)) return true;
   return false;
@@ -303,7 +303,7 @@ var E2 = Object.freeze({ __proto__: null, or: p3, nor: g2, and: m3, not: y3, eq:
 var M = Object.assign({}, E2, { in: N2 });
 var S = l3(M);
 
-// node_modules/.pnpm/@ucast+mongo2js@1.3.4/node_modules/@ucast/mongo2js/dist/es6m/index.mjs
+// node_modules/@ucast/mongo2js/dist/es6m/index.mjs
 function i3(o3) {
   return o3 instanceof Date ? o3.getTime() : o3 && "function" == typeof o3.toJSON ? o3.toJSON() : o3;
 }
@@ -319,7 +319,7 @@ function p4(e4, c4, f4) {
 var a3 = p4(z, M);
 var u4 = p4(["$and", "$or"].reduce((o3, t4) => (o3[t4] = Object.assign({}, o3[t4], { type: "field" }), o3), Object.assign({}, z, { $nor: Object.assign({}, z.$nor, { type: "field", parse: O.compound }) })), M, { forPrimitives: true });
 
-// node_modules/.pnpm/@casl+ability@6.7.1/node_modules/@casl/ability/dist/es6m/index.mjs
+// node_modules/@casl/ability/dist/es6m/index.mjs
 function O4(t4) {
   return Array.isArray(t4) ? t4 : [t4];
 }
@@ -579,7 +579,7 @@ var ForbiddenError = class extends yt {
 ForbiddenError.P = dt;
 var pt = Object.freeze({ __proto__: null });
 
-// node_modules/.pnpm/@casl+vue@2.2.2_@casl+ability@6.7.1_vue@3.3.13_typescript@5.5.4_/node_modules/@casl/vue/dist/es6m/index.mjs
+// node_modules/@casl/vue/dist/es6m/index.mjs
 function reactiveAbility(i5) {
   if (Object.hasOwn(i5, "possibleRulesFor")) return i5;
   const n4 = t3(true);

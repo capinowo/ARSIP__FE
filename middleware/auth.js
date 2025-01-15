@@ -3,6 +3,7 @@ import { useCookie } from 'nuxt/app'
 
 const AUTH_TOKEN_KEY = 'auth_token'
 const ROLE_TOKEN_KEY = 'role_token'
+const UNIT_TOKEN_KEY = 'unit_token'
 
 // Store auth token in a cookie
 export function setAuthToken(token) {
@@ -44,4 +45,22 @@ export function clearSelectedRoleToken() {
   const roleToken = useCookie(ROLE_TOKEN_KEY)
 
   roleToken.value = null
+}
+
+export function setSelectedUnitToken(token) {
+  const unitToken = useCookie(UNIT_TOKEN_KEY)
+
+  unitToken.value = token
+}
+
+export function getSelectedUnitToken() {
+  const unitToken = useCookie(UNIT_TOKEN_KEY)
+
+  return unitToken.value
+}
+
+export function clearSelectedUnitToken() {
+  const unitToken = useCookie(UNIT_TOKEN_KEY)
+
+  unitToken.value = null
 }
