@@ -1,118 +1,124 @@
+<!-- eslint-disable camelcase -->
 <script setup>
-import { useClassificationStore } from '@/stores/classificationStore';
-import { useFormStore } from '@/stores/formStoreArsip';
-import { useLocationStore } from '@/stores/locationStore';
-import { saveArsip } from '@/stores/saveArsip';
-import { useStatusStore } from '@/stores/statusStore';
-import { useUnitStore } from '@/stores/unitStore';
-import { computed, onMounted, ref } from 'vue';
+import { useClassificationStore } from '@/stores/classificationStore'
+import { useFormStore } from '@/stores/formStoreArsip'
+import { useLocationStore } from '@/stores/locationStore'
+import { saveArsip } from '@/stores/saveArsip'
+import { useStatusStore } from '@/stores/statusStore'
+import { useUnitStore } from '@/stores/unitStore'
+import { computed, onMounted, ref } from 'vue'
 
 definePageMeta({
   middleware: 'auth-middleware',
 })
-const route = useRoute();
-const locationStore = useLocationStore();
-const selectedLocation = ref(null);
-const formStore = useFormStore();
-const content = ref(null);
+
+const route = useRoute()
+const locationStore = useLocationStore()
+const selectedLocation = ref(null)
+const formStore = useFormStore()
+const content = ref(null)
 
 
 const typeOptions = computed(() => [
-      { id: 1, name: 'Subtantif' },
-      { id: 2, name: 'Fasilitatif' },
-    ]);
+  { id: 1, name: 'Subtantif' },
+  { id: 2, name: 'Fasilitatif' },
+])
 
 const clearDraft = () => {
-  formStore.clearDraft();
-};
+  formStore.clearDraft()
+}
 
 const snackbar = ref({
   show: false,
   message: '',
   color: 'success',  // Set warna snackbar (success/error)
-});
+})
 
 // Mendapatkan options lokasi dari store
 const locationOptions = computed(() => {
   return locationStore.locations.map(item => ({
     id: item.id,
     name: `${item.name} - ${item.building_name}`,  // Menampilkan nama dan building name
-  }));
-});
+  }))
+})
 
 // Ambil data lokasi saat komponen di-mount
 onMounted(() => {
-  locationStore.fetchLocations(); // Memanggil fetchLocations untuk mengambil data
-});
+  locationStore.fetchLocations() // Memanggil fetchLocations untuk mengambil data
+})
 
 // Menggunakan store untuk mengambil unit
-const unitStore = useUnitStore();
-const selectedUnit = ref(null);
+const unitStore = useUnitStore()
+const selectedUnit = ref(null)
 
 // Mendapatkan options unit dari store
 const unitOptions = computed(() => {
   return unitStore.units.map(item => ({
     id: item.id,
     name: item.name,
-  }));
-});
+  }))
+})
 
 // Ambil data unit saat komponen di-mount
 onMounted(() => {
-  unitStore.fetchUnits(); // Memanggil fetchUnits untuk mengambil data
-});
+  unitStore.fetchUnits() // Memanggil fetchUnits untuk mengambil data
+})
 
-const retentionPeriod = ref(null);
-const currentDate = ref(''); // Variabel untuk menyimpan tanggal saat ini
+const retentionPeriod = ref(null)
+const currentDate = ref('') // Variabel untuk menyimpan tanggal saat ini
 
 onMounted(() => {
-  const date = new Date();
-  const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long' };
-  currentDate.value = date.toLocaleDateString('id-ID', options); // Format dalam bahasa Indonesia
-});
+  const date = new Date()
+  const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long' }
+
+  currentDate.value = date.toLocaleDateString('id-ID', options) // Format dalam bahasa Indonesia
+})
 
 // Mengambil data dari classificationStore
-const classificationStore = useClassificationStore();
-onMounted(() => {
-  classificationStore.fetchClassifications();
-});
+const classificationStore = useClassificationStore()
 
-const selectedClassification = ref(null);
+onMounted(() => {
+  classificationStore.fetchClassifications()
+})
+
+const selectedClassification = ref(null)
 
 // Format options untuk klasifikasi
 const classificationOptions = computed(() => {
   return classificationStore.classifications.map(item => ({
     text: `${item.classification_code} - ${item.description}`,  // Properti 'text' yang akan ditampilkan
     value: item.id,  // ID sebagai nilai
-  }));
-});
+  }))
+})
 
 // Mengambil data dari statusStore
-const statusStore = useStatusStore();
-const selectedStatus = ref(null);
+const statusStore = useStatusStore()
+const selectedStatus = ref(null)
 
 onMounted(() => {
-  statusStore.fetchStatuses();
-});
+  statusStore.fetchStatuses()
+})
 
 // Format options untuk status
 const statusOptions = computed(() => {
   return statusStore.statuses.map(item => ({
     name: item.name,  // Properti 'name' yang akan ditampilkan
     id: item.id,      // ID sebagai nilai
-  }));
-});
+  }))
+})
 
 const handleSave = async () => { // Tambahkan `async` di sini
   // Validasi form sebelum menyimpan
   if (!formStore.namaArsip || !formStore.selectedUnit || !formStore.selectedLocation || !formStore.selectedClassification || !formStore.selectedStatus) {
-    formStore.isFormValid = false;
-    return;
+    formStore.isFormValid = false
+    
+    return
   }
 
-  formStore.isFormValid = true;
+  formStore.isFormValid = true
 
   const data = {
+    // eslint-disable-next-line camelcase
     archive_status_id: formStore.selectedStatus,
     archive_type_id: formStore.selectedType,
     classification_id: formStore.selectedClassification,
@@ -122,39 +128,39 @@ const handleSave = async () => { // Tambahkan `async` di sini
     title: formStore.namaArsip,
     unit_id: formStore.selectedUnit,
     user_id: 1, // Ganti dengan user ID yang sesuai
-  };
+  }
 
   try {
-  await saveArsip(data);
-  clearDraft();
-  showSnackbar('Save Arsip berhasil!', 'success');
-  setTimeout(() => {
-    navigateTo('/arsip/list_arsip');
-  }, 2000);
-} catch (error) {
+    await saveArsip(data)
+    clearDraft()
+    showSnackbar('Save Arsip berhasil!', 'success')
+    setTimeout(() => {
+      navigateTo('/arsip/list_arsip')
+    }, 2000)
+  } catch (error) {
   // Ambil semua pesan error dari backend GraphQL
-  const errorMessages = error.map(err => err.message).join(', ') 
-    || 'Terjadi kesalahan saat menyimpan arsip';
+    const errorMessages = error.map(err => err.message).join(', ') 
+    || 'Terjadi kesalahan saat menyimpan arsip'
   
-  showSnackbar(errorMessages, 'error');
+    showSnackbar(errorMessages, 'error')
+  }
 }
-};
 
 const showSnackbar = (message, color = 'success') => {
-  snackbar.value.message = message;
-  snackbar.value.color = color;
-  snackbar.value.show = true;
+  snackbar.value.message = message
+  snackbar.value.color = color
+  snackbar.value.show = true
   setTimeout(() => {
-    snackbar.value.show = false;
-  }, 2000); // Snackbar akan hilang setelah 3 detik
-};
+    snackbar.value.show = false
+  }, 2000) // Snackbar akan hilang setelah 3 detik
+}
 
 // Konten deskripsi arsip
 </script>
 
 <template>
-    <!-- Snackbar Notification -->
-    <VSnackbar
+  <!-- Snackbar Notification -->
+  <VSnackbar
     v-model="snackbar.show"
     :color="snackbar.color"
     top
@@ -173,16 +179,25 @@ const showSnackbar = (message, color = 'success') => {
       </div>
 
       <div class="d-flex gap-4 align-center flex-wrap">
-        <!-- <VBtn
+        <!--
+          <VBtn
           variant="outlined"
           color="secondary"
-        >
+          >
           Buang
-        </VBtn> -->
-        <VBtn @click="clearDraft" variant="outlined" color="primary">
+          </VBtn> 
+        -->
+        <VBtn
+          variant="outlined"
+          color="primary"
+          @click="clearDraft"
+        >
           Clear Draft
-        </VBtn >
-        <VBtn @click="handleSave" color="primary">
+        </VBtn>
+        <VBtn
+          color="primary"
+          @click="handleSave"
+        >
           Simpan Arsip
         </VBtn>
       </div>
@@ -199,39 +214,45 @@ const showSnackbar = (message, color = 'success') => {
             <VRow>
               <VCol cols="12">
                 <VTextField
+                  v-model="formStore.namaArsip"
                   label="Nama Arsip"
                   placeholder="Nama Arsip"
-                  v-model="formStore.namaArsip"
                   :rules="[value => !!value || 'Nama Arsip wajib diisi']"
                 />
               </VCol>
               <VCol cols="12">
+                <VTextField
+                  label="Prepend"
+                  placeholder="Placeholder Text"
+                />
+              </VCol>
+              <VCol cols="12">
                 <VAutocomplete
+                  v-model="formStore.selectedUnit"
                   label="Unit"
                   placeholder="Unit"
                   :items="unitOptions"
                   item-title="name"
                   item-value="id"
-                  v-model="formStore.selectedUnit"
                   :rules="[value => !!value || 'Unit wajib dipilih']"
                 />
               </VCol>
               <VCol cols="12">
                 <VAutocomplete
-                    label="Lokasi Arsip"
-                    placeholder="Select Lokasi"
-                    :items="locationOptions"
-                    item-title="name"
-                    item-value="id"
-                    v-model="formStore.selectedLocation"
-                    :rules="[value => !!value || 'Lokasi Arsip wajib dipilih']"
-                  />
+                  v-model="formStore.selectedLocation"
+                  label="Lokasi Arsip"
+                  placeholder="Select Lokasi"
+                  :items="locationOptions"
+                  item-title="name"
+                  item-value="id"
+                  :rules="[value => !!value || 'Lokasi Arsip wajib dipilih']"
+                />
               </VCol>
               <VCol cols="12">
                 <VTextField
+                  v-model="formStore.content"
                   label="Deskripsi Arsip"
                   placeholder="Deskripsi Arsip"
-                  v-model="formStore.content"
                   :rules="[value => !!value || 'Deskripsi Arsip wajib diisi']"
                 />
               </VCol>
@@ -269,30 +290,30 @@ const showSnackbar = (message, color = 'success') => {
           <VCardText>
             <div class="d-flex flex-column gap-y-4">
               <VAutocomplete
+                v-model="formStore.selectedClassification"
                 label="Klasifikasi"
                 placeholder="Select Klasifikasi"
-                :items="classificationOptions"
+                :items="classificationOptions" 
                 item-title="text" 
-                item-value="value" 
-                v-model="formStore.selectedClassification"
+                item-value="value"
                 :rules="[value => !!value || 'Klasifikasi wajib dipilih']"
               />
               <VSelect
-                label="Select Status"
-                :items="statusOptions"
-                item-title="name"  
-                item-value="id"   
-                placeholder="Select Status"
                 v-model="formStore.selectedStatus"
+                label="Select Status"
+                :items="statusOptions"  
+                item-title="name"   
+                item-value="id"
+                placeholder="Select Status"
                 :rules="[value => !!value || 'Status wajib dipilih']"
               />
               <VSelect
+                v-model="formStore.selectedType"
                 label="Select Type"
                 :items="typeOptions"
                 item-title="name"
                 item-value="id"
                 placeholder="Select Type"
-                v-model="formStore.selectedType"
                 :rules="[value => !!value || 'Type wajib dipilih']"
               />
               <VTextField
@@ -302,10 +323,10 @@ const showSnackbar = (message, color = 'success') => {
                 readonly
               />
               <VTextField
+                v-model="formStore.retentionPeriod"
                 label="Periode Retensi"
                 prepend-icon="ri-calendar-schedule-line"
                 placeholder="Masukkan jumlah tahun"
-                v-model="formStore.retentionPeriod"
                 :rules="[value => !!value || 'Periode Retensi wajib diisi']"
                 type="number"
                 min="1"
@@ -316,7 +337,6 @@ const showSnackbar = (message, color = 'success') => {
         </VCard>
       </VCol>
     </VRow>
-
   </div>
 </template>
 

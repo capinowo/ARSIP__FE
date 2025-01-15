@@ -1,12 +1,12 @@
 // composables/useLocation.js
-import { getSelectedRoleToken } from '@/middleware/auth';
-import { ref } from 'vue';
+import { getSelectedRoleToken } from '@/middleware/auth'
+import { ref } from 'vue'
 
 export default function useLocation() {
-  const isLoading = ref(false);
-  const error = ref(null);
+  const isLoading = ref(false)
+  const error = ref(null)
 
-  const fetchLocation = async (locationId) => {
+  const fetchLocation = async locationId => {
     const query = `
       query GetLocation($getLocationId: Int!) {
         getLocation(id: $getLocationId) {
@@ -20,7 +20,7 @@ export default function useLocation() {
           }
         }
       }
-    `;
+    `
 
     try {
       const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
@@ -33,20 +33,22 @@ export default function useLocation() {
           query,
           variables: { getLocationId: locationId },
         }),
-      });
+      })
 
-      const result = await response.json();
+      const result = await response.json()
       if (result.errors) {
-        console.error('GraphQL errors:', result.errors);
-        return null;
+        console.error('GraphQL errors:', result.errors)
+        
+        return null
       }
 
-      return result.data?.getLocation || null;
+      return result.data?.getLocation || null
     } catch (error) {
-      console.error('Error fetching location:', error);
-      return null;
+      console.error('Error fetching location:', error)
+      
+      return null
     }
-  };
+  }
 
-  return { fetchLocation };
+  return { fetchLocation }
 }

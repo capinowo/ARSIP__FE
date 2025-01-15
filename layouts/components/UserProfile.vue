@@ -1,65 +1,68 @@
+<!-- eslint-disable no-restricted-imports -->
 <script setup>
-import avatar1 from '@/images/avatars/avatar-1.png';
-import { clearAuthToken, clearSelectedRoleToken, getSelectedRoleToken } from '@/middleware/auth';
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
-import { VSkeletonLoader } from 'vuetify/components';
+import avatar1 from '@/images/avatars/avatar-1.png'
+import { clearAuthToken, clearSelectedRoleToken, getSelectedRoleToken } from '@/middleware/auth'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { VSkeletonLoader } from 'vuetify/components'
 
 
-const router = useRouter();
-const userRole = ref(''); // Store the decoded role name here
-const isLoading = ref(false);  // Flag to control loading state
+const router = useRouter()
+const userRole = ref('') // Store the decoded role name here
+const isLoading = ref(false)  // Flag to control loading state
 
 // Decode the role from `selectedRoleToken`
 onMounted(() => {
-  const selectedRoleToken = getSelectedRoleToken();
+  const selectedRoleToken = getSelectedRoleToken()
   if (selectedRoleToken) {
     try {
       // Decode and parse the token payload
-      const payload = JSON.parse(atob(selectedRoleToken.split('.')[1]));
-      userRole.value = payload?.selectedRole?.name || 'Unknown Role';
+      const payload = JSON.parse(atob(selectedRoleToken.split('.')[1]))
+
+      userRole.value = payload?.selectedRole?.name || 'Unknown Role'
     } catch (error) {
-      console.error('Error decoding selectedRoleToken:', error);
-      userRole.value = 'Unknown Role';
+      console.error('Error decoding selectedRoleToken:', error)
+      userRole.value = 'Unknown Role'
     }
   } else {
-    userRole.value = 'Unknown Role'; // Default value if no token is found
+    userRole.value = 'Unknown Role' // Default value if no token is found
   }
-});
+})
 
 // Add the "Role" navigation item to `userProfileList`
 const userProfileList = [
   { type: 'navItem', title: 'Select Role', icon: 'ri-shield-user-line', value: '/role' },
   { type: 'divider' },
+
   // Additional menu items can be added here if needed
-];
+]
 
 // Navigate to the route specified in each menu item with 3 seconds delay
 async function navigateTo(path) {
   if (path === '/role') {
     // Start loading state
-    isLoading.value = true;
+    isLoading.value = true
 
     // First, navigate to /arsip/list_arsip
-    await router.push('/arsip/list_arsip');
+    await router.push('/arsip/list_arsip')
 
     // Simulate 3-second delay before navigating to /role
     setTimeout(() => {
-      isLoading.value = false;  // Stop loading state
-      router.push('/role');  // After 3 seconds, navigate to /role
-    }, 100);
+      isLoading.value = false  // Stop loading state
+      router.push('/role')  // After 3 seconds, navigate to /role
+    }, 100)
   } else {
     // For other paths, navigate directly
-    router.push(path);
+    router.push(path)
   }
 }
 
 // Handle logout
 function logout() {
-  clearAuthToken();
-  clearSelectedRoleToken();
-  router.push('/login');
+  clearAuthToken()
+  clearSelectedRoleToken()
+  router.push('/login')
 }
 </script>
 
@@ -162,8 +165,14 @@ function logout() {
   </VBadge>
 
   <!-- Optional: Display a loading overlay while waiting -->
-  <div v-if="isLoading" class="loading-overlay">
-    <VSkeletonLoader size="64" color="primary" />
+  <div
+    v-if="isLoading"
+    class="loading-overlay"
+  >
+    <VSkeletonLoader
+      size="64"
+      color="primary"
+    />
     <span>Loading...</span>
   </div>
 </template>

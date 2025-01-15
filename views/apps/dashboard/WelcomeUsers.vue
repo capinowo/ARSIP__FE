@@ -1,9 +1,9 @@
 <script setup>
-import illustrationJohn2 from '@/images/illustration-john-2.png';
-import { getSelectedRoleToken } from '@/middleware/auth'; // Corrected the import for named export
-import { computed, onMounted, ref } from 'vue';
+import illustrationJohn2 from '@/images/illustration-john-2.png'
+import { getSelectedRoleToken } from '@/middleware/auth' // Corrected the import for named export
+import { computed, onMounted, ref } from 'vue'
 
-const selectedRoleToken = ref('');
+const selectedRoleToken = ref('')
 
 // Adjusted tokenData to match the selectedRoleToken structure
 const tokenData = ref({
@@ -14,17 +14,17 @@ const tokenData = ref({
   selectedUnit: null,
   iat: null,
   exp: null,
-});
+})
 
 // Load selectedRoleToken from localStorage, decode it, and set expiration time
 onMounted(() => {
-  selectedRoleToken.value = getSelectedRoleToken();
+  selectedRoleToken.value = getSelectedRoleToken()
 
   if (selectedRoleToken.value) {
     try {
       // Split the token and decode the payload
-      const payload = selectedRoleToken.value.split('.')[1];
-      const decoded = JSON.parse(atob(payload));
+      const payload = selectedRoleToken.value.split('.')[1]
+      const decoded = JSON.parse(atob(payload))
 
       tokenData.value = {
         userId: decoded.userId,
@@ -34,33 +34,33 @@ onMounted(() => {
         selectedUnit: decoded.selectedUnit || 'None',
         iat: decoded.iat ? new Date(decoded.iat * 1000).toLocaleString() : null,
         exp: decoded.exp ? new Date(decoded.exp * 1000).toLocaleString() : null,
-      };
+      }
 
       // Store expiration time in a separate variable
       if (decoded.exp) {
-        tokenExpiration.value = decoded.exp * 1000; // Store the expiration as a timestamp
+        tokenExpiration.value = decoded.exp * 1000 // Store the expiration as a timestamp
       }
 
     } catch (error) {
-      console.error('Error decoding token:', error);
+      console.error('Error decoding token:', error)
     }
   } else {
     console.warn('selectedRoleToken is not available.')
   }
-});
+})
 
-const tokenExpiration = ref('');
+const tokenExpiration = ref('')
 
 // Computed variable to calculate remaining time in minutes
 const remainingMinutes = computed(() => {
-  if (!tokenExpiration.value) return null;
-  const expirationTime = Number(tokenExpiration.value);
-  const currentTime = Date.now();
-  const remainingTime = expirationTime - currentTime;
+  if (!tokenExpiration.value) return null
+  const expirationTime = Number(tokenExpiration.value)
+  const currentTime = Date.now()
+  const remainingTime = expirationTime - currentTime
 
   // Convert milliseconds to minutes
-  return remainingTime > 0 ? Math.floor(remainingTime / 1000 / 60) : 0;
-});
+  return remainingTime > 0 ? Math.floor(remainingTime / 1000 / 60) : 0
+})
 </script>
 
 <template>

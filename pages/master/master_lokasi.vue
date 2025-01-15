@@ -1,24 +1,25 @@
+<!-- eslint-disable camelcase -->
 <script setup>
-import Snackbar from '@/components/Snackbar.vue';
-import { getSelectedRoleToken } from '@/middleware/auth';
-import AddNewMasterLokasi from '@/views/apps/master-lokasi/AddNewMasterLokasi.vue';
-import DeleteLokasi from '@/views/apps/master-lokasi/DeleteMasterLokasi.vue';
-import EditLocation from '@/views/apps/master-lokasi/EditMasterLokasi.vue';
-import { onMounted, ref } from 'vue';
+import Snackbar from '@/components/Snackbar.vue'
+import { getSelectedRoleToken } from '@/middleware/auth'
+import AddNewMasterLokasi from '@/views/apps/master-lokasi/AddNewMasterLokasi.vue'
+import DeleteLokasi from '@/views/apps/master-lokasi/DeleteMasterLokasi.vue'
+import EditLocation from '@/views/apps/master-lokasi/EditMasterLokasi.vue'
+import { onMounted, ref } from 'vue'
 
-const isDeleteDialogOpen = ref(false);
-const locationToDelete = ref(null);
-const isAddLocationDrawerOpen = ref(false);
-const isEditLocationDrawerOpen = ref(false);
-const searchQuery = ref('');
-const locations = ref([]);
-const isLoading = ref(false);
-const totalLocations = ref(0);
-const itemsPerPage = ref(10);
-const currentPage = ref(1);
-const selectedLocation = ref({});
-const unitNames = ref({}); // Object to store unit names by id
-const snackbarRef = ref(null);
+const isDeleteDialogOpen = ref(false)
+const locationToDelete = ref(null)
+const isAddLocationDrawerOpen = ref(false)
+const isEditLocationDrawerOpen = ref(false)
+const searchQuery = ref('')
+const locations = ref([])
+const isLoading = ref(false)
+const totalLocations = ref(0)
+const itemsPerPage = ref(10)
+const currentPage = ref(1)
+const selectedLocation = ref({})
+const unitNames = ref({}) // Object to store unit names by id
+const snackbarRef = ref(null)
 
 // Table headers
 const headers = [
@@ -31,11 +32,11 @@ const headers = [
   { title: 'Loker', key: 'rack_name' },
   { title: 'Kotak', key: 'box_name' },
   { title: 'Aksi', key: 'actions', sortable: false },
-];
+]
 
 // Fetch unit name based on unit_id and store it in unitNames
-const fetchUnit = async (unitId) => {
-  if (unitNames.value[unitId]) return; // Skip if unit already fetched
+const fetchUnit = async unitId => {
+  if (unitNames.value[unitId]) return // Skip if unit already fetched
 
   const query = `
     query GetUnit($getUnitId: Int!) {
@@ -44,11 +45,13 @@ const fetchUnit = async (unitId) => {
         name
       }
     }
-  `;
-  const variables = { getUnitId: unitId };
+  `
+
+  const variables = { getUnitId: unitId }
 
   try {
-    const token = getSelectedRoleToken();
+    const token = getSelectedRoleToken()
+
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
@@ -56,16 +59,16 @@ const fetchUnit = async (unitId) => {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query, variables }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
     if (result.data && result.data.getUnit) {
-      unitNames.value[unitId] = result.data.getUnit.name;
+      unitNames.value[unitId] = result.data.getUnit.name
     }
   } catch (error) {
-    console.error('Error fetching unit:', error);
+    console.error('Error fetching unit:', error)
   }
-};
+}
 
 // Fetch locations and their associated units
 const fetchLocations = async () => {
@@ -84,11 +87,12 @@ const fetchLocations = async () => {
         }
       }
     }
-  `;
+  `
 
-  isLoading.value = true;
+  isLoading.value = true
   try {
-    const token = getSelectedRoleToken();
+    const token = getSelectedRoleToken()
+
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
@@ -96,28 +100,29 @@ const fetchLocations = async () => {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query }),
-    });
+    })
 
-    const result = await response.json();
-    locations.value = result.data.getLocations.data;
-    totalLocations.value = locations.value.length;
+    const result = await response.json()
+
+    locations.value = result.data.getLocations.data
+    totalLocations.value = locations.value.length
 
     // Fetch unit names for each location's unit_id
     for (const location of locations.value) {
       if (location.unit_id) {
-        fetchUnit(location.unit_id);
+        fetchUnit(location.unit_id)
       }
     }
   } catch (error) {
-    console.error('Error fetching locations:', error);
-    snackbarRef.value.showSnackbar('This is an error message', 'error');
+    console.error('Error fetching locations:', error)
+    snackbarRef.value.showSnackbar('This is an error message', 'error')
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
-};
+}
 
 // Function to create a new location
-const createLocation = async (newLocationData) => {
+const createLocation = async newLocationData => {
   const mutation = `
     mutation CreateLocation($data: LocationCreateInput!) {
       createLocation(data: $data) {
@@ -133,11 +138,13 @@ const createLocation = async (newLocationData) => {
         updated_at
       }
     }
-  `;
-  const variables = { data: newLocationData };
+  `
+
+  const variables = { data: newLocationData }
 
   try {
-    const token = getSelectedRoleToken();
+    const token = getSelectedRoleToken()
+
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
@@ -145,40 +152,42 @@ const createLocation = async (newLocationData) => {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query: mutation, variables }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
     if (result.data.createLocation) {
-      locations.value.push(result.data.createLocation); // Tambahkan lokasi baru ke daftar
-      totalLocations.value += 1;
+      locations.value.push(result.data.createLocation) // Tambahkan lokasi baru ke daftar
+      totalLocations.value += 1
     }
   } catch (error) {
-    console.error('Error creating location:', error);
-    snackbarRef.value.showSnackbar('This is an error message', 'error');
+    console.error('Error creating location:', error)
+    snackbarRef.value.showSnackbar('This is an error message', 'error')
   } finally {
-    isAddLocationDrawerOpen.value = false;
+    isAddLocationDrawerOpen.value = false
   }
-};
+}
 
 // Open delete confirmation dialog
-const openDeleteDialog = (locationId) => {
-  locationToDelete.value = locationId;
-  isDeleteDialogOpen.value = true;
-};
+const openDeleteDialog = locationId => {
+  locationToDelete.value = locationId
+  isDeleteDialogOpen.value = true
+}
 
 // Handle confirmed delete action
-const handleDeleteLocation = async (locationId) => {
+const handleDeleteLocation = async locationId => {
   const mutation = `
     mutation DeleteLocation($deleteLocationId: Int!) {
       deleteLocation(id: $deleteLocationId) {
         id
       }
     }
-  `;
-  const variables = { deleteLocationId: locationId };
+  `
+
+  const variables = { deleteLocationId: locationId }
 
   try {
-    const token = getSelectedRoleToken();
+    const token = getSelectedRoleToken()
+
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
@@ -186,29 +195,29 @@ const handleDeleteLocation = async (locationId) => {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query: mutation, variables }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
     if (result.data.deleteLocation) {
-      locations.value = locations.value.filter((loc) => loc.id !== locationId);
+      locations.value = locations.value.filter(loc => loc.id !== locationId)
     }
   } catch (error) {
-    console.error('Error deleting location:', error);
-    snackbarRef.value.showSnackbar('This is an error message', 'error');
+    console.error('Error deleting location:', error)
+    snackbarRef.value.showSnackbar('This is an error message', 'error')
   } finally {
-    isDeleteDialogOpen.value = false;
-    locationToDelete.value = null;
+    isDeleteDialogOpen.value = false
+    locationToDelete.value = null
   }
-};
+}
 
 // Open the edit drawer with the selected location
-const openEditLocation = (location) => {
-  selectedLocation.value = { ...location };
-  isEditLocationDrawerOpen.value = true;
-};
+const openEditLocation = location => {
+  selectedLocation.value = { ...location }
+  isEditLocationDrawerOpen.value = true
+}
 
 // Update location data
-const updateLocation = async (updatedLocationData) => {
+const updateLocation = async updatedLocationData => {
   const mutation = `
     mutation UpdateLocation($data: LocationUpdateInput!, $updateLocationId: Int!) {
       updateLocation(data: $data, id: $updateLocationId) {
@@ -221,7 +230,7 @@ const updateLocation = async (updatedLocationData) => {
         updated_at
       }
     }
-  `;
+  `
 
   const variables = {
     data: {
@@ -234,10 +243,11 @@ const updateLocation = async (updatedLocationData) => {
       unit_id: updatedLocationData.unit_id,
     },
     updateLocationId: updatedLocationData.id,
-  };
+  }
 
   try {
-    const token = getSelectedRoleToken();
+    const token = getSelectedRoleToken()
+
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
@@ -245,27 +255,27 @@ const updateLocation = async (updatedLocationData) => {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query: mutation, variables }),
-    });
+    })
 
-    const result = await response.json();
-    const updatedLocation = result.data.updateLocation;
+    const result = await response.json()
+    const updatedLocation = result.data.updateLocation
 
     // Update the location in the list
-    const index = locations.value.findIndex(loc => loc.id === updatedLocationData.id);
+    const index = locations.value.findIndex(loc => loc.id === updatedLocationData.id)
     if (index !== -1) {
-      locations.value[index] = { ...locations.value[index], ...updatedLocation };
+      locations.value[index] = { ...locations.value[index], ...updatedLocation }
     }
   } catch (error) {
-    console.error('Error updating location:', error);
-    snackbarRef.value.showSnackbar('This is an error message', 'error');
+    console.error('Error updating location:', error)
+    snackbarRef.value.showSnackbar('This is an error message', 'error')
   } finally {
-    isEditLocationDrawerOpen.value = false;
+    isEditLocationDrawerOpen.value = false
   }
-};
+}
 
 onMounted(() => {
-  fetchLocations();
-});
+  fetchLocations()
+})
 </script>
 
 <template>
@@ -313,12 +323,17 @@ onMounted(() => {
           <!-- Actions column with edit and delete buttons -->
           <template #item.actions="{ item }">
             <div class="d-flex">
-              <VBtn icon
-              style="margin-inline-end: 6px;"
-               @click="openEditLocation(item)">
+              <VBtn
+                icon
+                style="margin-inline-end: 6px;"
+                @click="openEditLocation(item)"
+              >
                 <VIcon>ri-edit-2-fill</VIcon>
               </VBtn>
-              <VBtn icon @click="openDeleteDialog(item.id)">
+              <VBtn
+                icon
+                @click="openDeleteDialog(item.id)"
+              >
                 <VIcon>ri-delete-bin-2-fill</VIcon>
               </VBtn>
             </div>
@@ -343,8 +358,8 @@ onMounted(() => {
     />
 
     <DeleteLokasi
-      :isOpen="isDeleteDialogOpen"
-      :locationId="locationToDelete"
+      :is-open="isDeleteDialogOpen"
+      :location-id="locationToDelete"
       @confirm="handleDeleteLocation"
       @close="isDeleteDialogOpen = false"
     />

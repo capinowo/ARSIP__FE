@@ -1,6 +1,7 @@
+<!-- eslint-disable vue/custom-event-name-casing -->
 <script setup>
-import { getSelectedRoleToken } from '@/middleware/auth';
-import { onMounted, ref, watch } from 'vue';
+import { getSelectedRoleToken } from '@/middleware/auth'
+import { onMounted, ref, watch } from 'vue'
 
 const props = defineProps({
   isDrawerOpen: {
@@ -10,31 +11,31 @@ const props = defineProps({
   location: {
     type: Object,
     required: true,
-  }
-});
+  },
+})
 
-const emit = defineEmits(['update:isDrawerOpen', 'update-location']);
+const emit = defineEmits(['update:isDrawerOpen', 'update-location'])
 
-const refForm = ref();
-const formData = ref({});
-const units = ref([]); // Array to store units from API
+const refForm = ref()
+const formData = ref({})
+const units = ref([]) // Array to store units from API
 
 // Initialize formData once props.location is available
 onMounted(() => {
   if (props.location) {
-    formData.value = { ...props.location };
+    formData.value = { ...props.location }
   }
-  fetchUnits(); // Fetch units when component is mounted
-});
+  fetchUnits() // Fetch units when component is mounted
+})
 
 // Watch for changes in props.location and update formData
 watch(
   () => props.location,
-  (newLocation) => {
-    formData.value = { ...newLocation };
+  newLocation => {
+    formData.value = { ...newLocation }
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 
 // Fetch list of units from API
 const fetchUnits = async () => {
@@ -48,10 +49,11 @@ const fetchUnits = async () => {
         }
       }
     }
-  `;
+  `
 
   try {
-    const token = getSelectedRoleToken();
+    const token = getSelectedRoleToken()
+
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
@@ -59,35 +61,35 @@ const fetchUnits = async () => {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
 
     if (result.data && result.data.getUnits && result.data.getUnits.data) {
       units.value = result.data.getUnits.data.map(unit => ({
         title: unit.name,
         value: unit.id,
-      }));
+      }))
     } else if (result.errors) {
-      console.error('GraphQL errors:', result.errors);
+      console.error('GraphQL errors:', result.errors)
     } else {
-      console.error('Unexpected response structure:', result);
+      console.error('Unexpected response structure:', result)
     }
   } catch (error) {
-    console.error('Error fetching units:', error);
+    console.error('Error fetching units:', error)
   }
-};
+}
 
 // Close drawer function
 const closeDrawer = () => {
-  emit('update:isDrawerOpen', false);
-};
+  emit('update:isDrawerOpen', false)
+}
 
 // Form submission handler
 const onSubmit = () => {
-  emit('update-location', formData.value); // Emit updated data
-  closeDrawer();
-};
+  emit('update-location', formData.value) // Emit updated data
+  closeDrawer()
+}
 </script>
 
 <template>
@@ -108,9 +110,11 @@ const onSubmit = () => {
 
       <!-- Form Section -->
       <VCardText>
-        <VForm ref="refForm" @submit.prevent="onSubmit">
+        <VForm
+          ref="refForm"
+          @submit.prevent="onSubmit"
+        >
           <VRow>
-
             <!-- Unit ID Field as Select Dropdown -->
             <VCol cols="12">
               <VSelect
@@ -181,11 +185,21 @@ const onSubmit = () => {
             
 
             <!-- Submit and Cancel Buttons -->
-            <VCol cols="12" class="d-flex justify-end">
-              <VBtn type="submit" class="me-4">
+            <VCol
+              cols="12"
+              class="d-flex justify-end"
+            >
+              <VBtn
+                type="submit"
+                class="me-4"
+              >
                 Save Changes
               </VBtn>
-              <VBtn variant="outlined" color="error" @click="closeDrawer">
+              <VBtn
+                variant="outlined"
+                color="error"
+                @click="closeDrawer"
+              >
                 Cancel
               </VBtn>
             </VCol>

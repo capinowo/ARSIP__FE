@@ -1,3 +1,4 @@
+<!-- eslint-disable import/no-unresolved -->
 <script setup>
 import avatar4 from '@images/avatars/avatar-4.png'
 import avatar5 from '@images/avatars/avatar-5.png'

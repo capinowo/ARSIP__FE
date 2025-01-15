@@ -1,25 +1,26 @@
+<!-- eslint-disable camelcase -->
 <script setup>
-import Snackbar from '@/components/Snackbar.vue';
-import { getSelectedRoleToken } from '@/middleware/auth';
-import AddNewMasterJra from '@/views/apps/master-jra/AddNewMasterJra.vue';
-import DeleteMasterJra from '@/views/apps/master-jra/DeleteMasterJra.vue';
-import EditMasterJra from '@/views/apps/master-jra/EditMasterJra.vue';
+import Snackbar from '@/components/Snackbar.vue'
+import { getSelectedRoleToken } from '@/middleware/auth'
+import AddNewMasterJra from '@/views/apps/master-jra/AddNewMasterJra.vue'
+import DeleteMasterJra from '@/views/apps/master-jra/DeleteMasterJra.vue'
+import EditMasterJra from '@/views/apps/master-jra/EditMasterJra.vue'
 
 
-import { onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue'
 
-const isAddClassificationDrawerOpen = ref(false);
-const isEditClassificationDrawerOpen = ref(false);
-const isDeleteDialogOpen = ref(false); // Track delete confirmation dialog
-const classificationToDelete = ref(null); // Store classification ID to delete
-const searchQuery = ref('');
-const classifications = ref([]);
-const isLoading = ref(false);
-const totalClassifications = ref(0);
-const itemsPerPage = ref(10);
-const currentPage = ref(1);
-const selectedClassification = ref({});
-const snackbarRef = ref(null);
+const isAddClassificationDrawerOpen = ref(false)
+const isEditClassificationDrawerOpen = ref(false)
+const isDeleteDialogOpen = ref(false) // Track delete confirmation dialog
+const classificationToDelete = ref(null) // Store classification ID to delete
+const searchQuery = ref('')
+const classifications = ref([])
+const isLoading = ref(false)
+const totalClassifications = ref(0)
+const itemsPerPage = ref(10)
+const currentPage = ref(1)
+const selectedClassification = ref({})
+const snackbarRef = ref(null)
 
 
 // Table headers
@@ -32,7 +33,7 @@ const headers = [
   { title: 'Disposisi', key: 'retention_disposition_id' },
   { title: 'Keamanan', key: 'security_classification_id' },
   { title: 'Aksi', key: 'actions', sortable: false },
-];
+]
 
 // Fetch classifications
 const fetchClassifications = async () => {
@@ -52,11 +53,12 @@ const fetchClassifications = async () => {
         }
       }
     }
-  `;
+  `
 
-  isLoading.value = true;
+  isLoading.value = true
   try {
-    const token = getSelectedRoleToken();
+    const token = getSelectedRoleToken()
+
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
@@ -64,20 +66,21 @@ const fetchClassifications = async () => {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query }),
-    });
+    })
 
-    const result = await response.json();
-    classifications.value = result.data.getClassifications.data;
-    totalClassifications.value = classifications.value.length;
+    const result = await response.json()
+
+    classifications.value = result.data.getClassifications.data
+    totalClassifications.value = classifications.value.length
   } catch (error) {
-    console.error('Error fetching classifications:', error);
+    console.error('Error fetching classifications:', error)
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
-};
+}
 
 // Create classification
-const createClassification = async (newClassificationData) => {
+const createClassification = async newClassificationData => {
   const mutation = `
     mutation CreateClassification($data: ClassificationCreateInput!) {
       createClassification(data: $data) {
@@ -91,7 +94,7 @@ const createClassification = async (newClassificationData) => {
         security_classification_id
       }
     }
-  `;
+  `
 
   // Convert `retention_active` and `retention_inactive` to integers
   const variables = {
@@ -100,10 +103,11 @@ const createClassification = async (newClassificationData) => {
       retention_active: parseInt(newClassificationData.retention_active, 10),
       retention_inactive: parseInt(newClassificationData.retention_inactive, 10),
     },
-  };
+  }
 
   try {
-    const token = getSelectedRoleToken();
+    const token = getSelectedRoleToken()
+
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
@@ -111,29 +115,29 @@ const createClassification = async (newClassificationData) => {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query: mutation, variables }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
     if (result.data.createClassification) {
-      classifications.value.push(result.data.createClassification);
-      totalClassifications.value += 1;
+      classifications.value.push(result.data.createClassification)
+      totalClassifications.value += 1
     }
   } catch (error) {
-    console.error('Error creating classification:', error);
-    snackbarRef.value.showSnackbar('This is an error message', 'error');
+    console.error('Error creating classification:', error)
+    snackbarRef.value.showSnackbar('This is an error message', 'error')
   } finally {
-    isAddClassificationDrawerOpen.value = false;
+    isAddClassificationDrawerOpen.value = false
   }
-};
+}
 
 // Open edit drawer with selected classification
-const openEditClassification = (classification) => {
-  selectedClassification.value = { ...classification }; // Clone to avoid direct mutations
-  isEditClassificationDrawerOpen.value = true;
-};
+const openEditClassification = classification => {
+  selectedClassification.value = { ...classification } // Clone to avoid direct mutations
+  isEditClassificationDrawerOpen.value = true
+}
 
 // Update classification
-const updateClassification = async (updatedClassificationData) => {
+const updateClassification = async updatedClassificationData => {
   const mutation = `
     mutation UpdateClassification($updateClassificationId: Int!, $data: ClassificationUpdateInput!) {
       updateClassification(id: $updateClassificationId, data: $data) {
@@ -145,7 +149,7 @@ const updateClassification = async (updatedClassificationData) => {
         security_classification_id
       }
     }
-  `;
+  `
 
   // Convert `retention_active` and `retention_inactive` to integers
   const variables = {
@@ -155,12 +159,13 @@ const updateClassification = async (updatedClassificationData) => {
       description: updatedClassificationData.description,
       retention_active: parseInt(updatedClassificationData.retention_active, 10),
       retention_inactive: parseInt(updatedClassificationData.retention_inactive, 10),
-      security_classification_id: updatedClassificationData.security_classification_id
+      security_classification_id: updatedClassificationData.security_classification_id,
     },
-  };
+  }
 
   try {
-    const token = getSelectedRoleToken();
+    const token = getSelectedRoleToken()
+
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
@@ -168,56 +173,60 @@ const updateClassification = async (updatedClassificationData) => {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query: mutation, variables }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
 
     if (result.errors) {
-      console.error('GraphQL Errors:', result.errors);
-      snackbarRef.value.showSnackbar('This is an error message', 'error');
-      return;
+      console.error('GraphQL Errors:', result.errors)
+      snackbarRef.value.showSnackbar('This is an error message', 'error')
+      
+      return
     }
 
     if (result.data && result.data.updateClassification) {
       const index = classifications.value.findIndex(
-        (cls) => cls.id === updatedClassificationData.id
-      );
+        cls => cls.id === updatedClassificationData.id,
+      )
+
       if (index !== -1) {
         classifications.value[index] = {
           ...classifications.value[index],
           ...result.data.updateClassification,
-        };
+        }
       }
     } else {
-      console.error('Unexpected response structure:', result);
+      console.error('Unexpected response structure:', result)
     }
   } catch (error) {
-    console.error('Error updating classification:', error);
-    snackbarRef.value.showSnackbar('This is an error message', 'error');
+    console.error('Error updating classification:', error)
+    snackbarRef.value.showSnackbar('This is an error message', 'error')
   } finally {
-    isEditClassificationDrawerOpen.value = false; // Close the drawer after updating
+    isEditClassificationDrawerOpen.value = false // Close the drawer after updating
   }
-};
+}
 
 // Open delete confirmation dialog
-const openDeleteDialog = (classificationId) => {
-  classificationToDelete.value = classificationId;
-  isDeleteDialogOpen.value = true;
-};
+const openDeleteDialog = classificationId => {
+  classificationToDelete.value = classificationId
+  isDeleteDialogOpen.value = true
+}
 
 // Handle confirmed delete action
-const handleDeleteClassification = async (classificationId) => {
+const handleDeleteClassification = async classificationId => {
   const mutation = `
     mutation DeleteClassification($deleteClassificationId: Int!) {
       deleteClassification(id: $deleteClassificationId) {
         id
       }
     }
-  `;
-  const variables = { deleteClassificationId: classificationId };
+  `
+
+  const variables = { deleteClassificationId: classificationId }
 
   try {
-    const token = getSelectedRoleToken();
+    const token = getSelectedRoleToken()
+
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
@@ -225,27 +234,27 @@ const handleDeleteClassification = async (classificationId) => {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query: mutation, variables }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
     if (result.data.deleteClassification) {
       classifications.value = classifications.value.filter(
-        (cls) => cls.id !== classificationId
-      );
-      totalClassifications.value -= 1;
+        cls => cls.id !== classificationId,
+      )
+      totalClassifications.value -= 1
     }
   } catch (error) {
-    console.error('Error deleting classification:', error);
-    snackbarRef.value.showSnackbar('This is an error message', 'error');
+    console.error('Error deleting classification:', error)
+    snackbarRef.value.showSnackbar('This is an error message', 'error')
   } finally {
-    isDeleteDialogOpen.value = false;
-    classificationToDelete.value = null;
+    isDeleteDialogOpen.value = false
+    classificationToDelete.value = null
   }
-};
+}
 
 onMounted(() => {
-  fetchClassifications();
-});
+  fetchClassifications()
+})
 </script>
 
 <template>
@@ -346,8 +355,8 @@ onMounted(() => {
 
     <!-- Delete Confirmation Dialog Component -->
     <DeleteMasterJra
-      :isOpen="isDeleteDialogOpen"
-      :classificationId="classificationToDelete"
+      :is-open="isDeleteDialogOpen"
+      :classification-id="classificationToDelete"
       @confirm="handleDeleteClassification"
       @close="isDeleteDialogOpen = false"
     />

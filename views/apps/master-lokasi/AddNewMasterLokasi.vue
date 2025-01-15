@@ -1,26 +1,28 @@
+<!-- eslint-disable vue/custom-event-name-casing -->
+<!-- eslint-disable camelcase -->
 <script setup>
-import { getSelectedRoleToken } from '@/middleware/auth';
-import { nextTick, onMounted, ref } from 'vue';
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
+import { getSelectedRoleToken } from '@/middleware/auth'
+import { nextTick, onMounted, ref } from 'vue'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 
 const props = defineProps({
   isDrawerOpen: {
     type: Boolean,
     required: true,
   },
-});
+})
 
-const emit = defineEmits(['update:isDrawerOpen', 'create-location', 'refresh-locations']);
+const emit = defineEmits(['update:isDrawerOpen', 'create-location', 'refresh-locations'])
 
-const refForm = ref();
-const unit_id = ref(null); // Selected unit ID
-const name = ref('');
-const description = ref('');
-const building_name = ref('');
-const room_name = ref('');
-const rack_name = ref('');
-const box_name = ref('');
-const units = ref([]); // Array to store units from API
+const refForm = ref()
+const unit_id = ref(null) // Selected unit ID
+const name = ref('')
+const description = ref('')
+const building_name = ref('')
+const room_name = ref('')
+const rack_name = ref('')
+const box_name = ref('')
+const units = ref([]) // Array to store units from API
 
 // Fetch list of units from API
 const fetchUnits = async () => {
@@ -34,10 +36,11 @@ const fetchUnits = async () => {
         }
       }
     }
-  `;
+  `
 
   try {
-    const token = getSelectedRoleToken();
+    const token = getSelectedRoleToken()
+
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
@@ -45,34 +48,34 @@ const fetchUnits = async () => {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
 
     // Check if result contains data and getUnits exists
     if (result.data && result.data.getUnits && result.data.getUnits.data) {
       units.value = result.data.getUnits.data.map(unit => ({
         title: unit.name,
         value: unit.id,
-      }));
+      }))
     } else if (result.errors) {
-      console.error('GraphQL errors:', result.errors);
+      console.error('GraphQL errors:', result.errors)
     } else {
-      console.error('Unexpected response structure:', result);
+      console.error('Unexpected response structure:', result)
     }
   } catch (error) {
-    console.error('Error fetching units:', error);
+    console.error('Error fetching units:', error)
   }
-};
+}
 
 // Close drawer function
 const closeNavigationDrawer = () => {
-  emit('update:isDrawerOpen', false);
+  emit('update:isDrawerOpen', false)
   nextTick(() => {
-    refForm.value?.reset();
-    refForm.value?.resetValidation();
-  });
-};
+    refForm.value?.reset()
+    refForm.value?.resetValidation()
+  })
+}
 
 // Form submission handler
 const onSubmit = () => {
@@ -86,24 +89,24 @@ const onSubmit = () => {
         room_name: room_name.value,
         rack_name: rack_name.value,
         box_name: box_name.value,
-      });
-      closeNavigationDrawer();
+      })
+      closeNavigationDrawer()
       
       // Emit event untuk memuat ulang data di halaman master_lokasi
-      emit('refresh-locations');  // Tambahkan emit untuk refresh data
+      emit('refresh-locations')  // Tambahkan emit untuk refresh data
     }
-  });
-};
+  })
+}
 
 
-const handleDrawerModelValueUpdate = (val) => {
-  emit('update:isDrawerOpen', val);
-};
+const handleDrawerModelValueUpdate = val => {
+  emit('update:isDrawerOpen', val)
+}
 
 // Fetch units when component is mounted
 onMounted(() => {
-  fetchUnits();
-});
+  fetchUnits()
+})
 </script>
 
 <template>

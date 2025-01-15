@@ -1,13 +1,13 @@
-import { getSelectedRoleToken } from '@/middleware/auth.js';
+import { getSelectedRoleToken } from '@/middleware/auth'
 
 export async function saveArsip(data) {
   try {
     // Mendapatkan token dari middleware
-    const token = getSelectedRoleToken();
+    const token = getSelectedRoleToken()
     
     // Periksa apakah token ada
     if (!token) {
-      throw new Error('Token tidak ditemukan. Pastikan pengguna sudah login.');
+      throw new Error('Token tidak ditemukan. Pastikan pengguna sudah login.')
     }
 
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
@@ -35,20 +35,21 @@ export async function saveArsip(data) {
         `,
         variables: { data },
       }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
     
     // Cek jika ada error dari server GraphQL dan lempar error ke komponen pemanggil
     if (result.errors) {
-      console.error('Error saving archive:', result.errors);
-      throw result.errors; // Lempar error dari server ke komponen
+      console.error('Error saving archive:', result.errors)
+      throw result.errors // Lempar error dari server ke komponen
     }
 
-    console.log('Archive saved successfully:', result.data.createArchive);
-    return result.data.createArchive; // Jika diperlukan untuk diproses lebih lanjut
+    console.log('Archive saved successfully:', result.data.createArchive)
+    
+    return result.data.createArchive // Jika diperlukan untuk diproses lebih lanjut
   } catch (error) {
-    console.error('Error during API request:', error);
-    throw error; // Lempar error ke komponen pemanggil
+    console.error('Error during API request:', error)
+    throw error // Lempar error ke komponen pemanggil
   }
 }

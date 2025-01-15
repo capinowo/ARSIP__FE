@@ -6,14 +6,16 @@ import { computed, defineAsyncComponent } from 'vue'
 import { useRoute } from 'vue-router'
 
 const DefaultLayoutWithVerticalNav = defineAsyncComponent(() =>
-  import('./components/DefaultLayoutWithVerticalNav.vue')
+  import('./components/DefaultLayoutWithVerticalNav.vue'),
 )
+
 const configStore = useConfigStore()
 
 switchToVerticalNavOnLtOverlayNavBreakpoint()
 
 // Import layoutAttrs from useSkins
 const { layoutAttrs, injectSkinClasses } = useSkins()
+
 injectSkinClasses()
 
 // Filter out the `wrapper` property (VNode) and use only `wrapperProps`
@@ -31,7 +33,10 @@ const isRolePage = computed(() => route.path === '/role')
   </div>
 
   <!-- Use wrapperProps for component binding and render VThemeProvider separately -->
-  <DefaultLayoutWithVerticalNav v-else v-bind="wrapperProps">
+  <DefaultLayoutWithVerticalNav
+    v-else
+    v-bind="wrapperProps"
+  >
     <template v-if="wrapperVNode">
       <!-- Render the VThemeProvider wrapper here -->
       <component :is="wrapperVNode">

@@ -1,16 +1,17 @@
+<!-- eslint-disable camelcase -->
 <script setup>
-import { setPermissionsFromToken } from '@/composables/usePermission'; // Import fungsi dari composable
-import avatar1 from '@/images/avatars/avatar-1.png';
-import avatar2 from '@/images/avatars/avatar-2.png';
-import avatar3 from '@/images/avatars/avatar-3.png';
-import avatar4 from '@/images/avatars/avatar-4.png';
-import avatar5 from '@/images/avatars/avatar-5.png';
-import { getAuthToken, setSelectedRoleToken } from '@/middleware/auth.js';
-import { navigateTo, useState } from 'nuxt/app';
-import { computed, ref } from 'vue';
+import { setPermissionsFromToken } from '@/composables/usePermission' // Import fungsi dari composable
+import avatar1 from '@/images/avatars/avatar-1.png'
+import avatar2 from '@/images/avatars/avatar-2.png'
+import avatar3 from '@/images/avatars/avatar-3.png'
+import avatar4 from '@/images/avatars/avatar-4.png'
+import avatar5 from '@/images/avatars/avatar-5.png'
+import { getAuthToken, setSelectedRoleToken } from '@/middleware/auth'
+import { navigateTo, useState } from 'nuxt/app'
+import { computed, ref } from 'vue'
 
-const avatarImages = [avatar1, avatar2, avatar3, avatar4, avatar5];
-const getRandomAvatar = () => avatarImages[Math.floor(Math.random() * avatarImages.length)];
+const avatarImages = [avatar1, avatar2, avatar3, avatar4, avatar5]
+const getRandomAvatar = () => avatarImages[Math.floor(Math.random() * avatarImages.length)]
 
 // Define role mapping
 const roleMapping = {
@@ -22,9 +23,9 @@ const roleMapping = {
   operator: 'OPERATOR',
   verifikator: 'VERIFIKATOR',
   admin_uk_1: 'ADMIN UNIT KERJA 1',
-};
+}
 
-const userState = useState('user');
+const userState = useState('user')
 
 // Computed roles with name and value
 const roles = computed(() =>
@@ -42,19 +43,20 @@ const roles = computed(() =>
         create: true,
       })),
     },
-  })) || []
-);
+  })) || [],
+)
 
-const isRoleDialogVisible = ref(false);
-const roleDetail = ref();
+const isRoleDialogVisible = ref(false)
+const roleDetail = ref()
 
 const selectRole = async roleDetails => {
-  const authToken = getAuthToken();
+  const authToken = getAuthToken()
 
   if (!authToken) {
-    console.error('Auth token is missing. Redirecting to login.');
-    navigateTo('/login');
-    return;
+    console.error('Auth token is missing. Redirecting to login.')
+    navigateTo('/login')
+    
+    return
   }
 
   try {
@@ -62,8 +64,10 @@ const selectRole = async roleDetails => {
       mutation Mutation($roleName: String!) {
         selectRole(roleName: $roleName)
       }
-    `;
-    const variables = { roleName: roleDetails.value };
+    `
+
+    const variables = { roleName: roleDetails.value }
+
     // console.log('Role Name being sent to API:', variables.roleName);
 
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
@@ -76,38 +80,40 @@ const selectRole = async roleDetails => {
         query,
         variables,
       }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
+
     // console.log('API response:', result);
 
     if (result.errors) {
-      console.error('GraphQL error:', result.errors);
-      throw new Error('Failed to retrieve role token due to GraphQL error');
+      console.error('GraphQL error:', result.errors)
+      throw new Error('Failed to retrieve role token due to GraphQL error')
     }
 
-    const roleToken = result.data.selectRole;
+    const roleToken = result.data.selectRole
 
     if (!roleToken) {
-      throw new Error('Role token not received');
+      throw new Error('Role token not received')
     }
 
     // Store the role token in local storage for later use
-    setSelectedRoleToken(roleToken);
+    setSelectedRoleToken(roleToken)
+
     // console.log('Role token saved to local storage.');
 
     // Set permissions from the token in composable
-    setPermissionsFromToken(roleToken);
+    setPermissionsFromToken(roleToken)
+
     // console.log('Permissions set from role token.');
 
     // Redirect to the home page or dashboard
-    navigateTo('/');
+    navigateTo('/')
 
   } catch (error) {
-    console.error('Error fetching role token:', error);
+    console.error('Error fetching role token:', error)
   }
-};
-
+}
 </script>
 
 

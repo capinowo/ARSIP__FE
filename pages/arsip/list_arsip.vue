@@ -1,9 +1,10 @@
+<!-- eslint-disable camelcase -->
 <script setup>
-import useArsipStatus from '@/composables/useArsipStatus.js';
-import useClassification from '@/composables/useClassification.js';
-import { getSelectedRoleToken } from '@/middleware/auth.js';
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import useArsipStatus from '@/composables/useArsipStatus'
+import useClassification from '@/composables/useClassification'
+import { getSelectedRoleToken } from '@/middleware/auth'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 // Middleware for auth on the page
 definePageMeta({
@@ -18,24 +19,28 @@ const totalArchives = ref(0)
 const itemsPerPage = ref(10)
 const currentPage = ref(1)
 const { fetchClassification } = useClassification()
-const { fetchArsipStatus } = useArsipStatus();
-const snackbarRef = ref(null);
-const isDialogOpen = ref(false);  // Track dialog visibility
-const archiveToDelete = ref(null);  // Store the archive item to be deleted
-const openDeleteDialog = (item) => {
-  archiveToDelete.value = item;  // Set the archive item to be deleted
-  isDialogOpen.value = true;     // Open the dialog
-};
+const { fetchArsipStatus } = useArsipStatus()
+const snackbarRef = ref(null)
+const isDialogOpen = ref(false)  // Track dialog visibility
+const archiveToDelete = ref(null)  // Store the archive item to be deleted
+
+const openDeleteDialog = item => {
+  archiveToDelete.value = item  // Set the archive item to be deleted
+  isDialogOpen.value = true     // Open the dialog
+}
+
 const closeDialog = () => {
-  isDialogOpen.value = false;   // Close the dialog
-};
+  isDialogOpen.value = false   // Close the dialog
+}
+
+
 // Confirm deletion and send mutation to delete the archive
 const confirmDeletion = async () => {
   if (archiveToDelete.value && archiveToDelete.value.id) {
-    await deleteArchive(archiveToDelete.value.id);
-    closeDialog();
+    await deleteArchive(archiveToDelete.value.id)
+    closeDialog()
   }
-};
+}
 
 // Configure table headers
 const headers = [
@@ -70,9 +75,9 @@ const fetchArchives = async () => {
         }
       }
     }
-  `;
+  `
 
-  isLoading.value = true;
+  isLoading.value = true
   try {
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
@@ -81,46 +86,47 @@ const fetchArchives = async () => {
         'Authorization': `Bearer ${getSelectedRoleToken()}`,
       },
       body: JSON.stringify({ query }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
 
     if (result.errors) {
-      console.error('GraphQL errors:', result.errors);
+      console.error('GraphQL errors:', result.errors)
     } else if (result.data && result.data.getArchives) {
       // Map archives and fetch classification description
       archives.value = await Promise.all(
-        result.data.getArchives.data.map(async (archive) => {
-          const classification = await fetchClassification(archive.classification_id);
-          const status = await fetchArsipStatus(archive.archive_status_id);
+        result.data.getArchives.data.map(async archive => {
+          const classification = await fetchClassification(archive.classification_id)
+          const status = await fetchArsipStatus(archive.archive_status_id)
+          
           return {
             ...archive,
             classification_description: classification?.description || 'N/A',
             archive_status_name: status?.name || 'N/A',  // Set status name here
-          };
-        })
-      );
-      totalArchives.value = result.data.getArchives.total || 0;
+          }
+        }),
+      )
+      totalArchives.value = result.data.getArchives.total || 0
     } else {
-      console.warn('No data returned from getArchives query:', result);
+      console.warn('No data returned from getArchives query:', result)
     }
   } catch (error) {
-    console.error('Error fetching archives:', error);
-    snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives');
+    console.error('Error fetching archives:', error)
+    snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives')
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
-};
+}
 
 // Function to delete the archive
-const deleteArchive = async (id) => {
+const deleteArchive = async id => {
   const mutation = `
     mutation DeleteArchive($id: Int!) {
       deleteArchive(id: $id) {
         id
       }
     }
-  `;
+  `
 
   try {
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
@@ -133,34 +139,35 @@ const deleteArchive = async (id) => {
         query: mutation,
         variables: { id },
       }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
 
     if (result.errors) {
-      console.error('GraphQL errors:', result.errors);
-      return;
+      console.error('GraphQL errors:', result.errors)
+      
+      return
     }
 
     if (result.data && result.data.deleteArchive) {
       // Remove the deleted archive from the list
-      archives.value = archives.value.filter((archive) => archive.id !== id);
-      totalArchives.value -= 1; // Update total count
-      console.log(`Archive with ID ${id} deleted successfully.`);
+      archives.value = archives.value.filter(archive => archive.id !== id)
+      totalArchives.value -= 1 // Update total count
+      console.log(`Archive with ID ${id} deleted successfully.`)
     } else {
-      console.error('Error: Archive not deleted');
+      console.error('Error: Archive not deleted')
     }
   } catch (error) {
-    console.error('Error deleting archive:', error);
-    snackbarRef.value.showSnackbar('This is an error message', 'error delete archive');
+    console.error('Error deleting archive:', error)
+    snackbarRef.value.showSnackbar('This is an error message', 'error delete archive')
   } finally {
-    isDialogOpen.value = false; // Close dialog after deletion
+    isDialogOpen.value = false // Close dialog after deletion
   }
-};
+}
 
-const detailArchive = (item) => {
-  router.push(`/arsip/${item.id}/detail`); // Mengarahkan ke halaman detail dengan ID dinamis
-};
+const detailArchive = item => {
+  router.push(`/arsip/${item.id}/detail`) // Mengarahkan ke halaman detail dengan ID dinamis
+}
 
 
 onMounted(() => {
@@ -240,7 +247,10 @@ onMounted(() => {
       </VCard>
     </div>
     <!-- Confirmation Dialog for Deletion -->
-    <VDialog v-model="isDialogOpen" max-width="400">
+    <VDialog
+      v-model="isDialogOpen"
+      max-width="400"
+    >
       <VCard>
         <VCardTitle>Confirm Deletion</VCardTitle>
         <VCardText>
@@ -248,8 +258,15 @@ onMounted(() => {
         </VCardText>
         <VCardActions>
           <VSpacer />
-          <VBtn color="error" @click="confirmDeletion">Yes</VBtn>
-          <VBtn @click="closeDialog">No</VBtn>
+          <VBtn
+            color="error"
+            @click="confirmDeletion"
+          >
+            Yes
+          </VBtn>
+          <VBtn @click="closeDialog">
+            No
+          </VBtn>
         </VCardActions>
       </VCard>
     </VDialog>

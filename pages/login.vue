@@ -1,3 +1,4 @@
+<!-- eslint-disable import/no-unresolved -->
 <script setup>
 import tree1 from '@/images/misc/tree1.png'
 import authV2LoginIllustrationBorderedDark from '@/images/pages/auth-v2-login-illustration-bordered-dark.png'
@@ -6,7 +7,7 @@ import authV2LoginIllustrationDark from '@/images/pages/auth-v2-login-illustrati
 import authV2LoginIllustrationLight from '@/images/pages/auth-v2-login-illustration-light.png'
 import authV2MaskDark from '@/images/pages/mask-v2-dark.png'
 import authV2MaskLight from '@/images/pages/mask-v2-light.png'
-import undipLogo from '@/images/undiplogo2.png'; // Import the logo
+import undipLogo from '@/images/undiplogo2.png' // Import the logo
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import { setAuthToken } from '@/middleware/auth'
 
@@ -24,7 +25,9 @@ definePageMeta({
   layout: 'blank',
   public: true,
 })
+
 const snackbarRef = ref(null)
+
 // Define showSnackbar function
 
 // State untuk form login
@@ -40,7 +43,7 @@ const router = useRouter()
 
 // Fungsi untuk submit form login dan panggil API
 async function login() {
-  errorMessage.value = ''; // Reset pesan error
+  errorMessage.value = '' // Reset pesan error
 
   try {
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
@@ -59,25 +62,25 @@ async function login() {
           password: form.value.password,
         },
       }),
-    });
+    })
 
-    const data = await response.json();
+    const data = await response.json()
 
     if (!response.ok || data.errors) {
       // Ambil error message dari response
       const errorMessages = data.errors
         ? data.errors.map(err => err.message).join(', ') 
-        : 'Terjadi kesalahan saat login';
+        : 'Terjadi kesalahan saat login'
         
       // Menampilkan error di snackbar
       snackbarRef.value.showSnackbar(errorMessages, 'error')
     } else {
       // Jika login berhasil, set token dan navigasi ke halaman selanjutnya
-      setAuthToken(data.data.login);
-      navigateTo('/role');
+      setAuthToken(data.data.login)
+      navigateTo('/role')
     }
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error('Fetch error:', error)
     snackbarRef.value.showSnackbar('Network error. Please try again later.', 'error')
   }
 }
@@ -136,8 +139,14 @@ async function login() {
         >
           <VCardText>
             <!-- Logo positioned above the welcome text -->
-            <img :src="undipLogo" alt="Undip Logo" class="mb-4" style=" display: block;inline-size: 100px; margin-block: 0; margin-inline: auto;" />
-            <div class="welcome-text text-center"> <!-- Center-aligned text container -->
+            <img
+              :src="undipLogo"
+              alt="Undip Logo"
+              class="mb-4"
+              style=" display: block;inline-size: 100px; margin-block: 0; margin-inline: auto;"
+            >
+            <div class="welcome-text text-center">
+              <!-- Center-aligned text container -->
               <h4 class="text-h4 mb-1">
                 Welcome to <span class="text-capitalize">ARSIP</span>
               </h4>
@@ -187,15 +196,15 @@ async function login() {
 
                   <!-- Tampilkan pesan error jika ada -->
                   <Snackbar ref="snackbarRef" />
-                  </VCol>
-                </VRow>
-              </VForm>
-            </VCardText>
-          </VCard>
-        </VCol>
-      </VRow>
-    </div>
-  </template>
+                </VCol>
+              </VRow>
+            </VForm>
+          </VCardText>
+        </VCard>
+      </VCol>
+    </VRow>
+  </div>
+</template>
 
 
 <style lang="scss">

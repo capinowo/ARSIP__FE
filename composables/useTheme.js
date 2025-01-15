@@ -24,7 +24,7 @@ export function useTheme() {
     setThemeCookie(newTheme)
   }
 
-  watch(theme, (newTheme) => {
+  watch(theme, newTheme => {
     setThemeCookie(newTheme)
   })
 

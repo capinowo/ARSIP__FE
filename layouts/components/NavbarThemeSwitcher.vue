@@ -1,5 +1,5 @@
 <script setup>
-import { useTheme } from '@/composables/useTheme';
+import { useTheme } from '@/composables/useTheme'
 
 const { theme, setTheme } = useTheme()
 
@@ -15,5 +15,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <ThemeSwitcher v-if="themes && themes.length" :themes="themes" :current-theme="theme" @theme-change="setTheme" />
+  <ThemeSwitcher
+    v-if="themes && themes.length"
+    :themes="themes"
+    :current-theme="theme"
+    @theme-change="setTheme"
+  />
 </template>

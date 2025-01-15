@@ -1,5 +1,6 @@
+<!-- eslint-disable vue/custom-event-name-casing -->
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue'
 
 const props = defineProps({
   isDrawerOpen: {
@@ -9,41 +10,41 @@ const props = defineProps({
   classification: {
     type: Object,
     required: true,
-  }
-});
+  },
+})
 
-const emit = defineEmits(['update:isDrawerOpen', 'update-classification']);
+const emit = defineEmits(['update:isDrawerOpen', 'update-classification'])
 
-const refForm = ref();
-const formData = ref({});
+const refForm = ref()
+const formData = ref({})
 
 // Initialize formData once props.classification is available
 onMounted(() => {
   if (props.classification) {
-    formData.value = { ...props.classification };
+    formData.value = { ...props.classification }
   }
-});
+})
 
 // Watch for changes in props.classification and update formData
 watch(
   () => props.classification,
-  (newClassification) => {
-    formData.value = { ...newClassification };
+  newClassification => {
+    formData.value = { ...newClassification }
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 
 const closeDrawer = () => {
-  emit('update:isDrawerOpen', false);
-};
+  emit('update:isDrawerOpen', false)
+}
 
 const onSubmit = () => {
-  emit('update-classification', formData.value); // Emit updated classification data
-  closeDrawer();
-};
+  emit('update-classification', formData.value) // Emit updated classification data
+  closeDrawer()
+}
 
 // Required validator for the form
-const requiredValidator = value => !!value || 'This field is required';
+const requiredValidator = value => !!value || 'This field is required'
 </script>
 
 <template>
@@ -64,7 +65,10 @@ const requiredValidator = value => !!value || 'This field is required';
 
       <!-- Form Section -->
       <VCardText>
-        <VForm ref="refForm" @submit.prevent="onSubmit">
+        <VForm
+          ref="refForm"
+          @submit.prevent="onSubmit"
+        >
           <VRow>
             <!-- Classification Code -->
             <VCol cols="12">
@@ -107,17 +111,19 @@ const requiredValidator = value => !!value || 'This field is required';
             </VCol>
 
             <!-- Retention Disposition ID -->
-            <!-- <VCol cols="12">
+            <!--
+              <VCol cols="12">
               <VSelect
-                v-model="formData.retention_disposition_id"
-                :items="[ 
-                  { title: 'Musnah', value: 1 },
-                  { title: 'Permanen', value: 2 }
-                ]"
-                label="Retention Disposition ID"
-                placeholder="Select Disposition"
+              v-model="formData.retention_disposition_id"
+              :items="[ 
+              { title: 'Musnah', value: 1 },
+              { title: 'Permanen', value: 2 }
+              ]"
+              label="Retention Disposition ID"
+              placeholder="Select Disposition"
               />
-            </VCol> -->
+              </VCol> 
+            -->
 
             <!-- Security Classification ID -->
             <VCol cols="12">
@@ -133,11 +139,21 @@ const requiredValidator = value => !!value || 'This field is required';
             </VCol>
 
             <!-- Submit and Cancel Buttons -->
-            <VCol cols="12" class="d-flex justify-end">
-              <VBtn type="submit" class="me-4">
+            <VCol
+              cols="12"
+              class="d-flex justify-end"
+            >
+              <VBtn
+                type="submit"
+                class="me-4"
+              >
                 Save Changes
               </VBtn>
-              <VBtn variant="outlined" color="error" @click="closeDrawer">
+              <VBtn
+                variant="outlined"
+                color="error"
+                @click="closeDrawer"
+              >
                 Cancel
               </VBtn>
             </VCol>

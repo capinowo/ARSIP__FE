@@ -1,8 +1,8 @@
 <script setup>
-import { getSelectedRoleToken } from '@/middleware/auth'; // Import token retrieval function
-import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue';
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { getSelectedRoleToken } from '@/middleware/auth' // Import token retrieval function
+import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 // Middleware untuk auth pada halaman
 definePageMeta({
@@ -25,6 +25,7 @@ const headers = [
   { title: 'Email', key: 'email' },
   { title: 'Username', key: 'username' },
   { title: 'Identity', key: 'identity' },
+
   // { title: 'Unit Name', key: 'eduk_unit_1_name' },
   // { title: 'Actions', key: 'actions', sortable: false }, // Ensure Actions is the last column
 ]
@@ -102,9 +103,11 @@ onMounted(() => {
             class="me-4"
           />
           <!-- Add User Button -->
-          <!-- <VBtn @click="isAddNewUserDrawerVisible = true">
+          <!--
+            <VBtn @click="isAddNewUserDrawerVisible = true">
             Add New User
-          </VBtn> -->
+            </VBtn> 
+          -->
         </div>
       </VCard>
     </div>
@@ -128,21 +131,23 @@ onMounted(() => {
           </template>
 
           <!-- Template slot for Actions column -->
-          <template #item.actions="{ item }">
+          <template #item.actions="">
             <div class="d-flex">
-              <!-- <VBtn
+              <!--
+                <VBtn
                 icon
-                style="margin-inline-end: 6px;"
+                style="margin-inline-end: 6px"
                 @click="editUser(item)"
-              >
+                >
                 <VIcon>ri-edit-2-fill</VIcon>
-              </VBtn>
-              <VBtn
+                </VBtn>
+                <VBtn
                 icon
                 @click="deleteUser(item)"
-              >
+                >
                 <VIcon>ri-delete-bin-2-fill</VIcon>
-              </VBtn> -->
+                </VBtn> 
+              -->
             </div>
           </template>
         </VDataTable>

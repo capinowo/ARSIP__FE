@@ -1,8 +1,8 @@
 <script setup>
-import RolesCards from '@/views/apps/roles/RolesCards.vue';
-import { useState } from 'nuxt/app';
+import RolesCards from '@/views/apps/roles/RolesCards.vue'
+import { useState } from 'nuxt/app'
 
-const isLoading = useState('isLoading');
+const isLoading = useState('isLoading')
 
 // Apply 'auth' middleware and use the 'blanks' layout
 definePageMeta({
@@ -12,9 +12,12 @@ definePageMeta({
 </script>
 
 <template>
-  <div v-if="isLoading" class="loading-overlay">
+  <div
+    v-if="isLoading"
+    class="loading-overlay"
+  >
     <!-- Loading Spinner -->
-    <div class="spinner"></div>
+    <div class="spinner" />
   </div>
   <VRow
     class="px-12 py-12 align-items-start"

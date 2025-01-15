@@ -1,6 +1,6 @@
 <script setup>
-import { getSelectedRoleToken } from '@/middleware/auth';
-import { onMounted, ref } from 'vue';
+import { getSelectedRoleToken } from '@/middleware/auth'
+import { onMounted, ref } from 'vue'
 
 // const isAddRoleDrawerOpen = ref(false)
 const searchQuery = ref('')
@@ -16,6 +16,7 @@ const headers = [
   { title: 'Name', key: 'name' },
   { title: 'Description', key: 'description' },
   { title: 'Created At', key: 'created_at' },
+
   // { title: 'Updated At', key: 'updated_at' },
   // { title: 'Actions', key: 'actions', sortable: false },
 ]
@@ -122,9 +123,11 @@ onMounted(() => {
             density="compact"
             class="me-4"
           />
-          <!-- <VBtn @click="isAddRoleDrawerOpen = true">
+          <!--
+            <VBtn @click="isAddRoleDrawerOpen = true">
             Add New Role
-          </VBtn> -->
+            </VBtn> 
+          -->
         </div>
       </VCard>
     </div>
@@ -148,21 +151,23 @@ onMounted(() => {
             {{ (currentPage - 1) * itemsPerPage + index + 1 }}
           </template>
 
-          <template #item.actions="{ item }">
+          <template #item.actions="">
             <div class="d-flex">
-              <!-- <VBtn
+              <!--
+                <VBtn
                 icon
-                style="margin-inline-end: 6px;"
+                style="margin-inline-end: 6px"
                 @click="editRole(item)"
-              >
+                >
                 <VIcon>ri-edit-2-fill</VIcon>
-              </VBtn>
-              <VBtn
+                </VBtn>
+                <VBtn
                 icon
                 @click="deleteRole(item)"
-              >
+                >
                 <VIcon>ri-delete-bin-2-fill</VIcon>
-              </VBtn> -->
+                </VBtn> 
+              -->
             </div>
           </template>
         </VDataTable>
@@ -170,11 +175,13 @@ onMounted(() => {
     </div>
 
     <!-- AddRole Drawer Component -->
-    <!-- <AddRole
+    <!--
+      <AddRole
       :is-drawer-open="isAddRoleDrawerOpen"
       @update:is-drawer-open="isAddRoleDrawerOpen = $event"
       @create-role="createRole"
-    /> -->
+      /> 
+    -->
   </section>
 </template>
 

@@ -1,24 +1,25 @@
 <script setup>
-import { getSelectedRoleToken } from '@/middleware/auth.js';
-import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { getSelectedRoleToken } from '@/middleware/auth'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 definePageMeta({
   middleware: 'auth-middleware',
 })
 
-const route = useRoute();
-const archiveId = route.params.id;
-const archiveDetail = ref(null);
-const isLoading = ref(false);
-const errorMessage = ref(null);
+const route = useRoute()
+const archiveId = route.params.id
+const archiveDetail = ref(null)
+const isLoading = ref(false)
+const errorMessage = ref(null)
 
 // Fungsi untuk memformat tanggal
-const formatDate = (dateStr) => {
-  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('id-ID', options); // Menggunakan 'id-ID' untuk format Indonesia
-};
+const formatDate = dateStr => {
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+  const date = new Date(dateStr)
+  
+  return date.toLocaleDateString('id-ID', options) // Menggunakan 'id-ID' untuk format Indonesia
+}
 
 
 const fetchArchiveDetail = async () => {
@@ -85,10 +86,10 @@ const fetchArchiveDetail = async () => {
     created_at
   }
 }
-  `;
+  `
   
-  isLoading.value = true;
-  errorMessage.value = null;
+  isLoading.value = true
+  errorMessage.value = null
 
   try {
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
@@ -101,38 +102,38 @@ const fetchArchiveDetail = async () => {
         query,
         variables: { getArchiveId: parseInt(archiveId) },
       }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
 
     if (result.errors) {
-      console.error('GraphQL errors:', result.errors);
-      errorMessage.value = 'Error fetching archive data';
+      console.error('GraphQL errors:', result.errors)
+      errorMessage.value = 'Error fetching archive data'
     } else if (result.data && result.data.getArchive) {
-      archiveDetail.value = result.data.getArchive;
+      archiveDetail.value = result.data.getArchive
     } else {
-      console.warn('No data returned from getArchive query:', result);
-      errorMessage.value = 'No archive data found';
+      console.warn('No data returned from getArchive query:', result)
+      errorMessage.value = 'No archive data found'
     }
   } catch (error) {
-    console.error('Error fetching archive detail:', error);
-    errorMessage.value = 'Error fetching archive detail';
+    console.error('Error fetching archive detail:', error)
+    errorMessage.value = 'Error fetching archive detail'
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
-};
+}
 
 // Fetch archive details saat komponen di-mount
 onMounted(() => {
-  fetchArchiveDetail();
-});
+  fetchArchiveDetail()
+})
 
 // Dummy data untuk shipping activity
 const shippingActivity = [
   { date: 'Aug 17, 2020', status: 'Shipped', location: 'Warehouse 1', image: 'https://via.placeholder.com/50' },
   { date: 'Aug 18, 2020', status: 'Out for Delivery', location: 'Courier Center', image: 'https://via.placeholder.com/50' },
   { date: 'Aug 19, 2020', status: 'Delivered', location: 'Customer Address', image: 'https://via.placeholder.com/50' },
-];
+]
 
 // Dummy data untuk shipping address dan billing address
 const shippingAddress = {
@@ -144,7 +145,7 @@ const shippingAddress = {
   country: 'USA',
   state: 'London',
   zipCode: '110001',
-};
+}
 
 // Headers untuk tabel order detail
 const headers = [
@@ -152,7 +153,7 @@ const headers = [
   { title: 'Price', key: 'price' },
   { title: 'Quantity', key: 'quantity' },
   { title: 'Total', key: 'total', sortable: false },
-];
+]
 
 // Headers untuk tabel shipping activity
 const shippingHeaders = [
@@ -160,28 +161,38 @@ const shippingHeaders = [
   { title: 'Status', key: 'status' },
   { title: 'Location', key: 'location' },
   { title: 'Image', key: 'image' },
-];
+]
 
 // Dialog visibility state
-const isConfirmDialogVisible = ref(false);
+const isConfirmDialogVisible = ref(false)
 </script>
 
 <template>
   <section>
     <!-- Tampilkan loading saat data sedang diambil -->
-    <div v-if="isLoading">Loading...</div>
+    <div v-if="isLoading">
+      Loading...
+    </div>
 
     <!-- Tampilkan pesan error jika ada -->
-    <div v-if="errorMessage" class="text-red-500">
+    <div
+      v-if="errorMessage"
+      class="text-red-500"
+    >
       {{ errorMessage }}
     </div>
 
     <!-- Tampilkan detail arsip setelah data berhasil diambil -->
-    <div v-if="archiveDetail" class="mb-6">
+    <div
+      v-if="archiveDetail"
+      class="mb-6"
+    >
       <div class="d-flex justify-space-between align-center flex-wrap gap-y-4 mb-6">
         <div>
           <div class="d-flex gap-2 align-center mb-2 flex-wrap">
-            <h5 class="text-h5">Detail Arsip #{{ archiveDetail.id }}</h5>
+            <h5 class="text-h5">
+              Detail Arsip #{{ archiveDetail.id }}
+            </h5>
           </div>
           <div>
             <span class="text-body-1">{{ archiveDetail.updated_at || 'Tidak ada informasi' }}</span>
@@ -232,21 +243,38 @@ const isConfirmDialogVisible = ref(false);
           <!-- Menampilkan data dari user -->
           <p><strong>Nama Pengguna:</strong> {{ archiveDetail.user?.name }}</p>
           <p><strong>Identitas Pengguna:</strong> {{ archiveDetail.user?.identity }}</p>
-          <p><strong>Roles Pengguna:</strong> 
-            <span v-for="role in archiveDetail.user?.roles" :key="role.id">{{ role.name }}</span>
+          <p>
+            <strong>Roles Pengguna:</strong> 
+            <span
+              v-for="role in archiveDetail.user?.roles"
+              :key="role.id"
+            >{{ role.name }}</span>
           </p>
         </VCardText>
       </VCard>
 
       <!-- Konfirmasi Hapus Arsip -->
-      <VDialog v-model="isConfirmDialogVisible" max-width="400px">
+      <VDialog
+        v-model="isConfirmDialogVisible"
+        max-width="400px"
+      >
         <VCard>
           <VCardTitle>
             <span class="headline">Konfirmasi Hapus Arsip</span>
           </VCardTitle>
           <VCardActions>
-            <VBtn text @click="isConfirmDialogVisible = false">Batal</VBtn>
-            <VBtn color="error" @click="deleteArchive">Hapus</VBtn>
+            <VBtn
+              text
+              @click="isConfirmDialogVisible = false"
+            >
+              Batal
+            </VBtn>
+            <VBtn
+              color="error"
+              @click="deleteArchive"
+            >
+              Hapus
+            </VBtn>
           </VCardActions>
         </VCard>
       </VDialog>

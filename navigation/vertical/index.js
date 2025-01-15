@@ -1,37 +1,40 @@
-import { useState } from 'nuxt/app';
-import { computed } from 'vue';
+import { useState } from 'nuxt/app'
+import { computed } from 'vue'
 
 const permissionAccess = {
   'lokasi-dashboard': ['/', 'index', 'master-master_lokasi'],
   'dashboard-arsip': ['/', 'index', 'arsip-list_arsip'],
   'lokasi-dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'master-master_lokasi'],
-  'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip']
-};
+  'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip'],
+}
 
 // Ambil permissions pengguna dari state secara reaktif
-const userPermissions = computed(() => useState('selectedRole').value?.permissions || []);
+const userPermissions = computed(() => useState('selectedRole').value?.permissions || [])
 
 function filterMenuByPermissions(menu, permissions) {
-  const allowedRoutes = new Set();
+  const allowedRoutes = new Set()
+
   permissions.forEach(permission => {
-    const routes = permissionAccess[permission];
+    const routes = permissionAccess[permission]
     if (routes) {
-      routes.forEach(route => allowedRoutes.add(route));
+      routes.forEach(route => allowedRoutes.add(route))
     }
-  });
+  })
 
   return menu
     .map(item => {
       if (item.children) {
-        const filteredChildren = item.children.filter(child => allowedRoutes.has(child.to.name));
+        const filteredChildren = item.children.filter(child => allowedRoutes.has(child.to.name))
         if (filteredChildren.length) {
-          return { ...item, children: filteredChildren };
+          return { ...item, children: filteredChildren }
         }
-        return null;
+        
+        return null
       }
-      return allowedRoutes.has(item.to.name) ? item : null;
+      
+      return allowedRoutes.has(item.to.name) ? item : null
     })
-    .filter(Boolean);
+    .filter(Boolean)
 }
 
 export default computed(() => filterMenuByPermissions([
@@ -66,4 +69,4 @@ export default computed(() => filterMenuByPermissions([
       { title: 'Tambah Arsip', to: { name: 'arsip-add' }, icon: { icon: 'ri-circle-line' } },
     ],
   },
-], userPermissions.value));
+], userPermissions.value))

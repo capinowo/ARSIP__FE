@@ -1,6 +1,6 @@
 <script setup>
-import { getSelectedRoleToken } from '@/middleware/auth';
-import { onMounted, ref } from 'vue';
+import { getSelectedRoleToken } from '@/middleware/auth'
+import { onMounted, ref } from 'vue'
 
 // const isAddUnitDrawerOpen = ref(false)
 const searchQuery = ref('')
@@ -17,6 +17,7 @@ const headers = [
   { title: 'Name', key: 'name' },
   { title: 'Description', key: 'description' },
   { title: 'Created At', key: 'created_at' },
+
   // { title: 'Updated At', key: 'updated_at' },
   // { title: 'Actions', key: 'actions', sortable: false },
 ]
@@ -125,9 +126,11 @@ onMounted(() => {
             density="compact"
             class="me-4"
           />
-          <!-- <VBtn @click="isAddUnitDrawerOpen = true">
+          <!--
+            <VBtn @click="isAddUnitDrawerOpen = true">
             Add New Unit
-          </VBtn> -->
+            </VBtn> 
+          -->
         </div>
       </VCard>
     </div>
@@ -151,21 +154,23 @@ onMounted(() => {
             {{ (currentPage - 1) * itemsPerPage + index + 1 }}
           </template>
 
-          <template #item.actions="{ item }">
+          <template #item.actions="">
             <div class="d-flex">
-              <!-- <VBtn
+              <!--
+                <VBtn
                 icon
-                style="margin-inline-end: 6px;"
+                style="margin-inline-end: 6px"
                 @click="editUnit(item)"
-              >
+                >
                 <VIcon>ri-edit-2-fill</VIcon>
-              </VBtn>
-              <VBtn
+                </VBtn>
+                <VBtn
                 icon
                 @click="deleteUnit(item)"
-              >
+                >
                 <VIcon>ri-delete-bin-2-fill</VIcon>
-              </VBtn> -->
+                </VBtn> 
+              -->
             </div>
           </template>
         </VDataTable>
@@ -173,11 +178,13 @@ onMounted(() => {
     </div>
 
     <!-- AddUnit Drawer Component -->
-    <!-- <AddUnit
+    <!--
+      <AddUnit
       :is-drawer-open="isAddUnitDrawerOpen"
       @update:is-drawer-open="isAddUnitDrawerOpen = $event"
       @create-unit="createUnit"
-    /> -->
+      /> 
+    -->
   </section>
 </template>
 

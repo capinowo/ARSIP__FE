@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue'
 
 // Props dari `NavbarThemeSwitcher.vue`
 const props = defineProps({
@@ -37,8 +37,12 @@ function switchTheme(themeName) {
 <template>
   <div>
     <p>Current Theme: {{ activeTheme }}</p>
-    <div v-for="theme in themes" :key="theme.name" @click="switchTheme(theme.name)">
-      <span :class="theme.icon"></span> {{ theme.name }}
+    <div
+      v-for="theme in themes"
+      :key="theme.name"
+      @click="switchTheme(theme.name)"
+    >
+      <span :class="theme.icon" /> {{ theme.name }}
     </div>
   </div>
 </template>
