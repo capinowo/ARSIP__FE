@@ -23,6 +23,7 @@ const roleMapping = {
   operator: 'OPERATOR',
   verifikator: 'VERIFIKATOR',
   admin_uk_1: 'ADMIN UNIT KERJA 1',
+  verifikator_uk_1: 'VERIFIKATOR UNIT KERJA 1',
 }
 
 const userState = useState('user')
