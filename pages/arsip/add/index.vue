@@ -4,6 +4,7 @@ import { useClassificationStore } from '@/stores/classificationStore'
 import { useFormStore } from '@/stores/formStoreArsip'
 import { useLocationStore } from '@/stores/locationStore'
 import { saveArsip } from '@/stores/saveArsip'
+import { uploadFileArchive } from '@/stores/saveFileUploads'
 import { useStatusStore } from '@/stores/statusStore'
 import { useUnitStore } from '@/stores/unitStore'
 import { computed, onMounted, ref } from 'vue'
@@ -17,6 +18,15 @@ const locationStore = useLocationStore()
 const selectedLocation = ref(null)
 const formStore = useFormStore()
 const content = ref(null)
+
+
+const selectedFile = ref(null) // Menyimpan file yang dipilih oleh pengguna
+
+const handleFileChange = event => {
+  if (event && event.length > 0) {
+    selectedFile.value = event[0] // Menyimpan file pertama yang dipilih
+  }
+}
 
 
 const typeOptions = computed(() => [
@@ -107,8 +117,47 @@ const statusOptions = computed(() => {
   }))
 })
 
-const handleSave = async () => { // Tambahkan `async` di sini
-  // Validasi form sebelum menyimpan
+//tanpa upload
+// const handleSave = async () => { // Tambahkan `async` di sini
+//   // Validasi form sebelum menyimpan
+//   if (!formStore.namaArsip || !formStore.selectedUnit || !formStore.selectedLocation || !formStore.selectedClassification || !formStore.selectedStatus) {
+//     formStore.isFormValid = false
+    
+//     return
+//   }
+
+//   formStore.isFormValid = true
+
+//   const data = {
+//     // eslint-disable-next-line camelcase
+//     archive_status_id: formStore.selectedStatus,
+//     archive_type_id: formStore.selectedType,
+//     classification_id: formStore.selectedClassification,
+//     description: formStore.content,
+//     document_path: "path/to/document", // Ganti dengan path yang sesuai
+//     location_id: formStore.selectedLocation,
+//     title: formStore.namaArsip,
+//     unit_id: formStore.selectedUnit,
+//     user_id: 1, // Ganti dengan user ID yang sesuai
+//   }
+
+//   try {
+//     await saveArsip(data)
+//     clearDraft()
+//     showSnackbar('Save Arsip berhasil!', 'success')
+//     setTimeout(() => {
+//       navigateTo('/arsip/list_arsip')
+//     }, 2000)
+//   } catch (error) {
+//   // Ambil semua pesan error dari backend GraphQL
+//     const errorMessages = error.map(err => err.message).join(', ') 
+//     || 'Terjadi kesalahan saat menyimpan arsip'
+  
+//     showSnackbar(errorMessages, 'error')
+//   }
+// }
+
+const handleSave = async () => {
   if (!formStore.namaArsip || !formStore.selectedUnit || !formStore.selectedLocation || !formStore.selectedClassification || !formStore.selectedStatus) {
     formStore.isFormValid = false
     
@@ -118,33 +167,43 @@ const handleSave = async () => { // Tambahkan `async` di sini
   formStore.isFormValid = true
 
   const data = {
-    // eslint-disable-next-line camelcase
     archive_status_id: formStore.selectedStatus,
     archive_type_id: formStore.selectedType,
     classification_id: formStore.selectedClassification,
     description: formStore.content,
-    document_path: "path/to/document", // Ganti dengan path yang sesuai
+    document_path: "path/to/document",
     location_id: formStore.selectedLocation,
     title: formStore.namaArsip,
     unit_id: formStore.selectedUnit,
-    user_id: 1, // Ganti dengan user ID yang sesuai
+    user_id: 1,
   }
 
   try {
-    await saveArsip(data)
-    clearDraft()
+    const savedArchive = await saveArsip(data)
+
     showSnackbar('Save Arsip berhasil!', 'success')
+
+    // if (savedArchive?.id && selectedFile.value) {
+    //   await uploadFileArchive(savedArchive.id, selectedFile.value) // Upload file setelah arsip tersimpan
+    //   showSnackbar('File berhasil diunggah!', 'success')
+    // }
+    if (savedArchive?.id && selectedFile.value) {
+      await uploadFileArchive(savedArchive.id, selectedFile.value) // Upload file setelah arsip tersimpan
+      showSnackbar('File berhasil diunggah!', 'success')
+    }
+
+
+    clearDraft()
     setTimeout(() => {
       navigateTo('/arsip/list_arsip')
     }, 2000)
   } catch (error) {
-  // Ambil semua pesan error dari backend GraphQL
-    const errorMessages = error.map(err => err.message).join(', ') 
-    || 'Terjadi kesalahan saat menyimpan arsip'
-  
+    const errorMessages = error.map(err => err.message).join(', ') || 'Terjadi kesalahan saat menyimpan arsip'
+
     showSnackbar(errorMessages, 'error')
   }
 }
+
 
 const showSnackbar = (message, color = 'success') => {
   snackbar.value.message = message
@@ -282,9 +341,11 @@ const showSnackbar = (message, color = 'success') => {
               </VCol>
               <VCol cols="12">
                 <VFileInput
+                  v-model="selectedFile"
                   show-size
                   label="Upload Lampiran"
                   class="mb-4"
+                  @change="handleFileChange"
                 />
               </VCol>
             </VRow>

@@ -1,8 +1,10 @@
 <script setup>
 import illustrationJohn2 from '@/images/illustration-john-2.png'
 import { getSelectedUnitToken } from '@/middleware/auth' // Corrected the import for named export
+import { useTokenStore } from '@/stores/tokenStores'
 import { computed, onMounted, ref } from 'vue'
 
+const tokenStore = useTokenStore()
 const selectedRoleToken = ref('')
 
 // Adjusted tokenData to match the selectedRoleToken structure
@@ -20,6 +22,8 @@ const tokenData = ref({
 onMounted(() => {
   selectedRoleToken.value = getSelectedUnitToken()
 
+  // console.log('Selected Role Token:', selectedRoleToken.value)
+
   if (selectedRoleToken.value) {
     try {
       // Split the token and decode the payload
@@ -35,6 +39,11 @@ onMounted(() => {
         iat: decoded.iat ? new Date(decoded.iat * 1000).toLocaleString() : null,
         exp: decoded.exp ? new Date(decoded.exp * 1000).toLocaleString() : null,
       }
+
+      // console.log('tokenData:', tokenData.value)
+      tokenStore.setTokenData(tokenData.value)
+
+      // console.log(userId)
 
       // Store expiration time in a separate variable
       if (decoded.exp) {

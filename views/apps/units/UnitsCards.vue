@@ -23,6 +23,20 @@ onMounted(async () => {
 const units = computed(() => unitStore.units || [])
 
 // console.log(unitStore.units)
+const snackbar = ref({
+  show: false,
+  message: '',
+  color: 'error', // Default warna merah untuk error
+})
+
+const showSnackbar = (message, color = 'error') => {
+  snackbar.value.message = message
+  snackbar.value.color = color
+  snackbar.value.show = true
+  setTimeout(() => {
+    snackbar.value.show = false
+  }, 3000) // Snackbar akan hilang setelah 3 detik
+}
 
 // Pilih unit
 const selectUnit = async unit => {
@@ -30,6 +44,7 @@ const selectUnit = async unit => {
 
   if (!roleToken) {
     console.error('Auth token missing. Redirecting to login.')
+    showSnackbar('Token otentikasi tidak ditemukan. Silakan login ulang.', 'error')
     navigateTo('/login')
     
     return
@@ -59,9 +74,15 @@ const selectUnit = async unit => {
 
     const result = await response.json()
 
+    // Tangani error dari GraphQL response
     if (result.errors) {
       console.error('GraphQL error:', result.errors)
-      throw new Error('Failed to select unit')
+
+      const errorMessage = result.errors[0]?.message || 'Terjadi kesalahan saat memilih unit'
+
+      showSnackbar(errorMessage, 'error')
+      
+      return
     }
 
     const unitToken = result.data.selectUnit
@@ -73,15 +94,31 @@ const selectUnit = async unit => {
     // Simpan unit token
     setSelectedUnitToken(unitToken)
 
+    // Tampilkan notifikasi sukses
+    showSnackbar('Unit berhasil dipilih!', 'success')
+
     // Redirect ke halaman berikutnya
-    navigateTo('/')
+    setTimeout(() => {
+      navigateTo('/')
+    }, 2000)
   } catch (error) {
     console.error('Error selecting unit:', error)
+    showSnackbar(error.message || 'Terjadi kesalahan tidak diketahui', 'error')
   }
 }
 </script>
 
 <template>
+  <VSnackbar
+    v-model="snackbar.show"
+    :color="snackbar.color"
+    top
+    :timeout="3000"
+    multi-line
+  >
+    {{ snackbar.message }}
+  </VSnackbar>
+
   <div>
     <!-- Loading Indicator -->
     <div

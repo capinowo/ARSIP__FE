@@ -3,6 +3,7 @@
 import useArsipStatus from '@/composables/useArsipStatus'
 import useClassification from '@/composables/useClassification'
 import { getSelectedRoleToken } from '@/middleware/auth'
+import { useTokenStore } from '@/stores/tokenStores'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -33,6 +34,14 @@ const closeDialog = () => {
   isDialogOpen.value = false   // Close the dialog
 }
 
+const tokenStore = useTokenStore()
+
+onMounted(() => {
+  console.log('Token Store Data on mount:', tokenStore.tokenData)
+  console.log('Selected Unit:', tokenStore.tokenData.selectedUnit)
+  console.log('Selected Unit ID:', tokenStore.tokenData.selectedUnit?.id)
+})
+
 
 // Confirm deletion and send mutation to delete the archive
 const confirmDeletion = async () => {
@@ -54,10 +63,79 @@ const headers = [
 ]
 
 // GraphQL query to fetch archives data
+//sebelum ke filter unit
+// const fetchArchives = async () => {
+//   const query = `
+//     query {
+//       getArchives {
+//         total
+//         data {
+//           id
+//           title
+//           description
+//           classification_id
+//           document_path
+//           archive_status_id
+//           archive_type_id
+//           unit_id
+//           location_id
+//           user_id
+//           created_at
+//           updated_at
+//         }
+//       }
+//     }
+//   `
+
+//   isLoading.value = true
+//   try {
+//     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${getSelectedRoleToken()}`,
+//       },
+//       body: JSON.stringify({ query }),
+//     })
+
+//     const result = await response.json()
+
+//     if (result.errors) {
+//       console.error('GraphQL errors:', result.errors)
+//     } else if (result.data && result.data.getArchives) {
+//       // Map archives and fetch classification description
+//       archives.value = await Promise.all(
+//         result.data.getArchives.data.map(async archive => {
+//           const classification = await fetchClassification(archive.classification_id)
+//           const status = await fetchArsipStatus(archive.archive_status_id)
+          
+//           return {
+//             ...archive,
+//             classification_description: classification?.description || 'N/A',
+//             archive_status_name: status?.name || 'N/A',  // Set status name here
+//           }
+//         }),
+//       )
+//       totalArchives.value = result.data.getArchives.total || 0
+//     } else {
+//       console.warn('No data returned from getArchives query:', result)
+//     }
+//   } catch (error) {
+//     console.error('Error fetching archives:', error)
+//     snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives')
+//   } finally {
+//     isLoading.value = false
+//   }
+// }
+
 const fetchArchives = async () => {
+  const unitId = tokenStore.tokenData.selectedUnit?.id || null // Ambil unit_id dari tokenStore
+
+  console.log("Fetching archives with unit_id:", unitId) // Debugging unit_id
+
   const query = `
-    query {
-      getArchives {
+    query GetArchives($where: ArchiveWhereInput) {
+      getArchives(where: $where) {
         total
         data {
           id
@@ -77,46 +155,53 @@ const fetchArchives = async () => {
     }
   `
 
+  const variables = {
+    where: {
+      unit_id: unitId, // Menambahkan unit_id ke dalam filter
+    },
+  }
+
   isLoading.value = true
   try {
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
-      method: 'POST',
+    const response = await fetch("https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getSelectedRoleToken()}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getSelectedRoleToken()}`,
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, variables }), // Mengirim query beserta variables
     })
 
     const result = await response.json()
 
     if (result.errors) {
-      console.error('GraphQL errors:', result.errors)
+      console.error("GraphQL errors:", result.errors)
     } else if (result.data && result.data.getArchives) {
-      // Map archives and fetch classification description
+      // Map archives dan fetch classification description
       archives.value = await Promise.all(
         result.data.getArchives.data.map(async archive => {
           const classification = await fetchClassification(archive.classification_id)
           const status = await fetchArsipStatus(archive.archive_status_id)
-          
+
           return {
             ...archive,
-            classification_description: classification?.description || 'N/A',
-            archive_status_name: status?.name || 'N/A',  // Set status name here
+            classification_description: classification?.description || "N/A",
+            archive_status_name: status?.name || "N/A", // Set status name here
           }
         }),
       )
       totalArchives.value = result.data.getArchives.total || 0
     } else {
-      console.warn('No data returned from getArchives query:', result)
+      console.warn("No data returned from getArchives query:", result)
     }
   } catch (error) {
-    console.error('Error fetching archives:', error)
-    snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives')
+    console.error("Error fetching archives:", error)
+    snackbarRef.value.showSnackbar("This is an error message", "error fetch archives")
   } finally {
     isLoading.value = false
   }
 }
+
 
 // Function to delete the archive
 const deleteArchive = async id => {
