@@ -204,8 +204,9 @@ const showSnackbar = (message, color = 'success') => {
     </div>
 
     <VRow>
-      <VCol md="8">
-        <!-- 👉 Product Information -->
+      <VCol md="12">
+        <!-- Menjadikan 3 kartu dalam satu kolom -->
+        <!-- Informasi Arsip -->
         <VCard
           class="mb-6"
           title="Informasi Arsip"
@@ -218,12 +219,6 @@ const showSnackbar = (message, color = 'success') => {
                   label="Nama Arsip"
                   placeholder="Nama Arsip"
                   :rules="[value => !!value || 'Nama Arsip wajib diisi']"
-                />
-              </VCol>
-              <VCol cols="12">
-                <VTextField
-                  label="Prepend"
-                  placeholder="Placeholder Text"
                 />
               </VCol>
               <VCol cols="12">
@@ -259,34 +254,12 @@ const showSnackbar = (message, color = 'success') => {
             </VRow>
           </VCardText>
         </VCard>
-      </VCol>
 
-      <VCol
-        md="4"
-        cols="12"
-      >
-        <!-- 👉 Upload -->
+        <!-- Arsip Berdasarkan -->
         <VCard
-          title="Upload Dokumen"
           class="mb-6"
+          title="Arsip Berdasarkan"
         >
-          <VCardText>
-            <VFileInput
-              show-size
-              label="Upload Softcopy"
-              prepend-icon="ri-camera-line"
-              class="mb-4"
-            />
-            <VFileInput
-              show-size
-              label="Upload Lampiran"
-              class="mb-4"
-            />
-          </VCardText>
-        </VCard>
-
-        <!-- 👉 Select Classification -->
-        <VCard title="Arsip Berdasarkan">
           <VCardText>
             <div class="d-flex flex-column gap-y-4">
               <VAutocomplete
@@ -333,6 +306,28 @@ const showSnackbar = (message, color = 'success') => {
                 suffix="Tahun" 
               />
             </div>
+          </VCardText>
+        </VCard>
+
+        <!-- Upload Dokumen -->
+        <VCard
+          title="Upload Dokumen"
+          class="mb-6"
+        >
+          <VCardText>
+            <!--
+              <VFileInput
+              show-size
+              label="Upload Softcopy"
+              prepend-icon="ri-camera-line"
+              class="mb-4"
+              /> 
+            -->
+            <VFileInput
+              show-size
+              label="Upload Lampiran"
+              class="mb-4"
+            />
           </VCardText>
         </VCard>
       </VCol>

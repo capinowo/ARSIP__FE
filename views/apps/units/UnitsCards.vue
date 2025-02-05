@@ -22,6 +22,8 @@ onMounted(async () => {
 // Data units
 const units = computed(() => unitStore.units || [])
 
+// console.log(unitStore.units)
+
 // Pilih unit
 const selectUnit = async unit => {
   const authToken = getAuthToken()
@@ -71,7 +73,7 @@ const selectUnit = async unit => {
     setSelectedUnitToken(unitToken)
 
     // Redirect ke halaman berikutnya
-    navigateTo('/dashboard')
+    navigateTo('/')
   } catch (error) {
     console.error('Error selecting unit:', error)
   }
@@ -87,7 +89,6 @@ const selectUnit = async unit => {
     >
       <div class="spinner" />
     </div>
-
     <!-- Daftar Unit -->
     <VRow
       v-if="!isLoading"
@@ -99,14 +100,20 @@ const selectUnit = async unit => {
         :key="unit.id"
         cols="12"
         sm="6"
-        lg="4"
+        md="4"
+        lg="3"
+        xl="2"
         class="mb-4"
       >
-        <VCard class="pa-8 full-width-card">
+        <VCard
+          class="pa-8"
+          style="block-size: 100%;"
+        >
           <VCardText class="v-card-text-expanded">
             <h5 class="unit-title">
               {{ unit.name }}
-            </h5> <!-- Nama Unit -->
+            </h5>
+            <!-- Nama Unit -->
             <div class="d-flex align-center">
               <VBtn
                 color="primary"
@@ -121,6 +128,7 @@ const selectUnit = async unit => {
     </VRow>
   </div>
 </template>
+
 
 <style scoped>
 /* Menjadikan VCard lebar penuh dalam kolom */
