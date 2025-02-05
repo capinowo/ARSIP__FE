@@ -1,7 +1,7 @@
 <!-- eslint-disable no-restricted-imports -->
 <script setup>
 import avatar1 from '@/images/avatars/avatar-1.png'
-import { clearAuthToken, clearSelectedRoleToken, getSelectedRoleToken } from '@/middleware/auth'
+import { clearAuthToken, clearSelectedRoleToken, clearSelectedUnitToken, getSelectedRoleToken } from '@/middleware/auth'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
@@ -62,6 +62,7 @@ async function navigateTo(path) {
 function logout() {
   clearAuthToken()
   clearSelectedRoleToken()
+  clearSelectedUnitToken()
   router.push('/login')
 }
 </script>

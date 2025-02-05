@@ -109,7 +109,7 @@ const selectRole = async roleDetails => {
     // console.log('Permissions set from role token.');
 
     // Redirect to the home page or dashboard
-    navigateTo('/')
+    navigateTo('/unit')
 
   } catch (error) {
     console.error('Error fetching role token:', error)

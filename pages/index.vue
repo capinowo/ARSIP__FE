@@ -1,5 +1,5 @@
 <script setup>
-import { getSelectedRoleToken } from '@/middleware/auth' // Import getSelectedRoleToken dari auth.js
+import { getSelectedUnitToken } from '@/middleware/auth' // Import getSelectedUnitToken dari auth.js
 import GrafikArsip from '@/views/apps/dashboard/GrafikArsip.vue'
 import WelcomeUsers from '@/views/apps/dashboard/WelcomeUsers.vue'
 import { jwtDecode } from 'jwt-decode' // Import jwtDecode secara langsung
@@ -10,7 +10,7 @@ definePageMeta({
   middleware: 'auth-middleware',
 })
 
-const selectedRoleToken = ref(getSelectedRoleToken() || '')
+const selectedRoleToken = ref(getSelectedUnitToken() || '')
 
 const tokenData = ref({
   userId: null,
@@ -43,7 +43,7 @@ onMounted(() => {
 })
 
 // Watch perubahan pada selectedRoleToken di localStorage
-watch(() => getSelectedRoleToken(), newToken => {
+watch(() => getSelectedUnitToken(), newToken => {
   selectedRoleToken.value = newToken
   decodeToken() // Update data token setelah perubahan
 }, { immediate: true })

@@ -1,5 +1,5 @@
 // middleware/authMiddleware.js
-import { clearSelectedRoleToken, getSelectedRoleToken } from '@/middleware/auth'
+import { clearSelectedUnitToken, getSelectedUnitToken } from '@/middleware/auth'
 import { jwtDecode } from 'jwt-decode'
 import { navigateTo, useState } from 'nuxt/app'
 
@@ -10,31 +10,31 @@ export default defineNuxtRouteMiddleware((to, from) => {
     //   return;
     // }
 
-    const selectedRoleToken = getSelectedRoleToken()
+    const selectedUnitToken = getSelectedUnitToken()
 
-    if (!selectedRoleToken) {
-      clearSelectedRoleToken()
+    if (!selectedUnitToken) {
+      clearSelectedUnitToken()
       
       return navigateTo('/login')
     }
 
     try {
       // Decode the token
-      const decodedRole = jwtDecode(selectedRoleToken)
+      const decodedUnit = jwtDecode(selectedUnitToken)
 
       // console.log("Decoded Role:", decodedRole); // Debugging to see decoded data
 
       const currentTime = Date.now() / 1000
 
       // Check if the token is expired
-      if (decodedRole.exp < currentTime) {
+      if (decodedUnit.exp < currentTime) {
         console.log("Token expired.")
-        clearSelectedRoleToken()
+        clearSelectedUnitToken()
         
         return navigateTo('/login')
       }
 
-      useState('selectedRole', () => decodedRole)
+      useState('selectedRole', () => decodedUnit)
 
       // Define access by permission names for specific pages
       const permissionAccess = {
@@ -45,7 +45,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
       }
 
       // Get user's permissions from the token
-      const userPermissions = decodedRole.permissions || []
+      const userPermissions = decodedUnit.permissions || []
       const allowedPages = new Set()
 
       // Collect all allowed pages based on permissions
@@ -70,7 +70,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
     } catch (error) {
       // console.error("Error decoding token:", error); // Log specific decoding error
-      clearSelectedRoleToken()
+      clearSelectedUnitToken()
       
       return navigateTo('/error')
     }

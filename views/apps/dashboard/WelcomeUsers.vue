@@ -1,6 +1,6 @@
 <script setup>
 import illustrationJohn2 from '@/images/illustration-john-2.png'
-import { getSelectedRoleToken } from '@/middleware/auth' // Corrected the import for named export
+import { getSelectedUnitToken } from '@/middleware/auth' // Corrected the import for named export
 import { computed, onMounted, ref } from 'vue'
 
 const selectedRoleToken = ref('')
@@ -11,14 +11,14 @@ const tokenData = ref({
   roles: [],
   selectedRole: {},
   permissions: [],
-  selectedUnit: null,
+  selectedUnit: [],
   iat: null,
   exp: null,
 })
 
 // Load selectedRoleToken from localStorage, decode it, and set expiration time
 onMounted(() => {
-  selectedRoleToken.value = getSelectedRoleToken()
+  selectedRoleToken.value = getSelectedUnitToken()
 
   if (selectedRoleToken.value) {
     try {
@@ -31,7 +31,7 @@ onMounted(() => {
         roles: decoded.roles || [],
         selectedRole: decoded.selectedRole || {},
         permissions: decoded.permissions || [],
-        selectedUnit: decoded.selectedUnit || 'None',
+        selectedUnit: decoded.selectedUnit || [],
         iat: decoded.iat ? new Date(decoded.iat * 1000).toLocaleString() : null,
         exp: decoded.exp ? new Date(decoded.exp * 1000).toLocaleString() : null,
       }
@@ -85,7 +85,7 @@ const remainingMinutes = computed(() => {
           </VCardTitle>
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
-              Selected Unit: <strong>{{ tokenData.selectedUnit || 'Not available' }}</strong>
+              Selected Unit: <strong>{{ tokenData.selectedUnit?.name || 'Not available' }}</strong>
             </h4>
           </VCardTitle>
           <VCardTitle>

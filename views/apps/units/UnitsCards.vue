@@ -1,5 +1,5 @@
 <script setup>
-import { getAuthToken, setSelectedUnitToken } from '@/middleware/auth'
+import { getSelectedRoleToken, setSelectedUnitToken } from '@/middleware/auth'
 import { useUnitStore } from '@/stores/unitStore' // Import store untuk unit data
 import { navigateTo } from 'nuxt/app'
 import { computed, ref } from 'vue'
@@ -26,29 +26,30 @@ const units = computed(() => unitStore.units || [])
 
 // Pilih unit
 const selectUnit = async unit => {
-  const authToken = getAuthToken()
+  const roleToken = getSelectedRoleToken()
 
-  if (!authToken) {
+  if (!roleToken) {
     console.error('Auth token missing. Redirecting to login.')
     navigateTo('/login')
     
     return
   }
 
-  const query = `
+  try {
+
+    const query = `
     mutation SelectUnit($unitId: Int!) {
       selectUnit(unitId: $unitId)
     }
   `
 
-  const variables = { unitId: unit.id }
+    const variables = { unitId: unit.id }
 
-  try {
     const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${authToken}`,
+        Authorization: `Bearer ${roleToken}`,
       },
       body: JSON.stringify({
         query,
@@ -101,44 +102,42 @@ const selectUnit = async unit => {
         cols="12"
         sm="6"
         md="4"
-        lg="3"
-        xl="2"
-        class="mb-4"
+        lg="4"
+        xl="3"
+        class="mb-2"
       >
-        <VCard
-          class="pa-8"
-          style="block-size: 100%;"
-        >
+        <VCard class="pa-6 full-height-card">
           <VCardText class="v-card-text-expanded">
             <h5 class="unit-title">
               {{ unit.name }}
             </h5>
-            <!-- Nama Unit -->
-            <div class="d-flex align-center">
-              <VBtn
-                color="primary"
-                @click="selectUnit(unit)"
-              >
-                Select Unit
-              </VBtn>
-            </div>
           </VCardText>
+          <div class="button-container">
+            <VBtn
+              color="primary"
+              @click="selectUnit(unit)"
+            >
+              Select Unit
+            </VBtn>
+          </div>
         </VCard>
       </VCol>
     </VRow>
   </div>
 </template>
 
-
 <style scoped>
-/* Menjadikan VCard lebar penuh dalam kolom */
-.full-width-card {
-  inline-size: 100%;
+/* Menyamakan tinggi semua kartu */
+.full-height-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  block-size: 100%;
 }
 
-/* Memperluas area teks di dalam VCard */
+/* Memperluas area teks agar kartu tetap konsisten */
 .v-card-text-expanded {
-  inline-size: 100%;
+  flex-grow: 1;
   text-align: center;
 }
 
@@ -148,7 +147,19 @@ const selectUnit = async unit => {
   font-size: 1.5rem; /* Ukuran font lebih besar */
   font-weight: bold; /* Membuat teks lebih tebal */
   margin-block-end: 1rem; /* Memberikan jarak bawah */
+  white-space: normal; /* Memungkinkan teks turun ke baris berikutnya */
+  word-wrap: break-word; /* Memastikan teks tidak keluar dari area */
+}
+
+/* Menempatkan tombol di bagian bawah */
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-block-start: auto;
+  padding-block: 1rem;
 }
 </style>
+
+
 
 
