@@ -169,6 +169,7 @@ const showSnackbar = (message, color = 'success') => {
   >
     {{ snackbar.message }}
   </VSnackbar>
+  
   <div>
     <div class="d-flex flex-wrap justify-center justify-md-space-between gap-4 mb-6">
       <div class="d-flex flex-column justify-center">
@@ -177,163 +178,142 @@ const showSnackbar = (message, color = 'success') => {
         </h4>
         <span class="text-medium-emphasis">Tolong lengkapi dokumen arsip anda</span>
       </div>
-
-      <div class="d-flex gap-4 align-center flex-wrap">
-        <!--
-          <VBtn
-          variant="outlined"
-          color="secondary"
-          >
-          Buang
-          </VBtn> 
-        -->
-        <VBtn
-          variant="outlined"
-          color="primary"
-          @click="clearDraft"
-        >
-          Clear Draft
-        </VBtn>
-        <VBtn
-          color="primary"
-          @click="handleSave"
-        >
-          Simpan Arsip
-        </VBtn>
-      </div>
     </div>
 
     <VRow>
       <VCol md="12">
-        <!-- Menjadikan 3 kartu dalam satu kolom -->
-        <!-- Informasi Arsip -->
+        <!-- Menggabungkan semua bagian dalam satu card -->
         <VCard
-          class="mb-6"
-          title="Informasi Arsip"
+          class="mb-6 pb-4"
+          title="Form Arsip"
         >
           <VCardText>
             <VRow>
-              <VCol cols="12">
+              <VCol cols="6">
                 <VTextField
                   v-model="formStore.namaArsip"
                   label="Nama Arsip"
-                  placeholder="Nama Arsip"
+                  placeholder="Nama Arsip" 
                   :rules="[value => !!value || 'Nama Arsip wajib diisi']"
                 />
               </VCol>
-              <VCol cols="12">
+              <VCol cols="6">
                 <VAutocomplete
                   v-model="formStore.selectedUnit"
                   label="Unit"
-                  placeholder="Unit"
+                  placeholder="Unit" 
                   :items="unitOptions"
                   item-title="name"
-                  item-value="id"
+                  item-value="id" 
                   :rules="[value => !!value || 'Unit wajib dipilih']"
                 />
               </VCol>
-              <VCol cols="12">
+              <VCol cols="6">
                 <VAutocomplete
                   v-model="formStore.selectedLocation"
                   label="Lokasi Arsip"
-                  placeholder="Select Lokasi"
+                  placeholder="Select Lokasi" 
                   :items="locationOptions"
                   item-title="name"
-                  item-value="id"
+                  item-value="id" 
                   :rules="[value => !!value || 'Lokasi Arsip wajib dipilih']"
                 />
               </VCol>
               <VCol cols="12">
-                <VTextField
+                <VTextarea
                   v-model="formStore.content"
                   label="Deskripsi Arsip"
-                  placeholder="Deskripsi Arsip"
+                  placeholder="Deskripsi Arsip" 
                   :rules="[value => !!value || 'Deskripsi Arsip wajib diisi']"
+                />
+              </VCol>
+              <VCol cols="12">
+                <VAutocomplete
+                  v-model="formStore.selectedClassification"
+                  label="Klasifikasi"
+                  placeholder="Select Klasifikasi" 
+                  :items="classificationOptions"
+                  item-title="text"
+                  item-value="value" 
+                  :rules="[value => !!value || 'Klasifikasi wajib dipilih']"
+                />
+              </VCol>
+              <VCol cols="6">
+                <VSelect
+                  v-model="formStore.selectedStatus"
+                  label="Select Status"
+                  :items="statusOptions" 
+                  item-title="name"
+                  item-value="id"
+                  placeholder="Select Status" 
+                  :rules="[value => !!value || 'Status wajib dipilih']"
+                />
+              </VCol>
+              <VCol cols="6">
+                <VSelect
+                  v-model="formStore.selectedType"
+                  label="Select Type"
+                  :items="typeOptions" 
+                  item-title="name"
+                  item-value="id"
+                  placeholder="Select Type" 
+                  :rules="[value => !!value || 'Type wajib dipilih']"
+                />
+              </VCol>
+              <VCol cols="12">
+                <VTextField
+                  label="Tanggal Arsip Masuk"
+                  prepend-icon="ri-calendar-schedule-line" 
+                  :placeholder="currentDate"
+                  readonly
+                />
+              </VCol>
+              <VCol cols="12">
+                <VTextField
+                  v-model="formStore.retentionPeriod"
+                  label="Periode Retensi" 
+                  prepend-icon="ri-calendar-schedule-line"
+                  placeholder="Masukkan jumlah tahun" 
+                  :rules="[value => !!value || 'Periode Retensi wajib diisi']"
+                  type="number"
+                  min="1"
+                  suffix="Tahun"
+                />
+              </VCol>
+              <VCol cols="12">
+                <VFileInput
+                  show-size
+                  label="Upload Lampiran"
+                  class="mb-4"
                 />
               </VCol>
             </VRow>
           </VCardText>
-        </VCard>
 
-        <!-- Arsip Berdasarkan -->
-        <VCard
-          class="mb-6"
-          title="Arsip Berdasarkan"
-        >
-          <VCardText>
-            <div class="d-flex flex-column gap-y-4">
-              <VAutocomplete
-                v-model="formStore.selectedClassification"
-                label="Klasifikasi"
-                placeholder="Select Klasifikasi"
-                :items="classificationOptions" 
-                item-title="text" 
-                item-value="value"
-                :rules="[value => !!value || 'Klasifikasi wajib dipilih']"
-              />
-              <VSelect
-                v-model="formStore.selectedStatus"
-                label="Select Status"
-                :items="statusOptions"  
-                item-title="name"   
-                item-value="id"
-                placeholder="Select Status"
-                :rules="[value => !!value || 'Status wajib dipilih']"
-              />
-              <VSelect
-                v-model="formStore.selectedType"
-                label="Select Type"
-                :items="typeOptions"
-                item-title="name"
-                item-value="id"
-                placeholder="Select Type"
-                :rules="[value => !!value || 'Type wajib dipilih']"
-              />
-              <VTextField
-                label="Tanggal Arsip Masuk"
-                prepend-icon="ri-calendar-schedule-line"
-                :placeholder="currentDate" 
-                readonly
-              />
-              <VTextField
-                v-model="formStore.retentionPeriod"
-                label="Periode Retensi"
-                prepend-icon="ri-calendar-schedule-line"
-                placeholder="Masukkan jumlah tahun"
-                :rules="[value => !!value || 'Periode Retensi wajib diisi']"
-                type="number"
-                min="1"
-                suffix="Tahun" 
-              />
-            </div>
-          </VCardText>
-        </VCard>
-
-        <!-- Upload Dokumen -->
-        <VCard
-          title="Upload Dokumen"
-          class="mb-6"
-        >
-          <VCardText>
-            <!--
-              <VFileInput
-              show-size
-              label="Upload Softcopy"
-              prepend-icon="ri-camera-line"
-              class="mb-4"
-              /> 
-            -->
-            <VFileInput
-              show-size
-              label="Upload Lampiran"
-              class="mb-4"
-            />
-          </VCardText>
+          <!-- Tombol Simpan dan Clear Draft di bagian bawah -->
+          <VCardActions class="d-flex justify-end mt-4 px-4 pb-4">
+            <VBtn
+              variant="outlined"
+              color="secondary"
+              @click="clearDraft"
+            >
+              Clear Draft
+            </VBtn>
+            <VBtn
+              variant="flat"
+              color="primary"
+              style="margin-inline-start: 8px;"
+              @click="handleSave"
+            >
+              Simpan Arsip
+            </VBtn>
+          </VCardActions>
         </VCard>
       </VCol>
     </VRow>
   </div>
 </template>
+
 
 <style lang="scss" scoped>
   .drop-zone {

@@ -86,10 +86,12 @@ onMounted(() => {
       v-if="archiveDetail"
       class="mb-6"
     >
-      <h5 class="text-h5">
+      <!--
+        <h5 class="text-h5">
         Detail Arsip #{{ archiveDetail.id }}
-      </h5>
-      <p>{{ archiveDetail.updated_at || 'Tidak ada informasi' }}</p>
+        </h5> 
+      -->
+      <!-- <p>{{ archiveDetail.updated_at || 'Tidak ada informasi' }}</p> -->
 
       <VTabs v-model="activeTab">
         <VTab>Detail</VTab>
@@ -101,50 +103,128 @@ onMounted(() => {
         <VWindowItem>
           <VCard class="mt-4">
             <VCardText>
-              <h5>ARSIP</h5>
-              <hr class="mb-6">
+              <!-- <h5>ARSIP</h5> -->
+              <!-- <hr class="mb-6"> -->
               <div class="info-grid">
-                <div><strong>Judul:</strong></div> <div>{{ archiveDetail.title }}</div>
-                <div><strong>Deskripsi:</strong></div> <div>{{ archiveDetail.description }}</div>
-                <div><strong>Unit:</strong></div> <div>{{ archiveDetail.unit?.name }}</div>
-                <div><strong>Jenis Arsip:</strong></div> <div>{{ archiveDetail.archiveType?.name }}</div>
-                <div><strong>Status Arsip:</strong></div> <div>{{ archiveDetail.archiveStatus?.name }}</div>
-                <div><strong>Dibuat Pada:</strong></div> <div>{{ formatDate(archiveDetail.created_at) }}</div>
-              </div>
-
-              <h5>Klasifikasi</h5>
-              <hr class="mb-6">
-              <div class="info-grid">
-                <div><strong>Deskripsi Klasifikasi:</strong></div> <div>{{ archiveDetail.classification?.description }}</div>
-                <div><strong>Kode Klasifikasi:</strong></div> <div>{{ archiveDetail.classification?.classification_code }}</div>
-                <div><strong>Retensi Aktif:</strong></div> <div>{{ archiveDetail.classification?.retention_active }} Tahun</div>
-                <div><strong>Retensi Non-Aktif:</strong></div> <div>{{ archiveDetail.classification?.retention_inactive }} Tahun</div>
-                <div><strong>Jenis Retensi:</strong></div> <div>{{ archiveDetail.classification?.retentionDisposition?.name }}</div>
-                <div><strong>Keamanan:</strong></div> <div>{{ archiveDetail.classification?.securityClassification?.name }}</div>
-              </div>
-
-              <h5>Lokasi</h5>
-              <hr class="mb-6">
-              <div class="info-grid">
-                <div><strong>Nama Gedung:</strong></div> <div>{{ archiveDetail.location?.building_name }}</div>
-                <div><strong>Nama Lokasi:</strong></div> <div>{{ archiveDetail.location?.name }}</div>
-                <div><strong>Nama Ruangan:</strong></div> <div>{{ archiveDetail.location?.room_name }}</div>
-                <div><strong>Nama Rak:</strong></div> <div>{{ archiveDetail.location?.rack_name }}</div>
-                <div><strong>Nama Box:</strong></div> <div>{{ archiveDetail.location?.box_name }}</div>
-              </div>
-
-              <h5>Pengguna</h5>
-              <hr class="mb-6">
-              <div class="info-grid">
-                <div><strong>Nama Pengguna:</strong></div> <div>{{ archiveDetail.user?.name }}</div>
-                <div><strong>Identitas:</strong></div> <div>{{ archiveDetail.user?.identity }}</div>
-                <div><strong>Roles:</strong></div> 
-                <div>
-                  <span
-                    v-for="role in archiveDetail.user?.roles"
-                    :key="role.name"
-                  >{{ role.name }}</span>
+                <div class="mb-4">
+                  <strong>Judul:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.title }}
                 </div>
+                <div class="mb-4">
+                  <strong>Deskripsi:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.description }}
+                </div>
+                <div class="mb-4">
+                  <strong>Unit:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.unit?.name }}
+                </div>
+                <div class="mb-4">
+                  <strong>Jenis Arsip:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.archiveType?.name }}
+                </div>
+                <div class="mb-4">
+                  <strong>Status Arsip:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.archiveStatus?.name }}
+                </div>
+                <div class="mb-4">
+                  <strong>Dibuat Pada:</strong>
+                </div> <div class="mb-4">
+                  {{ formatDate(archiveDetail.created_at) }}
+                </div>
+              </div>
+
+              <!-- <h5>Klasifikasi</h5> -->
+              <!-- <hr class="mb-6"> -->
+              <div class="info-grid">
+                <div class="mb-4">
+                  <strong>Deskripsi Klasifikasi:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.classification?.description }}
+                </div>
+                <div class="mb-4">
+                  <strong>Kode Klasifikasi:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.classification?.classification_code }}
+                </div>
+                <div class="mb-4">
+                  <strong>Retensi Aktif:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.classification?.retention_active }} Tahun
+                </div>
+                <div class="mb-4">
+                  <strong>Retensi Non-Aktif:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.classification?.retention_inactive }} Tahun
+                </div>
+                <div class="mb-4">
+                  <strong>Jenis Retensi:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.classification?.retentionDisposition?.name }}
+                </div>
+                <div class="mb-4">
+                  <strong>Keamanan:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.classification?.securityClassification?.name }}
+                </div>
+              </div>
+
+              <!-- <h5>Lokasi</h5> -->
+              <!-- <hr class="mb-6"> -->
+              <div class="info-grid">
+                <div class="mb-4">
+                  <strong>Nama Gedung:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.location?.building_name }}
+                </div>
+                <div class="mb-4">
+                  <strong>Nama Lokasi:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.location?.name }}
+                </div>
+                <div class="mb-4">
+                  <strong>Nama Ruangan:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.location?.room_name }}
+                </div>
+                <div class="mb-4">
+                  <strong>Nama Rak:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.location?.rack_name }}
+                </div>
+                <div class="mb-4">
+                  <strong>Nama Box:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.location?.box_name }}
+                </div>
+              </div>
+
+              <!-- <h5>Pengguna</h5> -->
+              <!-- <hr class="mb-6"> -->
+              <div class="info-grid">
+                <div class="mb-4">
+                  <strong>Nama Pengguna:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.user?.name }}
+                </div>
+                <div class="mb-4">
+                  <strong>Identitas:</strong>
+                </div> <div class="mb-4">
+                  {{ archiveDetail.user?.identity }}
+                </div>
+                <!--
+                  <div class="mb-1"><strong>Roles:</strong></div> 
+                  <div class="mb-1">
+                  <span
+                  v-for="role in archiveDetail.user?.roles"
+                  :key="role.name"
+                  >{{ role.name }}</span>
+                  </div> 
+                -->
               </div>
             </VCardText>
           </VCard>
@@ -154,8 +234,8 @@ onMounted(() => {
         <VWindowItem>
           <VCard class="mt-4">
             <VCardText>
-              <h5>View File Upload</h5>
-              <hr class="mb-6">
+              <!-- <h5>View File Upload</h5> -->
+              <!-- <hr class="mb-6"> -->
               <p><strong>Dokumen Path:</strong> {{ archiveDetail.document_path }}</p>
               <VBtn
                 v-if="archiveDetail.document_path"
