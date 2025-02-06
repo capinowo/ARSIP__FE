@@ -1,4 +1,5 @@
 import { getSelectedRoleToken } from '@/middleware/auth'
+import { BASE_URL } from "@/utils/api"
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -14,6 +15,7 @@ export const useLocationStore = defineStore('location', () => {
         getLocations {
           data {
             id
+            unit_id
             name
             building_name
           }
@@ -28,7 +30,7 @@ export const useLocationStore = defineStore('location', () => {
       const token = getSelectedRoleToken()
       if (!token) throw new Error('Invalid token')
 
-      const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+      const response = await fetch(BASE_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

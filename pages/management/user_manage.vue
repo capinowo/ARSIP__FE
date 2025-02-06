@@ -1,5 +1,6 @@
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth' // Import token retrieval function
+import { BASE_URL } from "@/utils/api"
 import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -51,7 +52,7 @@ const fetchUsers = async () => {
   try {
     const token = getSelectedRoleToken() // Get the selected role token
 
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

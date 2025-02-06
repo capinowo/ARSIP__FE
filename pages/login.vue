@@ -12,6 +12,7 @@ import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import { setAuthToken } from '@/middleware/auth'
 
 import Snackbar from '@/components/Snackbar.vue'
+import { BASE_URL } from "@/utils/api"
 import { navigateTo } from 'nuxt/app'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -46,7 +47,7 @@ async function login() {
   errorMessage.value = '' // Reset pesan error
 
   try {
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

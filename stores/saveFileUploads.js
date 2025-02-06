@@ -1,4 +1,7 @@
+
 import { getSelectedRoleToken } from '@/middleware/auth'
+import { BASE_URL } from "@/utils/api"
+
 
 export async function uploadFileArchive(archiveId, file) {
   if (!file) return // Jika tidak ada file, keluar dari fungsi
@@ -23,12 +26,12 @@ export async function uploadFileArchive(archiveId, file) {
   formData.append('0', file)
 
   try {
-    const token = getSelectedRoleToken()
+    // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGVzIjpbImFkbWluIiwib3BlcmF0b3IiLCJvcGVyYXRvcl91a18xIiwicGltcGluYW4iLCJwaW1waW5hbl91a18xIiwic3lzdGVtIiwidmVyaWZpa2F0b3IiXSwic2VsZWN0ZWRSb2xlIjp7ImlkIjoxLCJuYW1lIjoic3lzdGVtIiwiZGVzY3JpcHRpb24iOiJTeXN0ZW0gcm9sZSIsImNyZWF0ZWRfYXQiOiIyMDI1LTAyLTA1VDA4OjU0OjI2LjQxOVoiLCJ1cGRhdGVkX2F0IjoiMjAyNS0wMi0wNVQwODo1NDoyNi40MTlaIn0sInBlcm1pc3Npb25zIjpbImFjY2Vzcy1jb250cm9sIl0sInNlbGVjdGVkVW5pdCI6eyJpZCI6MSwiY29kZW5hbWUiOiJCS0IiLCJuYW1lIjoiQktCIiwiZGVzY3JpcHRpb24iOiJEU1RJIiwiY3JlYXRlZF9hdCI6IjIwMjUtMDItMDVUMTY6MDk6MjguMDAwWiIsInVwZGF0ZWRfYXQiOiIyMDI1LTAyLTA1VDE2OjA5OjI5LjAwMFoifSwiaWF0IjoxNzM4ODA2ODI4LCJleHAiOjE3Mzg4MTA0Mjh9.EYUCipE7FZhB529DXpVZLTtyw1ECoFQPIInnsFlENrE"
 
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${getSelectedRoleToken()}`,
         'apollo-require-preflight': 'true',
         'x-apollo-operation-name': 'uploadFileArchive',
       },

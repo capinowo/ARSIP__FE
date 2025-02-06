@@ -84,7 +84,7 @@ const remainingMinutes = computed(() => {
         <VCardItem>
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
-              Anda login sebagai <strong>{{ tokenData.selectedRole?.description || 'Not available' }}</strong>
+              Anda login sebagai: <strong>{{ tokenData.selectedRole?.description || 'Not available' }}</strong>
             </h4>
           </VCardTitle>
           <VCardTitle>

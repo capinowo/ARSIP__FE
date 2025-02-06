@@ -4,6 +4,7 @@ import useArsipStatus from '@/composables/useArsipStatus'
 import useClassification from '@/composables/useClassification'
 import { getSelectedRoleToken } from '@/middleware/auth'
 import { useTokenStore } from '@/stores/tokenStores'
+import { BASE_URL } from "@/utils/api"
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -36,11 +37,11 @@ const closeDialog = () => {
 
 const tokenStore = useTokenStore()
 
-onMounted(() => {
-  console.log('Token Store Data on mount:', tokenStore.tokenData)
-  console.log('Selected Unit:', tokenStore.tokenData.selectedUnit)
-  console.log('Selected Unit ID:', tokenStore.tokenData.selectedUnit?.id)
-})
+// onMounted(() => {
+//   console.log('Token Store Data on mount:', tokenStore.tokenData)
+//   console.log('Selected Unit:', tokenStore.tokenData.selectedUnit)
+//   console.log('Selected Unit ID:', tokenStore.tokenData.selectedUnit?.id)
+// })
 
 
 // Confirm deletion and send mutation to delete the archive
@@ -57,7 +58,8 @@ const headers = [
   { title: 'Judul', key: 'title' },
   { title: 'Deskripsi', key: 'description' },
   { title: 'Klasifikasi', key: 'classification_description' },
-  { title: 'Document Path', key: 'document_path' },
+
+  // { title: 'Document Path', key: 'document_path' },
   { title: 'Status', key: 'archive_status_name' },
   { title: 'Actions', key: 'actions', sortable: false },
 ]
@@ -131,7 +133,7 @@ const headers = [
 const fetchArchives = async () => {
   const unitId = tokenStore.tokenData.selectedUnit?.id || null // Ambil unit_id dari tokenStore
 
-  console.log("Fetching archives with unit_id:", unitId) // Debugging unit_id
+  // console.log("Fetching archives with unit_id:", unitId) // Debugging unit_id
 
   const query = `
     query GetArchives($where: ArchiveWhereInput) {
@@ -142,7 +144,6 @@ const fetchArchives = async () => {
           title
           description
           classification_id
-          document_path
           archive_status_id
           archive_type_id
           unit_id
@@ -163,7 +164,7 @@ const fetchArchives = async () => {
 
   isLoading.value = true
   try {
-    const response = await fetch("https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql", {
+    const response = await fetch(BASE_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -214,7 +215,7 @@ const deleteArchive = async id => {
   `
 
   try {
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

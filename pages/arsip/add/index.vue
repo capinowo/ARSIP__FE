@@ -1,4 +1,5 @@
 <!-- eslint-disable camelcase -->
+<!-- eslint-disable camelcase -->
 <script setup>
 import { useClassificationStore } from '@/stores/classificationStore'
 import { useFormStore } from '@/stores/formStoreArsip'
@@ -6,6 +7,7 @@ import { useLocationStore } from '@/stores/locationStore'
 import { saveArsip } from '@/stores/saveArsip'
 import { uploadFileArchive } from '@/stores/saveFileUploads'
 import { useStatusStore } from '@/stores/statusStore'
+import { useTokenStore } from '@/stores/tokenStores'
 import { useUnitStore } from '@/stores/unitStore'
 import { computed, onMounted, ref } from 'vue'
 
@@ -18,16 +20,31 @@ const locationStore = useLocationStore()
 const selectedLocation = ref(null)
 const formStore = useFormStore()
 const content = ref(null)
+const selectedFile = ref(null)
+const tokenStore = useTokenStore()
+const unit_id = ref(null)
+const unit_name = ref(null)
 
+onMounted(() => {
+  const selectedUnit = tokenStore.tokenData.selectedUnit
+  if (selectedUnit) {
+    unit_id.value = selectedUnit.id
+    unit_name.value = selectedUnit.name
+    formStore.selectedUnit = selectedUnit.id
+  }
+})
 
-const selectedFile = ref(null) // Menyimpan file yang dipilih oleh pengguna
+const unitStore = useUnitStore()
+
+onMounted(() => {
+  unitStore.fetchUnits()
+})
 
 const handleFileChange = event => {
   if (event && event.length > 0) {
-    selectedFile.value = event[0] // Menyimpan file pertama yang dipilih
+    selectedFile.value = event[0]
   }
 }
-
 
 const typeOptions = computed(() => [
   { id: 1, name: 'Subtantif' },
@@ -41,50 +58,30 @@ const clearDraft = () => {
 const snackbar = ref({
   show: false,
   message: '',
-  color: 'success',  // Set warna snackbar (success/error)
+  color: 'success',
 })
 
-// Mendapatkan options lokasi dari store
 const locationOptions = computed(() => {
   return locationStore.locations.map(item => ({
     id: item.id,
-    name: `${item.name} - ${item.building_name}`,  // Menampilkan nama dan building name
+    name: `${item.name} - ${item.building_name}`,
   }))
 })
 
-// Ambil data lokasi saat komponen di-mount
 onMounted(() => {
-  locationStore.fetchLocations() // Memanggil fetchLocations untuk mengambil data
-})
-
-// Menggunakan store untuk mengambil unit
-const unitStore = useUnitStore()
-const selectedUnit = ref(null)
-
-// Mendapatkan options unit dari store
-const unitOptions = computed(() => {
-  return unitStore.units.map(item => ({
-    id: item.id,
-    name: item.name,
-  }))
-})
-
-// Ambil data unit saat komponen di-mount
-onMounted(() => {
-  unitStore.fetchUnits() // Memanggil fetchUnits untuk mengambil data
+  locationStore.fetchLocations()
 })
 
 const retentionPeriod = ref(null)
-const currentDate = ref('') // Variabel untuk menyimpan tanggal saat ini
+const currentDate = ref('')
 
 onMounted(() => {
   const date = new Date()
   const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long' }
 
-  currentDate.value = date.toLocaleDateString('id-ID', options) // Format dalam bahasa Indonesia
+  currentDate.value = date.toLocaleDateString('id-ID', options)
 })
 
-// Mengambil data dari classificationStore
 const classificationStore = useClassificationStore()
 
 onMounted(() => {
@@ -93,15 +90,13 @@ onMounted(() => {
 
 const selectedClassification = ref(null)
 
-// Format options untuk klasifikasi
 const classificationOptions = computed(() => {
   return classificationStore.classifications.map(item => ({
-    text: `${item.classification_code} - ${item.description}`,  // Properti 'text' yang akan ditampilkan
-    value: item.id,  // ID sebagai nilai
+    text: `${item.classification_code} - ${item.description}`,
+    value: item.id,
   }))
 })
 
-// Mengambil data dari statusStore
 const statusStore = useStatusStore()
 const selectedStatus = ref(null)
 
@@ -109,53 +104,12 @@ onMounted(() => {
   statusStore.fetchStatuses()
 })
 
-// Format options untuk status
 const statusOptions = computed(() => {
   return statusStore.statuses.map(item => ({
-    name: item.name,  // Properti 'name' yang akan ditampilkan
-    id: item.id,      // ID sebagai nilai
+    name: item.name,
+    id: item.id,
   }))
 })
-
-//tanpa upload
-// const handleSave = async () => { // Tambahkan `async` di sini
-//   // Validasi form sebelum menyimpan
-//   if (!formStore.namaArsip || !formStore.selectedUnit || !formStore.selectedLocation || !formStore.selectedClassification || !formStore.selectedStatus) {
-//     formStore.isFormValid = false
-    
-//     return
-//   }
-
-//   formStore.isFormValid = true
-
-//   const data = {
-//     // eslint-disable-next-line camelcase
-//     archive_status_id: formStore.selectedStatus,
-//     archive_type_id: formStore.selectedType,
-//     classification_id: formStore.selectedClassification,
-//     description: formStore.content,
-//     document_path: "path/to/document", // Ganti dengan path yang sesuai
-//     location_id: formStore.selectedLocation,
-//     title: formStore.namaArsip,
-//     unit_id: formStore.selectedUnit,
-//     user_id: 1, // Ganti dengan user ID yang sesuai
-//   }
-
-//   try {
-//     await saveArsip(data)
-//     clearDraft()
-//     showSnackbar('Save Arsip berhasil!', 'success')
-//     setTimeout(() => {
-//       navigateTo('/arsip/list_arsip')
-//     }, 2000)
-//   } catch (error) {
-//   // Ambil semua pesan error dari backend GraphQL
-//     const errorMessages = error.map(err => err.message).join(', ') 
-//     || 'Terjadi kesalahan saat menyimpan arsip'
-  
-//     showSnackbar(errorMessages, 'error')
-//   }
-// }
 
 const handleSave = async () => {
   if (!formStore.namaArsip || !formStore.selectedUnit || !formStore.selectedLocation || !formStore.selectedClassification || !formStore.selectedStatus) {
@@ -183,15 +137,10 @@ const handleSave = async () => {
 
     showSnackbar('Save Arsip berhasil!', 'success')
 
-    // if (savedArchive?.id && selectedFile.value) {
-    //   await uploadFileArchive(savedArchive.id, selectedFile.value) // Upload file setelah arsip tersimpan
-    //   showSnackbar('File berhasil diunggah!', 'success')
-    // }
     if (savedArchive?.id && selectedFile.value) {
-      await uploadFileArchive(savedArchive.id, selectedFile.value) // Upload file setelah arsip tersimpan
+      await uploadFileArchive(savedArchive.id, selectedFile.value)
       showSnackbar('File berhasil diunggah!', 'success')
     }
-
 
     clearDraft()
     setTimeout(() => {
@@ -204,18 +153,16 @@ const handleSave = async () => {
   }
 }
 
-
 const showSnackbar = (message, color = 'success') => {
   snackbar.value.message = message
   snackbar.value.color = color
   snackbar.value.show = true
   setTimeout(() => {
     snackbar.value.show = false
-  }, 2000) // Snackbar akan hilang setelah 3 detik
+  }, 2000)
 }
-
-// Konten deskripsi arsip
 </script>
+
 
 <template>
   <!-- Snackbar Notification -->
@@ -248,24 +195,49 @@ const showSnackbar = (message, color = 'success') => {
         >
           <VCardText>
             <VRow>
-              <VCol cols="6">
-                <VTextField
-                  v-model="formStore.namaArsip"
-                  label="Nama Arsip"
-                  placeholder="Nama Arsip" 
-                  :rules="[value => !!value || 'Nama Arsip wajib diisi']"
+              <VCol cols="12">
+                <VAutocomplete
+                  v-model="formStore.selectedClassification"
+                  label="Klasifikasi"
+                  placeholder="Select Klasifikasi" 
+                  :items="classificationOptions"
+                  item-title="text"
+                  item-value="value" 
+                  :rules="[value => !!value || 'Klasifikasi wajib dipilih']"
                 />
               </VCol>
               <VCol cols="6">
-                <VAutocomplete
-                  v-model="formStore.selectedUnit"
-                  label="Unit"
-                  placeholder="Unit" 
-                  :items="unitOptions"
-                  item-title="name"
-                  item-value="id" 
-                  :rules="[value => !!value || 'Unit wajib dipilih']"
+                <VTextField
+                  v-model="formStore.namaArsip"
+                  label="Judul Arsip"
+                  placeholder="Judul Arsip" 
+                  :rules="[value => !!value || 'Judul Arsip wajib diisi']"
                 />
+              </VCol>
+              <!--
+                <VCol cols="6">
+                <VAutocomplete
+                v-model="formStore.selectedUnit"
+                label="Unit"
+                placeholder="Unit" 
+                :items="unitOptions"
+                item-title="name"
+                item-value="id" 
+                :rules="[value => !!value || 'Unit wajib dipilih']"
+                />
+                </VCol> 
+              -->
+              <VCol cols="6">
+                <VTextField
+                  v-model="unit_name"
+                  label="Unit"
+                  placeholder="Unit"
+                  readonly
+                />
+                <input
+                  v-model="unit_id"
+                  type="hidden"
+                >
               </VCol>
               <VCol cols="6">
                 <VAutocomplete
@@ -286,17 +258,7 @@ const showSnackbar = (message, color = 'success') => {
                   :rules="[value => !!value || 'Deskripsi Arsip wajib diisi']"
                 />
               </VCol>
-              <VCol cols="12">
-                <VAutocomplete
-                  v-model="formStore.selectedClassification"
-                  label="Klasifikasi"
-                  placeholder="Select Klasifikasi" 
-                  :items="classificationOptions"
-                  item-title="text"
-                  item-value="value" 
-                  :rules="[value => !!value || 'Klasifikasi wajib dipilih']"
-                />
-              </VCol>
+             
               <VCol cols="6">
                 <VSelect
                   v-model="formStore.selectedStatus"

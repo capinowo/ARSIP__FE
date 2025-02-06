@@ -1,3 +1,7 @@
+// config/api.js
+// export const BASE_URL = "https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql"
+export const BASE_URL = "http://localhost:4000/graphql"
+
 export const $api = $fetch.create({
 
   // Request interceptor
@@ -14,3 +18,4 @@ export const $api = $fetch.create({
     }
   },
 })
+

@@ -1,6 +1,7 @@
 <script setup>
 import { getSelectedRoleToken, setSelectedUnitToken } from '@/middleware/auth'
 import { useUnitStore } from '@/stores/unitStore' // Import store untuk unit data
+import { BASE_URL } from "@/utils/api"
 import { navigateTo } from 'nuxt/app'
 import { computed, ref } from 'vue'
 
@@ -60,7 +61,7 @@ const selectUnit = async unit => {
 
     const variables = { unitId: unit.id }
 
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -2,6 +2,8 @@
 <!-- eslint-disable camelcase -->
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth'
+import { useTokenStore } from '@/stores/tokenStores'
+import { BASE_URL } from "@/utils/api"
 import { nextTick, onMounted, ref } from 'vue'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 
@@ -14,8 +16,12 @@ const props = defineProps({
 
 const emit = defineEmits(['update:isDrawerOpen', 'create-location', 'refresh-locations'])
 
+const tokenStore = useTokenStore()
+
+// Variables for the form
 const refForm = ref()
 const unit_id = ref(null) // Selected unit ID
+const unit_name = ref('') // Selected unit name
 const name = ref('')
 const description = ref('')
 const building_name = ref('')
@@ -41,7 +47,7 @@ const fetchUnits = async () => {
   try {
     const token = getSelectedRoleToken()
 
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,6 +74,19 @@ const fetchUnits = async () => {
   }
 }
 
+// Initialize unit_id and unit_name on mounted
+onMounted(() => {
+  const selectedUnit = tokenStore.tokenData.selectedUnit
+  if (selectedUnit) {
+    unit_id.value = selectedUnit.id  // Set unit_id
+    unit_name.value = selectedUnit.name  // Set unit_name
+  }
+
+  // console.log('Token Store Data on mount:', tokenStore.tokenData)
+  // console.log('Selected Unit ID:', unit_id.value)
+  // console.log('Selected Unit Name:', unit_name.value)
+})
+
 // Close drawer function
 const closeNavigationDrawer = () => {
   emit('update:isDrawerOpen', false)
@@ -91,13 +110,12 @@ const onSubmit = () => {
         box_name: box_name.value,
       })
       closeNavigationDrawer()
-      
+
       // Emit event untuk memuat ulang data di halaman master_lokasi
       emit('refresh-locations')  // Tambahkan emit untuk refresh data
     }
   })
 }
-
 
 const handleDrawerModelValueUpdate = val => {
   emit('update:isDrawerOpen', val)
@@ -136,15 +154,15 @@ onMounted(() => {
             @submit.prevent="onSubmit"
           >
             <VRow>
-              <!-- Unit ID Field as Select Dropdown -->
+              <!-- Unit ID Field as TextField to show Unit Name -->
               <VCol cols="12">
-                <VSelect
-                  v-model="unit_id"
-                  :items="units"
+                <VTextField
+                  v-model="unit_name"
                   label="Unit"
                   placeholder="Select a unit"
                   :rules="[v => !!v || 'Unit is required']"
                   required
+                  readonly
                 />
               </VCol>
 

@@ -2,6 +2,7 @@
 <script setup>
 import Snackbar from '@/components/Snackbar.vue'
 import { getSelectedRoleToken } from '@/middleware/auth'
+import { BASE_URL } from "@/utils/api"
 import AddNewMasterLokasi from '@/views/apps/master-lokasi/AddNewMasterLokasi.vue'
 import DeleteLokasi from '@/views/apps/master-lokasi/DeleteMasterLokasi.vue'
 import EditLocation from '@/views/apps/master-lokasi/EditMasterLokasi.vue'
@@ -35,6 +36,41 @@ const headers = [
 ]
 
 // Fetch unit name based on unit_id and store it in unitNames
+// const fetchUnit = async unitId => {
+//   if (unitNames.value[unitId]) return // Skip if unit already fetched
+
+//   const query = `
+//     query GetUnit($getUnitId: Int!) {
+//       getUnit(id: $getUnitId) {
+//         id
+//         name
+//       }
+//     }
+//   `
+
+//   const variables = { getUnitId: unitId }
+
+//   try {
+//     const token = getSelectedRoleToken()
+
+//     const response = await fetch(BASE_URL, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${token}`,
+//       },
+//       body: JSON.stringify({ query, variables }),
+//     })
+
+//     const result = await response.json()
+//     if (result.data && result.data.getUnit) {
+//       unitNames.value[unitId] = result.data.getUnit.name
+//     }
+//   } catch (error) {
+//     console.error('Error fetching unit:', error)
+//   }
+// }
+// Fetch unit name based on unit_id and store it in unitNames
 const fetchUnit = async unitId => {
   if (unitNames.value[unitId]) return // Skip if unit already fetched
 
@@ -52,7 +88,7 @@ const fetchUnit = async unitId => {
   try {
     const token = getSelectedRoleToken()
 
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -63,12 +99,66 @@ const fetchUnit = async unitId => {
 
     const result = await response.json()
     if (result.data && result.data.getUnit) {
-      unitNames.value[unitId] = result.data.getUnit.name
+      // Use Vue's reactivity system to update the unit name
+      unitNames.value = { ...unitNames.value, [unitId]: result.data.getUnit.name }
     }
   } catch (error) {
     console.error('Error fetching unit:', error)
   }
 }
+
+
+
+// Fetch locations and their associated units
+// const fetchLocations = async () => {
+//   const query = `
+//     query GetLocations {
+//       getLocations {
+//         data {
+//           id
+//           name
+//           description
+//           building_name
+//           room_name
+//           rack_name
+//           box_name
+//           unit_id
+//         }
+//       }
+//     }
+//   `
+
+//   isLoading.value = true
+//   try {
+//     const token = getSelectedRoleToken()
+
+//     const response = await fetch(BASE_URL, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${token}`,
+//       },
+//       body: JSON.stringify({ query }),
+//     })
+
+//     const result = await response.json()
+
+//     locations.value = result.data.getLocations.data
+//     totalLocations.value = locations.value.length
+
+//     // Fetch unit names for each location's unit_id
+//     for (const location of locations.value) {
+//       if (location.unit_id) {
+//         fetchUnit(location.unit_id)
+//       }
+//     }
+//   } catch (error) {
+//     console.error('Error fetching locations:', error)
+//     snackbarRef.value.showSnackbar('This is an error message', 'error')
+//   } finally {
+//     isLoading.value = false
+//   }
+// }
 
 // Fetch locations and their associated units
 const fetchLocations = async () => {
@@ -93,7 +183,7 @@ const fetchLocations = async () => {
   try {
     const token = getSelectedRoleToken()
 
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -109,8 +199,8 @@ const fetchLocations = async () => {
 
     // Fetch unit names for each location's unit_id
     for (const location of locations.value) {
-      if (location.unit_id) {
-        fetchUnit(location.unit_id)
+      if (location.unit_id && !unitNames.value[location.unit_id]) {
+        await fetchUnit(location.unit_id) // Wait for the unit to be fetched
       }
     }
   } catch (error) {
@@ -120,6 +210,7 @@ const fetchLocations = async () => {
     isLoading.value = false
   }
 }
+
 
 // Function to create a new location
 const createLocation = async newLocationData => {
@@ -145,7 +236,7 @@ const createLocation = async newLocationData => {
   try {
     const token = getSelectedRoleToken()
 
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -188,7 +279,7 @@ const handleDeleteLocation = async locationId => {
   try {
     const token = getSelectedRoleToken()
 
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -248,7 +339,7 @@ const updateLocation = async updatedLocationData => {
   try {
     const token = getSelectedRoleToken()
 
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -316,9 +407,18 @@ onMounted(() => {
           </template>
 
           <!-- Custom rendering for Unit column to show unit name -->
-          <template #item.unit_id="{ item }">
+          <!--
+            <template #item.unit_id="{ item }">
             {{ unitNames[item.unit_id] || 'Loading...' }}
+            </template> 
+          -->
+          <!-- Custom rendering for Unit column to show unit name -->
+          <template #item.unit_id="{ item }">
+            <!-- Only display loading if the unit name is still being fetched -->
+            <span v-if="!unitNames[item.unit_id]">Loading...</span>
+            <span v-else>{{ unitNames[item.unit_id] }}</span>
           </template>
+
 
           <!-- Actions column with edit and delete buttons -->
           <template #item.actions="{ item }">

@@ -7,6 +7,7 @@ import avatar3 from '@/images/avatars/avatar-3.png'
 import avatar4 from '@/images/avatars/avatar-4.png'
 import avatar5 from '@/images/avatars/avatar-5.png'
 import { getAuthToken, setSelectedRoleToken } from '@/middleware/auth'
+import { BASE_URL } from "@/utils/api"
 import { navigateTo, useState } from 'nuxt/app'
 import { computed, ref } from 'vue'
 
@@ -71,7 +72,7 @@ const selectRole = async roleDetails => {
 
     // console.log('Role Name being sent to API:', variables.roleName);
 
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

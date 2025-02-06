@@ -1,5 +1,6 @@
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth'
+import { BASE_URL } from "@/utils/api"
 import { onMounted, ref } from 'vue'
 
 // const isAddRoleDrawerOpen = ref(false)
@@ -9,6 +10,16 @@ const isLoading = ref(false)
 const totalRoles = ref(0)
 const itemsPerPage = ref(10)
 const currentPage = ref(1)
+
+const formatDate = dateString => {
+  const date = new Date(dateString)
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0') // Month is 0-based
+  const year = date.getFullYear()
+  
+  return `${day}-${month}-${year}`
+}
+
 
 // Table headers
 const headers = [
@@ -41,7 +52,7 @@ const fetchRoles = async () => {
   try {
     const token = getSelectedRoleToken()
 
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -86,7 +97,7 @@ const createRole = async newRoleData => {
   try {
     const token = getSelectedRoleToken()
 
-    const response = await fetch('https://a98c7c1a-d4c9-48dd-8fd1-6a7833d51149.apps.undip.ac.id/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -149,6 +160,10 @@ onMounted(() => {
         >
           <template #item.no="{ index }">
             {{ (currentPage - 1) * itemsPerPage + index + 1 }}
+          </template>
+
+          <template #item.created_at="{ item }">
+            {{ formatDate(item.created_at) }}
           </template>
 
           <template #item.actions="">
