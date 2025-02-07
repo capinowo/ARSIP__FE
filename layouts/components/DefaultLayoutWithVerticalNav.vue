@@ -6,8 +6,8 @@ import { getSelectedRoleToken } from '@/middleware/auth'
 import filterMenuByPermissions from '@/utils/filterMenuByPermissions'
 import { VerticalNavLayout } from '@layouts'
 import { jwtDecode } from 'jwt-decode'
-import { ref, watchEffect } from 'vue'
-
+import { computed, ref, watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
 
 // Data menu statis
 const menuItems = [
@@ -23,6 +23,7 @@ const menuItems = [
       { title: 'Users', to: { name: 'management-user_manage' }, icon: { icon: 'ri-circle-line' } },
       { title: 'Roles', to: { name: 'management-role_manage' }, icon: { icon: 'ri-circle-line' } },
       { title: 'Units', to: { name: 'management-unit_manage' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Units Has Roles', to: { name: 'management-unit_role_manage' }, icon: { icon: 'ri-circle-line' } },
       { title: 'Permissions', to: { name: 'management-perm_manage' }, icon: { icon: 'ri-circle-line' } },
     ],
   },
@@ -64,6 +65,13 @@ watchEffect(() => {
       console.error('Error decoding the selectedRoleToken:', error)
     }
   }
+})
+
+// Computed property to determine if the current route matches the "Daftar Arsip" route
+const route = useRoute()
+
+const isArsipActive = computed(() => {
+  return route.name === 'arsip-list_arsip' || route.name === 'arsip-add' || route.path.startsWith('/arsip/')
 })
 </script>
 

@@ -5,7 +5,8 @@ const permissionAccess = {
   'lokasi-dashboard': ['/', 'index', 'master-master_lokasi'],
   'dashboard-arsip': ['/', 'index', 'arsip-list_arsip'],
   'lokasi-dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'master-master_lokasi'],
-  'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip'],
+  'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'management-unit_role_manage'],
+  'arsip-detail': ['arsip-list_arsip'],
 }
 
 // Ambil permissions pengguna dari state secara reaktif
@@ -24,7 +25,10 @@ function filterMenuByPermissions(menu, permissions) {
   return menu
     .map(item => {
       if (item.children) {
-        const filteredChildren = item.children.filter(child => allowedRoutes.has(child.to.name))
+        const filteredChildren = item.children.filter(child => {
+          return allowedRoutes.has(child.to.name) || Array.from(allowedRoutes).some(route => route.startsWith(child.to.name))
+        })
+
         if (filteredChildren.length) {
           return { ...item, children: filteredChildren }
         }

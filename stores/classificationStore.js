@@ -17,6 +17,8 @@ export const useClassificationStore = defineStore('classification', () => {
             id
             classification_code
             description
+            retention_active
+            retention_inactive
           }
         }
       }
@@ -41,6 +43,8 @@ export const useClassificationStore = defineStore('classification', () => {
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
 
       const result = await response.json()
+
+      // console.log('GraphQL response:', result) 
 
       if (result.data && result.data.getClassifications) {
         classifications.value = result.data.getClassifications.data

@@ -12,11 +12,16 @@ const permissionAccess = {
     'management-role_manage',
     'management-user_manage',
     'management-unit_manage',
+    'management-unit_role_manage', // Added new menu
     'master-master_jra',
     'master-master_lokasi',
     'arsip-list_arsip',
     'arsip-[id]-detail',
+    'arsip-add',
   ],
+
+  // 'arsip-[id]-detail': ['arsip-list_arsip'],
+  // 'arsip-add': ['arsip-list_arsip'],
 }
   
 // Fungsi untuk memfilter menu berdasarkan permissions user
@@ -36,7 +41,9 @@ export default function filterMenuByPermissions(menu, permissions) {
     .map(item => {
       // Jika item memiliki children, filter children berdasarkan allowedRoutes
       if (item.children) {
-        const filteredChildren = item.children.filter(child => allowedRoutes.has(child.to.name))
+        const filteredChildren = item.children.filter(child => {
+          return allowedRoutes.has(child.to.name) || Array.from(allowedRoutes).some(route => route.startsWith(child.to.name))
+        })
 
         // Kembalikan item jika memiliki children yang diizinkan
         if (filteredChildren.length) {
@@ -51,4 +58,3 @@ export default function filterMenuByPermissions(menu, permissions) {
     })
     .filter(Boolean) // Hapus item null dari hasil akhir
 }
-  

@@ -15,6 +15,8 @@ export default function useClassification() {
         getClassification(id: $getClassificationId) {
           classification_code
           description
+            retention_active
+            retention_inactive
         }
       }
     `

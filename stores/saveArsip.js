@@ -3,10 +3,7 @@ import { BASE_URL } from "@/utils/api"
 
 export async function saveArsip(data) {
   try {
-    // Mendapatkan token dari middleware
     const token = getSelectedRoleToken()
-    
-    // Periksa apakah token ada
     if (!token) {
       throw new Error('Token tidak ditemukan. Pastikan pengguna sudah login.')
     }
@@ -15,12 +12,13 @@ export async function saveArsip(data) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`, // Menambahkan token ke header Authorization
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({
         query: `
           mutation Mutation($data: ArchiveCreateInput!) {
             createArchive(data: $data) {
+              id
               archive_status_id
               archive_type_id
               classification_id
@@ -39,18 +37,19 @@ export async function saveArsip(data) {
     })
 
     const result = await response.json()
-    
-    // Cek jika ada error dari server GraphQL dan lempar error ke komponen pemanggil
     if (result.errors) {
-      console.error('Error saving archive:', result.errors)
-      throw result.errors // Lempar error dari server ke komponen
+      const uniqueConstraintError = result.errors.find(error => error.message.includes('Unique constraint failed'))
+      if (uniqueConstraintError) {
+        return { error: 'Judul arsip sudah ada. Silakan gunakan judul yang berbeda.' }
+      }
+      throw result.errors
     }
 
     console.log('Archive saved successfully:', result.data.createArchive)
     
-    return result.data.createArchive // Jika diperlukan untuk diproses lebih lanjut
+    return result.data.createArchive
   } catch (error) {
-    console.error('Error during API request:', error)
-    throw error // Lempar error ke komponen pemanggil
+    console.error('Error saving archive:', error)
+    throw error
   }
 }

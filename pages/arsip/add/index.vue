@@ -9,7 +9,7 @@ import { uploadFileArchive } from '@/stores/saveFileUploads'
 import { useStatusStore } from '@/stores/statusStore'
 import { useTokenStore } from '@/stores/tokenStores'
 import { useUnitStore } from '@/stores/unitStore'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 definePageMeta({
   middleware: 'auth-middleware',
@@ -47,7 +47,7 @@ const handleFileChange = event => {
 }
 
 const typeOptions = computed(() => [
-  { id: 1, name: 'Subtantif' },
+  { id: 1, name: 'Substantif' },
   { id: 2, name: 'Fasilitatif' },
 ])
 
@@ -62,14 +62,20 @@ const snackbar = ref({
 })
 
 const locationOptions = computed(() => {
-  return locationStore.locations.map(item => ({
-    id: item.id,
-    name: `${item.name} - ${item.building_name}`,
-  }))
+  return locationStore.locations
+    .filter(item => item.unit_id === unit_id.value)
+    .map(item => ({
+      id: item.id,
+      name: `${item.name} - ${item.building_name}`,
+    }))
 })
 
+console.log(locationStore.locations.name)
+
 onMounted(() => {
-  locationStore.fetchLocations()
+  locationStore.fetchLocations().then(() => {
+    console.log(locationStore.locations)
+  })
 })
 
 const retentionPeriod = ref(null)
@@ -84,17 +90,43 @@ onMounted(() => {
 
 const classificationStore = useClassificationStore()
 
-onMounted(() => {
-  classificationStore.fetchClassifications()
+const classificationOptions = computed(() => {
+  // console.log('Classifications:', classificationStore.classifications) 
+  
+  return classificationStore.classifications.map(item => {
+    // console.log('Mapping item:', {
+    //   classification_code: item.classification_code,
+    //   description: item.description,
+    //   retention_active: item.retention_active,
+    //   retention_inactive: item.retention_inactive,
+    // }) 
+    
+    return {
+      text: `${item.classification_code} - ${item.description}`,
+      value: item.id,
+      retention_active: item.retention_active || 'N/A',
+      retention_inactive: item.retention_inactive || 'N/A',
+     
+    }
+  })
 })
 
-const selectedClassification = ref(null)
+onMounted(() => {
+  classificationStore.fetchClassifications().then(() => {
+    // console.log('Fetched classifications:', classificationStore.classifications) 
+  })
+})
 
-const classificationOptions = computed(() => {
-  return classificationStore.classifications.map(item => ({
-    text: `${item.classification_code} - ${item.description}`,
-    value: item.id,
-  }))
+// Add watcher to update retention values when classification changes
+watch(() => formStore.selectedClassification, newVal => {
+  if (newVal) {
+    const selectedClass = classificationStore.classifications.find(c => c.id === newVal)
+    if (selectedClass) {
+      formStore.retentionPeriod = selectedClass.retention_active
+
+      // You can add other retention/security values to formStore here if needed
+    }
+  }
 })
 
 const statusStore = useStatusStore()
@@ -111,6 +143,19 @@ const statusOptions = computed(() => {
   }))
 })
 
+const selectedLocationName = computed(() => {
+  const location = locationStore.locations.find(item => item.unit_id === unit_id.value)
+  
+  return location ? `${location.name} - ${location.building_name}` : ''
+})
+
+watch(() => unit_id.value, newVal => {
+  const location = locationStore.locations.find(item => item.unit_id === newVal)
+  if (location) {
+    formStore.selectedLocation = location.id
+  }
+})
+
 const handleSave = async () => {
   if (!formStore.namaArsip || !formStore.selectedUnit || !formStore.selectedLocation || !formStore.selectedClassification || !formStore.selectedStatus) {
     formStore.isFormValid = false
@@ -125,7 +170,7 @@ const handleSave = async () => {
     archive_type_id: formStore.selectedType,
     classification_id: formStore.selectedClassification,
     description: formStore.content,
-    document_path: "path/to/document",
+    document_path: "", // Initialize with empty string
     location_id: formStore.selectedLocation,
     title: formStore.namaArsip,
     unit_id: formStore.selectedUnit,
@@ -135,10 +180,20 @@ const handleSave = async () => {
   try {
     const savedArchive = await saveArsip(data)
 
+    if (savedArchive.error) {
+      showSnackbar(savedArchive.error, 'error')
+      
+      return
+    }
+
     showSnackbar('Save Arsip berhasil!', 'success')
 
     if (savedArchive?.id && selectedFile.value) {
-      await uploadFileArchive(savedArchive.id, selectedFile.value)
+      const uploadedFile = await uploadFileArchive(savedArchive.id, selectedFile.value)
+
+      // Update the document_path of the saved archive
+      savedArchive.document_path = uploadedFile.document_path
+
       showSnackbar('File berhasil diunggah!', 'success')
     }
 
@@ -147,7 +202,7 @@ const handleSave = async () => {
       navigateTo('/arsip/list_arsip')
     }, 2000)
   } catch (error) {
-    const errorMessages = error.map(err => err.message).join(', ') || 'Terjadi kesalahan saat menyimpan arsip'
+    const errorMessages = error.message || 'Terjadi kesalahan saat menyimpan arsip'
 
     showSnackbar(errorMessages, 'error')
   }
@@ -206,14 +261,7 @@ const showSnackbar = (message, color = 'success') => {
                   :rules="[value => !!value || 'Klasifikasi wajib dipilih']"
                 />
               </VCol>
-              <VCol cols="6">
-                <VTextField
-                  v-model="formStore.namaArsip"
-                  label="Judul Arsip"
-                  placeholder="Judul Arsip" 
-                  :rules="[value => !!value || 'Judul Arsip wajib diisi']"
-                />
-              </VCol>
+             
               <!--
                 <VCol cols="6">
                 <VAutocomplete
@@ -240,14 +288,23 @@ const showSnackbar = (message, color = 'success') => {
                 >
               </VCol>
               <VCol cols="6">
-                <VAutocomplete
+                <VTextField
+                  v-model="selectedLocationName"
+                  label="Lokasi"
+                  placeholder="Lokasi"
+                  readonly
+                />
+                <input
                   v-model="formStore.selectedLocation"
-                  label="Lokasi Arsip"
-                  placeholder="Select Lokasi" 
-                  :items="locationOptions"
-                  item-title="name"
-                  item-value="id" 
-                  :rules="[value => !!value || 'Lokasi Arsip wajib dipilih']"
+                  type="hidden"
+                >
+              </VCol>
+              <VCol cols="6">
+                <VTextField
+                  v-model="formStore.namaArsip"
+                  label="Judul Arsip"
+                  placeholder="Judul Arsip" 
+                  :rules="[value => !!value || 'Judul Arsip wajib diisi']"
                 />
               </VCol>
               <VCol cols="12">
@@ -283,7 +340,7 @@ const showSnackbar = (message, color = 'success') => {
               </VCol>
               <VCol cols="12">
                 <VTextField
-                  label="Tanggal Arsip Masuk"
+                  label="Tanggal Arsip Dibuat"
                   prepend-icon="ri-calendar-schedule-line" 
                   :placeholder="currentDate"
                   readonly
