@@ -51,6 +51,16 @@ const typeOptions = computed(() => [
   { id: 2, name: 'Fasilitatif' },
 ])
 
+const mediaOptions = computed(() => [
+  { name: 'Berkas' },
+  { name: 'Buku' },
+])
+
+const tingkatPerkembanganOptions = computed(() => [
+  { name: 'Lampiran' },
+  { name: 'Pertinggal' },
+])
+
 const clearDraft = () => {
   formStore.clearDraft()
 }
@@ -78,14 +88,13 @@ onMounted(() => {
   })
 })
 
-const retentionPeriod = ref(null)
+const retentionActivePeriod = ref(null)
+const retentionInactivePeriod = ref(null)
 const currentDate = ref('')
 
 onMounted(() => {
   const date = new Date()
-  const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long' }
-
-  currentDate.value = date.toLocaleDateString('id-ID', options)
+  currentDate.value = date.toISOString().substr(0, 10) // Format YYYY-MM-DD agar cocok dengan input type="date"
 })
 
 const classificationStore = useClassificationStore()
@@ -122,11 +131,44 @@ watch(() => formStore.selectedClassification, newVal => {
   if (newVal) {
     const selectedClass = classificationStore.classifications.find(c => c.id === newVal)
     if (selectedClass) {
-      formStore.retentionPeriod = selectedClass.retention_active
+      formStore.retentionActivePeriod = selectedClass.retention_active
+      formStore.retentionInactivePeriod = selectedClass.retention_inactive
 
       // You can add other retention/security values to formStore here if needed
     }
   }
+})
+
+const retentionActiveDate = computed(() => {
+  if (formStore.selectedClassification && currentDate.value) {
+    const selectedClass = classificationStore.classifications.find(c => c.id === formStore.selectedClassification)
+    if (selectedClass) {
+      const activeYears = selectedClass.retention_active || 0
+      const publishDate = new Date(formStore.publishDate || currentDate.value)
+      publishDate.setFullYear(publishDate.getFullYear() + activeYears)
+      return publishDate.toISOString().substr(0, 10) // Format YYYY-MM-DD
+    }
+  }
+  return ''
+})
+
+const retentionInactiveDate = computed(() => {
+  if (formStore.selectedClassification && retentionActiveDate.value) {
+    const selectedClass = classificationStore.classifications.find(c => c.id === formStore.selectedClassification)
+    if (selectedClass) {
+      const inactiveYears = selectedClass.retention_inactive || 0
+      const activeEndDate = new Date(retentionActiveDate.value)
+      activeEndDate.setFullYear(activeEndDate.getFullYear() + inactiveYears)
+      return activeEndDate.toISOString().substr(0, 10) // Format YYYY-MM-DD
+    }
+  }
+  return ''
+})
+
+// Pastikan formStore menyimpan tanggal publikasi arsip
+watch(() => formStore.selectedClassification, () => {
+  formStore.retentionActiveDate = retentionActiveDate.value
+  formStore.retentionInactiveDate = retentionInactiveDate.value
 })
 
 const statusStore = useStatusStore()
@@ -166,15 +208,24 @@ const handleSave = async () => {
   formStore.isFormValid = true
 
   const data = {
+    title: formStore.namaArsip,
+    description: formStore.content,
+    classification_id: formStore.selectedClassification,
+    document_path: "", // Jika ada file, sesuaikan dengan path dari file yang diunggah
     archive_status_id: formStore.selectedStatus,
     archive_type_id: formStore.selectedType,
-    classification_id: formStore.selectedClassification,
-    description: formStore.content,
-    document_path: "", // Initialize with empty string
-    location_id: formStore.selectedLocation,
-    title: formStore.namaArsip,
     unit_id: formStore.selectedUnit,
-    user_id: 1,
+    location_id: formStore.selectedLocation,
+    user_id: 1, // Sesuaikan dengan ID user yang sedang login
+    approval_status_id: 2,
+    jumlah_arsip: parseInt(formStore.jumlahArsip, 10) || 0, // Jika tidak diisi, default ke 0
+    media_arsip: formStore.selectedMediaArsip,
+    tingkat_perkembangan: formStore.selectedTingkatPerkembangan,
+    jumlah_lampiran: parseInt(formStore.jumlahArsip, 10) || 0, // Jika tidak diisi, default ke 0
+    media_lampiran: formStore.selectedMediaLampiran,
+    document_date: new Date().toISOString(),
+    final_retensi_aktif: new Date().toISOString(),
+    final_retensi_inaktif: new Date().toISOString(),
   }
 
   try {
@@ -299,7 +350,7 @@ const showSnackbar = (message, color = 'success') => {
                   type="hidden"
                 >
               </VCol>
-              <VCol cols="6">
+              <VCol cols="12">
                 <VTextField
                   v-model="formStore.namaArsip"
                   label="Judul Arsip"
@@ -316,10 +367,61 @@ const showSnackbar = (message, color = 'success') => {
                 />
               </VCol>
              
+              <VCol cols="12">
+                <VTextField
+                  v-model="currentDate"
+                  label="Tanggal Arsip Dibuat"
+                  prepend-icon="ri-calendar-schedule-line" 
+                  type="date"
+                />
+              </VCol>
+              
+
+              <VCol cols="3">
+                <VTextField 
+                  v-model="formStore.retentionActivePeriod"
+                  label="Retensi Aktif (belum)" 
+                  placeholder="Masukkan jumlah tahun" 
+                  :rules="[value => !!value || 'Periode Retensi wajib diisi']"
+                  type="number"
+                  min="1"
+                  suffix="Tahun"
+                />
+              </VCol>
+              <VCol cols="3">
+                <VTextField 
+                  v-model="formStore.retentionActiveDate"
+                  label="Tenggat Retensi Aktif" 
+                  prepend-icon="ri-calendar-schedule-line"
+                  readonly
+                />
+              </VCol>
+
+              <VCol cols="3">
+                <VTextField 
+                  v-model="formStore.retentionInactivePeriod"
+                  label="Retensi Inaktif (belum)" 
+                  placeholder="Masukkan jumlah tahun" 
+                  :rules="[value => !!value || 'Periode Retensi wajib diisi']"
+                  type="number"
+                  min="1"
+                  suffix="Tahun"
+                />
+              </VCol>
+              <VCol cols="3">
+                <VTextField 
+                  v-model="formStore.retentionInactiveDate"
+                  label="Tenggat Retensi Inaktif" 
+                  prepend-icon="ri-calendar-schedule-line"
+                  readonly
+
+                />
+              </VCol>
+
               <VCol cols="6">
                 <VSelect
                   v-model="formStore.selectedStatus"
-                  label="Select Status"
+                  label="Status (belum)"
                   :items="statusOptions" 
                   item-title="name"
                   item-value="id"
@@ -327,29 +429,11 @@ const showSnackbar = (message, color = 'success') => {
                   :rules="[value => !!value || 'Status wajib dipilih']"
                 />
               </VCol>
+
               <VCol cols="6">
-                <VSelect
-                  v-model="formStore.selectedType"
-                  label="Select Type"
-                  :items="typeOptions" 
-                  item-title="name"
-                  item-value="id"
-                  placeholder="Select Type" 
-                  :rules="[value => !!value || 'Type wajib dipilih']"
-                />
-              </VCol>
-              <VCol cols="12">
-                <VTextField
-                  label="Tanggal Arsip Dibuat"
-                  prepend-icon="ri-calendar-schedule-line" 
-                  :placeholder="currentDate"
-                  readonly
-                />
-              </VCol>
-              <VCol cols="12">
-                <VTextField
-                  v-model="formStore.retentionPeriod"
-                  label="Periode Retensi" 
+                <VTextField 
+                  v-model="formStore.retentionActivePeriod"
+                  label="Jenis Retensi (belum)" 
                   prepend-icon="ri-calendar-schedule-line"
                   placeholder="Masukkan jumlah tahun" 
                   :rules="[value => !!value || 'Periode Retensi wajib diisi']"
@@ -358,6 +442,72 @@ const showSnackbar = (message, color = 'success') => {
                   suffix="Tahun"
                 />
               </VCol>
+
+              <VCol cols="4">
+                <VTextField 
+                  v-model="formStore.jumlahArsip"
+                  label="Jumlah Arsip (belum)" 
+                  placeholder="Masukkan jumlah tahun" 
+                  :rules="[value => !!value || 'Periode Retensi wajib diisi']"
+                  type="number"
+                  min="1"
+                />
+              </VCol>
+              <VCol cols="4">
+                <VSelect
+                  v-model="formStore.selectedMediaArsip"
+                  label="Media (belum)"
+                  :items="mediaOptions" 
+                  item-title="name"
+                  item-value="name"
+                  placeholder="Select Media" 
+                  :rules="[value => !!value || 'Media wajib dipilih']"
+                />
+              </VCol>
+              <VCol cols="4">
+                <VSelect
+                  v-model="formStore.selectedTingkatPerkembangan"
+                  label="Tingkat Perkembangan (belum)"
+                  :items="tingkatPerkembanganOptions" 
+                  item-title="name"
+                  item-value="name"
+                  placeholder="Select Tingkat Perkembangan" 
+                  :rules="[value => !!value || 'Tingkat Perkembangan wajib dipilih']"
+                />
+              </VCol>
+              
+              <VCol cols="12">
+                <VFileInput
+                  v-model="selectedFile"
+                  show-size
+                  label="Upload Arsip"
+                  class="mb-4"
+                  @change="handleFileChange"
+                />
+              </VCol>
+
+              <VCol cols="4">
+                <VTextField 
+                  v-model="formStore.jumlahLampiran"
+                  label="Jumlah Lampiran (belum)" 
+                  placeholder="Masukkan jumlah tahun" 
+                  :rules="[value => !!value || 'Periode Retensi wajib diisi']"
+                  type="number"
+                  min="1"
+                />
+              </VCol>
+              <VCol cols="4">
+                <VSelect
+                  v-model="formStore.selectedMediaLampiran"
+                  label="Media Lampiran (belum)"
+                  :items="mediaOptions" 
+                  item-title="name"
+                  item-value="name"
+                  placeholder="Select Media" 
+                  :rules="[value => !!value || 'Media wajib dipilih']"
+                />
+              </VCol>
+
               <VCol cols="12">
                 <VFileInput
                   v-model="selectedFile"

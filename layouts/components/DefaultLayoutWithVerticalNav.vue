@@ -25,6 +25,7 @@ const menuItems = [
       { title: 'Units', to: { name: 'management-unit_manage' }, icon: { icon: 'ri-circle-line' } },
       { title: 'Units Has Roles', to: { name: 'management-unit_role_manage' }, icon: { icon: 'ri-circle-line' } },
       { title: 'Permissions', to: { name: 'management-perm_manage' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Log', to: { name: 'management-log_manage' }, icon: { icon: 'ri-circle-line' } },
     ],
   },
   {
@@ -40,6 +41,9 @@ const menuItems = [
     icon: { icon: 'ri-book-shelf-line' },
     children: [
       { title: 'Daftar Arsip', to: { name: 'arsip-list_arsip' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Unggah Arsip', to: { name: 'arsip-add' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Usulan Masuk', to: { name: 'arsip-persetujuan_arsip' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Usulan Pemusnahan', to: { name: 'arsip-arsip_usul_musnah' }, icon: { icon: 'ri-circle-line' } },
     ],
   },
 ]

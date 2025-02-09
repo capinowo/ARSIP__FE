@@ -5,11 +5,19 @@ export const useFormStore = defineStore('form', () => {
   // State untuk menyimpan data form
   const selectedType = ref(null)
   const namaArsip = ref(null)
-  const retentionPeriod = ref(null)
+  const retentionActivePeriod = ref(null)
+  const retentionInactivePeriod = ref(null)
+  const retentionActiveDate = ref(null)
+  const retentionInactiveDate = ref(null)
   const selectedUnit = ref(null)
   const selectedLocation = ref(null)
   const selectedClassification = ref(null)
   const selectedStatus = ref(null)
+  const jumlahArsip = ref(null)
+  const selectedMediaArsip = ref(null)
+  const selectedTingkatPerkembangan = ref(null)
+  const jumlahLampiran = ref(null)
+  const selectedMediaLampiran = ref(null)
   const content = ref(null) // Untuk Deskripsi Arsip
 
   // Fungsi untuk menyimpan data ke localStorage
@@ -17,11 +25,19 @@ export const useFormStore = defineStore('form', () => {
     const draftData = {
       selectedType: selectedType.value,
       namaArsip: namaArsip.value,
-      retentionPeriod: retentionPeriod.value,
+      retentionActivePeriod: retentionActivePeriod.value,
+      retentionInactivePeriod: retentionInactivePeriod.value,
+      retentionActiveDate: retentionActiveDate.value,
+      retentionInactiveDate: retentionInactiveDate.value,
       selectedUnit: selectedUnit.value,
       selectedLocation: selectedLocation.value,
       selectedClassification: selectedClassification.value,
       selectedStatus: selectedStatus.value,
+      jumlahArsip: jumlahArsip.value,
+      selectedMediaArsip: selectedMediaArsip.value,
+      selectedTingkatPerkembangan: selectedTingkatPerkembangan.value,
+      jumlahLampiran: jumlahLampiran.value,
+      selectedMediaLampiran: selectedMediaLampiran.value,
       content: content.value,
     }
 
@@ -34,11 +50,19 @@ export const useFormStore = defineStore('form', () => {
       if (savedData) {
         selectedType.value = savedData.selectedType
         namaArsip.value = savedData.namaArsip
-        retentionPeriod.value = savedData.retentionPeriod
+        retentionActivePeriod.value = savedData.retentionActivePeriod
+        retentionInactivePeriod.value = savedData.retentionInactivePeriod
+        retentionActiveDate.value = savedData.retentionActiveDate
+        retentionInactiveDate.value = savedData.retentionInactiveDate
         selectedUnit.value = savedData.selectedUnit
         selectedLocation.value = savedData.selectedLocation
         selectedClassification.value = savedData.selectedClassification
         selectedStatus.value = savedData.selectedStatus
+        jumlahArsip.value = savedData.jumlahArsip
+        selectedMediaArsip.value = savedData.selectedMediaArsip
+        selectedTingkatPerkembangan.value = savedData.selectedTingkatPerkembangan
+        jumlahLampiran.value = savedData.jumlahLampiran
+        selectedMediaLampiran.value = savedData.selectedMediaLampiran
         content.value = savedData.content
       }
     }
@@ -51,7 +75,7 @@ export const useFormStore = defineStore('form', () => {
 
   // Menggunakan watch untuk menyimpan data setiap kali ada perubahan
   watch(
-    [selectedType, namaArsip, retentionPeriod, selectedUnit, selectedLocation, selectedClassification, selectedStatus, content],
+    [selectedType, namaArsip, retentionActivePeriod, retentionInactivePeriod, selectedUnit, selectedLocation, selectedClassification, selectedStatus, content],
     saveDraft,
     { deep: true },
   )
@@ -61,22 +85,38 @@ export const useFormStore = defineStore('form', () => {
     localStorage.removeItem('draftForm')
     selectedType.value = null
     namaArsip.value = null
-    retentionPeriod.value = null
+    retentionActivePeriod.value = null
+    retentionInactivePeriod.value = null
+    retentionActiveDate.value = ref(null)
+    retentionInactiveDate.value = ref(null)
     selectedUnit.value = null
     selectedLocation.value = null
     selectedClassification.value = null
     selectedStatus.value = null
+    jumlahArsip.value = null
+    selectedMediaArsip.value = null
+    selectedTingkatPerkembangan.value = null
+    jumlahLampiran.value = null
+    selectedMediaLampiran.value = null
     content.value = null
   }
 
   return {
     selectedType,
     namaArsip,
-    retentionPeriod,
+    retentionActivePeriod,
+    retentionInactivePeriod,
+    retentionActiveDate,
+    retentionInactiveDate,
     selectedUnit,
     selectedLocation,
     selectedClassification,
     selectedStatus,
+    jumlahArsip,
+    selectedMediaArsip,
+    selectedTingkatPerkembangan,
+    jumlahLampiran,
+    selectedMediaLampiran,
     content,
     saveDraft,
     loadDraft,

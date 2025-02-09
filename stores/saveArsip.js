@@ -19,16 +19,25 @@ export async function saveArsip(data) {
           mutation Mutation($data: ArchiveCreateInput!) {
             createArchive(data: $data) {
               id
+              title
+              description
+              classification_id
+              document_path
               archive_status_id
               archive_type_id
-              classification_id
-              created_at
-              description
-              document_path
-              location_id
-              title
               unit_id
+              location_id
               user_id
+              approval_status_id
+              created_at
+              jumlah_arsip
+              media_arsip
+              tingkat_perkembangan
+              jumlah_lampiran
+              media_lampiran
+              document_date
+              final_retensi_aktif
+              final_retensi_inaktif
             }
           }
         `,
@@ -46,7 +55,7 @@ export async function saveArsip(data) {
     }
 
     console.log('Archive saved successfully:', result.data.createArchive)
-    
+
     return result.data.createArchive
   } catch (error) {
     console.error('Error saving archive:', error)
