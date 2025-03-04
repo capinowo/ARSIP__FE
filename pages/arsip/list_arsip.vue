@@ -52,6 +52,124 @@ const confirmDeletion = async () => {
   }
 }
 
+const buttons = [
+  { label: 'Semua', status: 'all' },
+  { label: 'Arsip Aktif', status: 'active' },
+  { label: 'Arsip Inaktif', status: 'inactive' },
+  { label: 'Arsip Statis', status: 'static' },
+  { label: 'Musnah', status: 'destroyed' },
+]
+
+const filterArchives = async status => {
+  let query = `
+    query {
+      getArchives (where: { approval_status_id: 1 }) {
+        total
+        data {
+          id
+          title
+          description
+          classification_id
+          document_path
+          archive_status_id
+          archive_type_id
+          unit_id
+          location_id
+          user_id
+          approval_status_id
+          created_at
+          updated_at
+          jumlah_arsip
+          media_arsip
+          tingkat_perkembangan
+          jumlah_lampiran
+          media_lampiran
+          final_retensi_aktif
+          final_retensi_inaktif
+        }
+      }
+    }
+  `
+
+  if (status !== 'all') {
+    const statusId = {
+      active: 1,
+      inactive: 2,
+      static: 3,
+      destroyed: 4,
+    }[status]
+
+    query = `
+      query {
+        getArchives(where: { archive_status_id: ${statusId}, approval_status_id: 1 }) {
+          total
+          data {
+            id
+            title
+            description
+            classification_id
+            document_path
+            archive_status_id
+            archive_type_id
+            unit_id
+            location_id
+            user_id
+            approval_status_id
+            created_at
+            updated_at
+            jumlah_arsip
+            media_arsip
+            tingkat_perkembangan
+            jumlah_lampiran
+            media_lampiran
+            final_retensi_aktif
+            final_retensi_inaktif
+          }
+        }
+      }
+    `
+  }
+
+  isLoading.value = true
+  try {
+    const response = await fetch(BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getSelectedRoleToken()}`,
+      },
+      body: JSON.stringify({ query }),
+    })
+
+    const result = await response.json()
+
+    if (result.errors) {
+      console.error('GraphQL errors:', result.errors)
+    } else if (result.data && result.data.getArchives) {
+      archives.value = await Promise.all(
+        result.data.getArchives.data.map(async archive => {
+          const classification = await fetchClassification(archive.classification_id)
+          const status = await fetchArsipStatus(archive.archive_status_id)
+
+          return {
+            ...archive,
+            classification_description: classification?.description || 'N/A',
+            archive_status_name: status?.name || 'N/A',
+          }
+        }),
+      )
+      totalArchives.value = result.data.getArchives.total || 0
+    } else {
+      console.warn('No data returned from getArchives query:', result)
+    }
+  } catch (error) {
+    console.error('Error fetching archives:', error)
+    snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives')
+  } finally {
+    isLoading.value = false
+  }
+}
+
 // Configure table headers
 const headers = [
   { title: 'No', key: 'no', sortable: false },
@@ -110,7 +228,7 @@ const headers = [
 //         result.data.getArchives.data.map(async archive => {
 //           const classification = await fetchClassification(archive.classification_id)
 //           const status = await fetchArsipStatus(archive.archive_status_id)
-          
+
 //           return {
 //             ...archive,
 //             classification_description: classification?.description || 'N/A',
@@ -137,7 +255,7 @@ const fetchArchives = async () => {
 
   const query = `
     query {
-      getArchives {
+      getArchives (where: { approval_status_id: 1 }) {
         total
         data {
           id
@@ -240,7 +358,7 @@ const deleteArchive = async id => {
 
     if (result.errors) {
       console.error('GraphQL errors:', result.errors)
-      
+
       return
     }
 
@@ -277,12 +395,7 @@ onMounted(() => {
       <VCard style="padding: 24px;">
         <div class="app-user-search-filter d-flex align-center">
           <!-- Search Field -->
-          <VTextField
-            v-model="searchQuery"
-            placeholder="Search Archive"
-            density="compact"
-            class="me-4"
-          />
+          <VTextField v-model="searchQuery" placeholder="Search Archive" density="compact" class="me-4" />
           <!-- Add New Archive Button -->
           <VBtn @click="router.push('/arsip/add')">
             Add New Arsip
@@ -292,18 +405,20 @@ onMounted(() => {
     </div>
     <div>
       <VCard style="padding: 24px;">
-        <VDataTable
-          :headers="headers"
-          :items="archives"
-          :search="searchQuery"
-          :loading="isLoading"
-          :total-items="totalArchives"
-          :items-per-page="itemsPerPage"
-          :page="currentPage"
-          item-key="id"
-          @update:page="currentPage = $event"
-          @update:items-per-page="itemsPerPage = $event"
-        >
+
+        <div class="d-flex justify-content-between mb-4">
+          <VBtnToggle v-model="activeTab" class="d-flex w-100">
+            <VBtn v-for="button in buttons" :key="button.status" @click="filterArchives(button.status)"
+              class="flex-grow-1 text-center">
+              {{ button.label }}
+            </VBtn>
+          </VBtnToggle>
+        </div>
+
+
+        <VDataTable :headers="headers" :items="archives" :search="searchQuery" :loading="isLoading"
+          :total-items="totalArchives" :items-per-page="itemsPerPage" :page="currentPage" item-key="id"
+          @update:page="currentPage = $event" @update:items-per-page="itemsPerPage = $event">
           <!-- Slot for No column -->
           <template #item.no="{ index }">
             {{ (currentPage - 1) * itemsPerPage + index + 1 }}
@@ -322,18 +437,11 @@ onMounted(() => {
           <template #item.actions="{ item }">
             <div class="d-flex">
               <!-- Tombol untuk melihat detail -->
-              <VBtn
-                icon
-                style="margin-inline-end: 6px;"
-                @click="detailArchive(item)"
-              >
+              <VBtn icon style="margin-inline-end: 6px;" @click="detailArchive(item)">
                 <VIcon>ri-todo-line</VIcon>
               </VBtn>
               <!-- Tombol untuk menghapus -->
-              <VBtn
-                icon
-                @click="openDeleteDialog(item)"
-              >
+              <VBtn icon @click="openDeleteDialog(item)">
                 <VIcon>ri-delete-bin-2-fill</VIcon>
               </VBtn>
             </div>
@@ -342,10 +450,7 @@ onMounted(() => {
       </VCard>
     </div>
     <!-- Confirmation Dialog for Deletion -->
-    <VDialog
-      v-model="isDialogOpen"
-      max-width="400"
-    >
+    <VDialog v-model="isDialogOpen" max-width="400">
       <VCard>
         <VCardTitle>Confirm Deletion</VCardTitle>
         <VCardText>
@@ -353,10 +458,7 @@ onMounted(() => {
         </VCardText>
         <VCardActions>
           <VSpacer />
-          <VBtn
-            color="error"
-            @click="confirmDeletion"
-          >
+          <VBtn color="error" @click="confirmDeletion">
             Yes
           </VBtn>
           <VBtn @click="closeDialog">

@@ -14,7 +14,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
     if (!selectedUnitToken) {
       clearSelectedUnitToken()
-      
+
       return navigateTo('/login')
     }
 
@@ -30,7 +30,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
       if (decodedUnit.exp < currentTime) {
         console.log("Token expired.")
         clearSelectedUnitToken()
-        
+
         return navigateTo('/login')
       }
 
@@ -39,9 +39,9 @@ export default defineNuxtRouteMiddleware((to, from) => {
       // Define access by permission names for specific pages
       const permissionAccess = {
         'lokasi-dashboard': ['/', 'index', 'master-master_lokasi'],
-        'dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'arsip-arsip_inactive', 'arsip-arsip_usul_musnah', 'arsip-arsip_musnah'],
+        'dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah'],
         'lokasi-dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'master-master_lokasi'],
-        'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-arsip_inactive', 'arsip-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add'],
+        'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'arsip-verifikasi-persetujuan_arsip'],
       }
 
       // Get user's permissions from the token
@@ -71,7 +71,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     } catch (error) {
       // console.error("Error decoding token:", error); // Log specific decoding error
       clearSelectedUnitToken()
-      
+
       return navigateTo('/error')
     }
   }

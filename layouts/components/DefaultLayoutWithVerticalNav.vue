@@ -41,9 +41,10 @@ const menuItems = [
     icon: { icon: 'ri-book-shelf-line' },
     children: [
       { title: 'Daftar Arsip', to: { name: 'arsip-list_arsip' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Status Usulan', to: { name: 'arsip-view_arsip' }, icon: { icon: 'ri-circle-line' } },
       { title: 'Unggah Arsip', to: { name: 'arsip-add' }, icon: { icon: 'ri-circle-line' } },
-      { title: 'Usulan Masuk', to: { name: 'arsip-persetujuan_arsip' }, icon: { icon: 'ri-circle-line' } },
-      { title: 'Usulan Pemusnahan', to: { name: 'arsip-arsip_usul_musnah' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Usulan Masuk', to: { name: 'verifikasi-persetujuan_arsip' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Usulan Pemusnahan', to: { name: 'verifikasi-arsip_usul_musnah' }, icon: { icon: 'ri-circle-line' } },
     ],
   },
 ]
@@ -84,11 +85,7 @@ const isArsipActive = computed(() => {
     <!-- 👉 navbar -->
     <template #navbar="{ toggleVerticalOverlayNavActive }">
       <div class="d-flex h-100 align-center">
-        <IconBtn
-          id="vertical-nav-toggle-btn"
-          class="ms-n2 d-lg-none"
-          @click="toggleVerticalOverlayNavActive(true)"
-        >
+        <IconBtn id="vertical-nav-toggle-btn" class="ms-n2 d-lg-none" @click="toggleVerticalOverlayNavActive(true)">
           <VIcon icon="ri-menu-line" />
         </IconBtn>
 

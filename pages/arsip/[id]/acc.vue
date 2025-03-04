@@ -296,26 +296,19 @@ onMounted(() => {
                 </v-col>
               </v-row>
 
-              <h5>Pengguna</h5>
-              <hr class="mb-6">
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Nama pengguna" v-model="archiveData.namaPengguna" readonly />
+              <v-row justify="end">
+                <v-col cols="auto">
+                  <v-btn color="primary" @click="mutateArchive(archiveDetail.id)">Setujui</v-btn>
+                </v-col>
+                <v-col cols="auto">
+                  <v-btn color="error" @click="rejectArchive(archiveDetail.id)">Tolak</v-btn>
                 </v-col>
               </v-row>
 
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Identitas pengguna" v-model="archiveData.identitasPengguna" readonly />
-                </v-col>
-              </v-row>
 
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Role pengguna" v-model="archiveData.rolePengguna" readonly />
-                </v-col>
-              </v-row>
+
+
+
             </VCardText>
           </VCard>
         </VWindowItem>

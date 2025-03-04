@@ -5,7 +5,7 @@ const permissionAccess = {
   'lokasi-dashboard': ['/', 'index', 'master-master_lokasi'],
   'dashboard-arsip': ['/', 'index', 'arsip-list_arsip'],
   'lokasi-dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'master-master_lokasi'],
-  'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'management-unit_role_manage'],
+  'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'management-unit_role_manage'],
   'arsip-detail': ['arsip-list_arsip'],
 }
 
@@ -32,10 +32,10 @@ function filterMenuByPermissions(menu, permissions) {
         if (filteredChildren.length) {
           return { ...item, children: filteredChildren }
         }
-        
+
         return null
       }
-      
+
       return allowedRoutes.has(item.to.name) ? item : null
     })
     .filter(Boolean)
@@ -55,6 +55,7 @@ export default computed(() => filterMenuByPermissions([
       { title: 'Roles', to: { name: 'management-role_manage' }, icon: { icon: 'ri-circle-line' } },
       { title: 'Units', to: { name: 'management-unit_manage' }, icon: { icon: 'ri-circle-line' } },
       { title: 'Permissions', to: { name: 'management-perm_manage' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Log', to: { name: 'management-log_manage' }, icon: { icon: 'ri-circle-line' } },
     ],
   },
   {

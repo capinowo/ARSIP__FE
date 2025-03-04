@@ -23,6 +23,7 @@ export async function saveArsip(data) {
               description
               classification_id
               document_path
+              document_date
               archive_status_id
               archive_type_id
               unit_id
@@ -30,14 +31,15 @@ export async function saveArsip(data) {
               user_id
               approval_status_id
               created_at
+              updated_at
               jumlah_arsip
               media_arsip
               tingkat_perkembangan
               jumlah_lampiran
               media_lampiran
-              document_date
               final_retensi_aktif
               final_retensi_inaktif
+              nilai_guna
             }
           }
         `,

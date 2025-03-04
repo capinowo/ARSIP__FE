@@ -16,9 +16,13 @@ export const useFormStore = defineStore('form', () => {
   const jumlahArsip = ref(null)
   const selectedMediaArsip = ref(null)
   const selectedTingkatPerkembangan = ref(null)
+  const selectedKondisi = ref(null)
   const jumlahLampiran = ref(null)
   const selectedMediaLampiran = ref(null)
   const content = ref(null) // Untuk Deskripsi Arsip
+  const tanggalDokumen = ref(null)
+  const retentionDispositionName = ref(null)
+  const nilaiGuna = ref(null)
 
   // Fungsi untuk menyimpan data ke localStorage
   const saveDraft = () => {
@@ -36,9 +40,13 @@ export const useFormStore = defineStore('form', () => {
       jumlahArsip: jumlahArsip.value,
       selectedMediaArsip: selectedMediaArsip.value,
       selectedTingkatPerkembangan: selectedTingkatPerkembangan.value,
+      selectedKondisi: selectedKondisi.value,
       jumlahLampiran: jumlahLampiran.value,
       selectedMediaLampiran: selectedMediaLampiran.value,
       content: content.value,
+      tanggalDokumen: tanggalDokumen.value,
+      retentionDispositionName: retentionDispositionName.value,
+      nilaiGuna: nilaiGuna.value,
     }
 
     localStorage.setItem('draftForm', JSON.stringify(draftData))
@@ -61,9 +69,13 @@ export const useFormStore = defineStore('form', () => {
         jumlahArsip.value = savedData.jumlahArsip
         selectedMediaArsip.value = savedData.selectedMediaArsip
         selectedTingkatPerkembangan.value = savedData.selectedTingkatPerkembangan
+        selectedKondisi.value = savedData.selectedKondisi
         jumlahLampiran.value = savedData.jumlahLampiran
         selectedMediaLampiran.value = savedData.selectedMediaLampiran
         content.value = savedData.content
+        tanggalDokumen.value = savedData.tanggalDokumen
+        retentionDispositionName.value = savedData.retentionDispositionName
+        nilaiGuna.value = savedData.nilaiGuna
       }
     }
   }
@@ -75,7 +87,7 @@ export const useFormStore = defineStore('form', () => {
 
   // Menggunakan watch untuk menyimpan data setiap kali ada perubahan
   watch(
-    [selectedType, namaArsip, retentionActivePeriod, retentionInactivePeriod, selectedUnit, selectedLocation, selectedClassification, selectedStatus, content],
+    [selectedType, namaArsip, retentionActivePeriod, retentionInactivePeriod, selectedUnit, selectedLocation, selectedClassification, selectedStatus, content, tanggalDokumen, retentionDispositionName],
     saveDraft,
     { deep: true },
   )
@@ -96,9 +108,13 @@ export const useFormStore = defineStore('form', () => {
     jumlahArsip.value = null
     selectedMediaArsip.value = null
     selectedTingkatPerkembangan.value = null
+    selectedKondisi.value = null
     jumlahLampiran.value = null
     selectedMediaLampiran.value = null
     content.value = null
+    tanggalDokumen.value = null
+    retentionDispositionName.value = null
+    nilaiGuna.value = null
   }
 
   return {
@@ -115,9 +131,13 @@ export const useFormStore = defineStore('form', () => {
     jumlahArsip,
     selectedMediaArsip,
     selectedTingkatPerkembangan,
+    selectedKondisi,
     jumlahLampiran,
     selectedMediaLampiran,
     content,
+    tanggalDokumen,
+    retentionDispositionName,
+    nilaiGuna,
     saveDraft,
     loadDraft,
     clearDraft,
