@@ -2,7 +2,7 @@
 import useArsipStatus from '@/composables/useArsipStatus'
 import useClassification from '@/composables/useClassification'
 import { getSelectedRoleToken } from '@/middleware/auth'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 // Middleware for auth on the page
@@ -15,6 +15,8 @@ const searchQuery = ref('')
 const archives = ref([])
 const isLoading = ref(false)
 const totalArchives = ref(0)
+const itemsPerPage = ref(10)
+const currentPage = ref(1)
 const { fetchClassification } = useClassification()
 const { fetchArsipStatus } = useArsipStatus()
 const snackbarRef = ref(null)
@@ -30,13 +32,7 @@ const closeDialog = () => {
     isDialogOpen.value = false   // Close the dialog
 }
 
-import { useRoute } from 'vue-router'
-
-const route = useRoute();
-const selectedArchiveIds = route.query.ids ? route.query.ids.split(',') : [];
-
-console.log("Selected Archive IDs:", selectedArchiveIds);
-
+const selectedArchives = ref([]);
 
 // Confirm deletion and send mutation to delete the archive
 const confirmMutation = async () => {
@@ -56,6 +52,11 @@ const confirmMutation = async () => {
     }
 };
 
+// Ensure mutateArchive function is defined
+const mutateArchive = async (id) => {
+    // Implement the mutation logic here
+    console.log(`Archive with ID ${id} mutated.`);
+}
 
 // Configure table headers
 const headers = [
@@ -95,7 +96,7 @@ const fetchArchives = async () => {
                 }
             }
         }
-    `
+    `;
 
     isLoading.value = true
     try {
@@ -106,42 +107,47 @@ const fetchArchives = async () => {
                 'Authorization': `Bearer ${getSelectedRoleToken()}`,
             },
             body: JSON.stringify({ query }),
-        })
+        });
 
-        const result = await response.json()
+        const result = await response.json();
 
         if (result.errors) {
-            console.log('📥 Raw Response:', await response.text())
-            console.error('GraphQL errors:', result.errors)
+            console.log('📥 Raw Response:', await response.text());
+            console.error('GraphQL errors:', result.errors);
         } else if (result.data && result.data.getArchives) {
             // Map archives and fetch classification description
             archives.value = await Promise.all(
                 result.data.getArchives.data.map(async archive => {
-                    const classification = await fetchClassification(archive.classification_id)
-                    const status = await fetchArsipStatus(archive.archive_status_id)
+                    const classification = await fetchClassification(archive.classification_id);
+                    const status = await fetchArsipStatus(archive.archive_status_id);
 
                     return {
                         ...archive,
                         classification_description: classification?.description || 'N/A',
                         archive_status_name: status?.name || 'N/A',  // Set status name here
-                    }
+                    };
                 }),
-            )
-            totalArchives.value = result.data.getArchives.total || 0
+            );
+            totalArchives.value = result.data.getArchives.total || 0;
         } else {
-            console.warn('No data returned from getArchives query:', result)
+            console.warn('No data returned from getArchives query:', result);
         }
     } catch (error) {
-        console.error('Error fetching archives:', error)
-        snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives')
+        console.error('Error fetching archives:', error);
+        snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives');
     } finally {
-        isLoading.value = false
+        isLoading.value = false;
     }
-}
+};
 
 onMounted(() => {
-    fetchArchives()
-})
+    fetchArchives();
+});
+
+// Watch for changes in searchQuery and fetch archives
+watch(searchQuery, () => {
+    fetchArchives();
+});
 </script>
 
 <template>
@@ -149,40 +155,25 @@ onMounted(() => {
         <v-container>
             <v-row>
                 <v-col cols="12">
-                    <v-text-field v-model="searchQuery" label="Search" @input="fetchArchives"></v-text-field>
+                    <v-text-field v-model="searchQuery" label="Search"></v-text-field>
                 </v-col>
             </v-row>
             <v-row>
                 <v-col cols="12">
-                    <v-data-table :headers="headers" :items="archives" :loading="isLoading" class="elevation-1">
+                    <v-data-table :headers="headers" :items="archives" :items-per-page="itemsPerPage"
+                        :loading="isLoading" class="elevation-1">
                         <template v-slot:item="{ item }">
                             <tr>
                                 <td>{{ item.title }}</td>
                                 <td>{{ item.description }}</td>
                                 <td>{{ item.unit_id }}</td>
                                 <td>{{ item.created_at }}</td>
-                                <td>
-                                    <v-btn color="primary" @click="openMutationDialog(item)">Detail</v-btn>
-                                </td>
                             </tr>
                         </template>
                     </v-data-table>
                 </v-col>
             </v-row>
         </v-container>
-
-        <v-row>
-            <v-col cols="12">
-                <v-textarea v-model="archiveToMutate.value.detailPemusnahan" label="Detail Pemusnahan"
-                    rows="5"></v-textarea>
-            </v-col>
-        </v-row>
-        <v-row>
-            <v-col cols="12">
-                <v-file-input v-model="archiveToMutate.value.beritaAcara" label="Berita Acara (opsional)"
-                    accept=".pdf,.doc,.docx"></v-file-input>
-            </v-col>
-        </v-row>
 
         <v-dialog v-model="isDialogOpen" max-width="500px">
             <v-card>
@@ -196,6 +187,16 @@ onMounted(() => {
             </v-card>
         </v-dialog>
     </div>
+
+
+    <v-row></v-row>
+    <v-col cols="12">
+        <v-textarea label="Deskripsi Arsip" placeholder="Deskripsi Arsip"
+            :rules="[value => !!value || 'Deskripsi Arsip wajib diisi']" />
+    </v-col>
+    <v-col cols="12">
+        <v-file-input show-size label="Upload Arsip" class="mb-4" @change="handleFileChange" />
+    </v-col>
 </template>
 
 <style scoped>

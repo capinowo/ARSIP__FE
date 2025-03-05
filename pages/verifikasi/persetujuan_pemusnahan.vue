@@ -188,7 +188,7 @@ const submitProposal = () => {
 
   // Navigasi ke halaman detail_usul_musnah dengan parameter ID yang dipilih
   router.push({
-    path: "/verifikasi/detail_usul_musnah",
+    path: "/arsip/verifikasi/detail_usul_musnah",
     query: { ids: selectedArchives.value.join(",") }
   });
 };
