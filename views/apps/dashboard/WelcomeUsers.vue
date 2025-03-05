@@ -1,8 +1,8 @@
 <script setup>
-import illustrationJohn2 from '@/images/illustration-john-2.png'
-import { getSelectedUnitToken } from '@/middleware/auth' // Corrected the import for named export
-import { useTokenStore } from '@/stores/tokenStores'
-import { computed, onMounted, ref } from 'vue'
+import illustrationJohn2 from '@/images/illustration-john-2.png';
+import { getSelectedUnitToken } from '@/middleware/auth'; // Corrected the import for named export
+import { useTokenStore } from '@/stores/tokenStores';
+import { computed, onMounted, ref } from 'vue';
 
 const tokenStore = useTokenStore()
 const selectedRoleToken = ref('')
@@ -75,12 +75,7 @@ const remainingMinutes = computed(() => {
 <template>
   <VCard class="overflow-visible mt-sm-10 mt-md-0">
     <VRow no-gutters>
-      <VCol
-        cols="12"
-        sm="6"
-        order="2"
-        order-sm="1"
-      >
+      <VCol cols="12" sm="6" order="2" order-sm="1">
         <VCardItem>
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
@@ -89,7 +84,8 @@ const remainingMinutes = computed(() => {
           </VCardTitle>
           <VCardTitle>
             <h4 class="text-h4 text-wrap">
-              Permissions: <strong>{{ tokenData.permissions.length ? tokenData.permissions.join(', ') : 'No permissions' }}</strong>
+              Permissions: <strong>{{ tokenData.permissions.length ? tokenData.permissions.join(', ') : 'No permissions'
+              }}</strong>
             </h4>
           </VCardTitle>
           <VCardTitle>
@@ -103,25 +99,46 @@ const remainingMinutes = computed(() => {
             </h4>
           </VCardTitle>
         </VCardItem>
+
+        <VCardItem>
+          <VRow>
+            <VCol cols="4">
+              <VAvatar size="large">
+                <img :src="illustrationJohn2" alt="User Avatar">
+              </VAvatar>
+            </VCol>
+            <VCol cols="8">
+              <VCardTitle>
+                <h4 class="text-h4 text-wrap">
+                  Selamat datang, <strong>{{ tokenData.selectedRole?.description || 'Not available' }}</strong>
+                </h4>
+              </VCardTitle>
+              <VCardTitle>
+                <h4 class="text-h4 text-wrap">
+                  <strong>{{ tokenData.selectedRole?.description || 'Not available' }}</strong>
+                </h4>
+              </VCardTitle>
+              <VCardTitle>
+                <h4 class="text-h4 text-wrap">
+                  <strong>{{ tokenData.selectedUnit?.name || 'Not available' }}</strong>
+                </h4>
+              </VCardTitle>
+            </VCol>
+          </VRow>
+        </VCardItem>
       </VCol>
 
-      <VCol
-        cols="12"
-        sm="6"
-        order="1"
-        order-sm="2"
-        class="text-center"
-      >
-        <img
-          :src="illustrationJohn2"
-          :height="$vuetify.display.xs ? '165' : '200'"
+      <VCol cols="12" sm="6" order="1" order-sm="2" class="text-center">
+        <img :src="illustrationJohn2" :height="$vuetify.display.xs ? '165' : '200'"
           :class="$vuetify.display.xs ? 'position-relative' : 'position-absolute'"
-          class="john-illustration flip-in-rtl mt-6 mt-sm-0"
-        >
+          class="john-illustration flip-in-rtl mt-6 mt-sm-0">
       </VCol>
     </VRow>
   </VCard>
 </template>
+
+
+
 
 <style lang="scss" scoped>
 .john-illustration {

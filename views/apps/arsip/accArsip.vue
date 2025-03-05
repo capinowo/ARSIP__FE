@@ -1,13 +1,87 @@
+<!-- eslint-disable camelcase -->
+<!-- eslint-disable vue/custom-event-name-casing -->
 <script setup>
 import { getSelectedRoleToken } from '@/middleware/auth'
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 
 // Middleware
 definePageMeta({
   middleware: 'auth-middleware',
 })
 
+const props = defineProps({
+  isDrawerOpen: {
+    type: Boolean,
+    required: true,
+  },
+})
+
+const emit = defineEmits([
+  'update:isDrawerOpen',
+  'create-classification',
+])
+
+const isFormValid = ref(false)
+const refForm = ref()
+const classificationCode = ref('')
+const description = ref('')
+const retentionActive = ref(1) // Default to 1 (Yes)
+const retentionInactive = ref(1) // Default to 1 (Yes)
+const retentionDispositionId = ref(1) // Default to 1 (Musnah)
+const securityClassificationId = ref(1) // Default to 1 (Terbuka)
+
+// Custom validation rule for classification code
+// const classificationCodeValidator = value => {
+//   if (!value) {
+//     return 'Classification code is required'
+//   }
+
+//   return value.length === 6 || 'Classification code must be exactly 6 characters'
+// }
+
+// Required field validator
+const requiredValidator = value => {
+  return !!value || 'This field is required'
+}
+
+// Close drawer function
+const closeNavigationDrawer = () => {
+  emit('update:isDrawerOpen', false)
+  nextTick(() => {
+    refForm.value?.reset()
+    refForm.value?.resetValidation()
+  })
+}
+
+// Form submission
+const onSubmit = () => {
+  refForm.value?.validate().then(({ valid }) => {
+    if (valid) {
+      emit('create-classification', {
+        classification_code: classificationCode.value,
+        description: description.value,
+        retention_active: parseInt(retentionActive.value, 10),
+        retention_inactive: parseInt(retentionInactive.value, 10),
+        retention_disposition_id: parseInt(retentionDispositionId.value, 10),
+        security_classification_id: parseInt(securityClassificationId.value, 10),
+      })
+      emit('update:isDrawerOpen', false)
+      nextTick(() => {
+        refForm.value?.reset()
+        refForm.value?.resetValidation()
+      })
+    }
+  })
+}
+
+// Update drawer visibility
+const handleDrawerModelValueUpdate = val => {
+  emit('update:isDrawerOpen', val)
+}
+
+// Archive detail fetching logic
 const route = useRoute()
 const archiveId = route.params.id
 const archiveDetail = ref(null)
@@ -15,17 +89,8 @@ const isLoading = ref(false)
 const errorMessage = ref(null)
 const activeTab = ref(0) // Tab Navigation
 
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-
-const submitFiling = () => {
-  router.push(`/arsip/${archiveId}/edit`)
-}
-
 const formatDate = dateStr => {
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
-
   return new Date(dateStr).toLocaleDateString('id-ID', options)
 }
 
@@ -50,76 +115,75 @@ const archiveData = computed(() => ({
   namaPengguna: archiveDetail.value?.user?.name || '',
   identitasPengguna: archiveDetail.value?.user?.identity || '',
   rolePengguna: archiveDetail.value?.user?.roles?.map(role => role.name).join(', ') || '',
-}));
-
+}))
 
 const fetchArchiveDetail = async () => {
   const query = `
     query GetArchive($getArchiveId: Int!) {
-  getArchive(id: $getArchiveId) {
-    user_id
-    unit_id
-    title
-    location_id
-    id
-    description
-    classification_id
-    archive_type_id
-    archive_status_id
-    archiveType {
-      id
-      name
-    }
-    archiveStatus {
-      id
-      name
-    }
-    classification {
-      id
-      description
-      classification_code
-      retentionDisposition {
+      getArchive(id: $getArchiveId) {
+        user_id
+        unit_id
+        title
+        location_id
         id
-        name
+        description
+        classification_id
+        archive_type_id
+        archive_status_id
+        archiveType {
+          id
+          name
+        }
+        archiveStatus {
+          id
+          name
+        }
+        classification {
+          id
+          description
+          classification_code
+          retentionDisposition {
+            id
+            name
+          }
+          retention_active
+          retention_disposition_id
+          retention_inactive
+          securityClassification {
+            id
+            name
+          }
+          security_classification_id
+        }
+        location {
+          id
+          name
+          rack_name
+          room_name
+          unit_id
+          description
+          building_name
+          box_name
+        }
+        user {
+          name
+          identity
+          roles {
+            id
+            name
+          }
+        }
+        unit {
+          id
+          name
+        }
+        created_at
       }
-      retention_active
-      retention_disposition_id
-      retention_inactive
-      securityClassification {
-        id
-        name
-      }
-      security_classification_id
     }
-    location {
-      id
-      name
-      rack_name
-      room_name
-      unit_id
-      description
-      building_name
-      box_name
-    }
-    user {
-      name
-      identity
-      roles {
-        id
-        name
-      }
-    }
-    unit {
-      id
-      name
-    }
-    created_at
-  }
-}
-  `;
+  `
 
-  isLoading.value = true;
-  errorMessage.value = null;
+  isLoading.value = true
+  errorMessage.value = null
 
   try {
     const response = await fetch('http://localhost:4000/graphql', {
@@ -132,35 +196,103 @@ const fetchArchiveDetail = async () => {
         query,
         variables: { getArchiveId: parseInt(archiveId) },
       }),
-    });
+    })
 
-    const result = await response.json();
+    const result = await response.json()
 
     if (result.errors) {
-      console.error('GraphQL errors:', result.errors);
-      errorMessage.value = 'Error fetching archive data';
+      console.error('GraphQL errors:', result.errors)
+      errorMessage.value = 'Error fetching archive data'
     } else if (result.data && result.data.getArchive) {
-      archiveDetail.value = result.data.getArchive;
+      archiveDetail.value = result.data.getArchive
     } else {
-      console.warn('No data returned from getArchive query:', result);
-      errorMessage.value = 'No archive data found';
+      console.warn('No data returned from getArchive query:', result)
+      errorMessage.value = 'No archive data found'
     }
   } catch (error) {
-    console.error('Error fetching archive detail:', error);
-    errorMessage.value = 'Error fetching archive detail';
+    console.error('Error fetching archive detail:', error)
+    errorMessage.value = 'Error fetching archive detail'
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
-};
+}
 
 // Fetch archive details saat komponen di-mount
 onMounted(() => {
-  fetchArchiveDetail();
-});
-
+  fetchArchiveDetail()
+})
 </script>
 
 <template>
+  <VNavigationDrawer temporary :width="400" location="end" class="scrollable-content" :model-value="props.isDrawerOpen"
+    @update:model-value="handleDrawerModelValueUpdate">
+    <!-- Drawer Title -->
+    <AppDrawerHeaderSection title="Add Master JRA" @cancel="closeNavigationDrawer" />
+
+    <VDivider />
+
+    <PerfectScrollbar :options="{ wheelPropagation: false }">
+      <VCard flat>
+        <VCardText>
+          <!-- Form -->
+          <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
+            <VRow>
+              <!-- Classification Code -->
+              <VCol cols="12">
+                <VTextField v-model="classificationCode" :rules="[requiredValidator, classificationCodeValidator]"
+                  label="Classification Code" placeholder="Enter classification code" />
+              </VCol>
+
+              <!-- Description -->
+              <VCol cols="12">
+                <VTextField v-model="description" :rules="[requiredValidator]" label="Description"
+                  placeholder="Enter description" />
+              </VCol>
+              <!-- Retention Active -->
+              <VCol cols="12">
+                <VTextField v-model="retentionActive" type="number"
+                  :rules="[requiredValidator, value => value >= 0 || 'Must be a positive number']"
+                  label="Retention Active (in years)" placeholder="Enter number of years" />
+              </VCol>
+              <!-- Retention Inactive -->
+              <VCol cols="12">
+                <VTextField v-model="retentionInactive" type="number"
+                  :rules="[requiredValidator, value => value >= 0 || 'Must be a positive number']"
+                  label="Retention Inactive (in years)" placeholder="Enter number of years" />
+              </VCol>
+              <!-- Retention Disposition ID -->
+              <VCol cols="12">
+                <VSelect v-model="retentionDispositionId" :items="[
+                  { title: 'Musnah', value: 1 },
+                  { title: 'Permanen', value: 2 }
+                ]" :rules="[requiredValidator]" label="Retention Disposition ID" placeholder="Select Disposition" />
+              </VCol>
+
+              <!-- Security Classification ID -->
+              <VCol cols="12">
+                <VSelect v-model="securityClassificationId" :items="[
+                  { title: 'Terbuka', value: 1 },
+                  { title: 'Terbatas', value: 2 }
+                ]" :rules="[requiredValidator]" label="Security Classification ID"
+                  placeholder="Select Classification" />
+              </VCol>
+
+              <!-- Submit and Cancel buttons -->
+              <VCol cols="12">
+                <VBtn type="submit" class="me-4">
+                  Submit
+                </VBtn>
+                <VBtn type="reset" variant="outlined" color="error" @click="closeNavigationDrawer">
+                  Cancel
+                </VBtn>
+              </VCol>
+            </VRow>
+          </VForm>
+        </VCardText>
+      </VCard>
+    </PerfectScrollbar>
+  </VNavigationDrawer>
+
   <section>
     <!-- Tampilkan loading saat data sedang diambil -->
     <div v-if="isLoading">Loading...</div>
@@ -183,16 +315,11 @@ onMounted(() => {
         </div>
       </div>
 
-      <div class="d-flex align-center justify-space-between">
-        <VTabs v-model="activeTab">
-          <VTab>Detail Arsip</VTab>
-          <VTab>Dokumen</VTab>
-        </VTabs>
-        <VBtn color="primary" @click="submitFiling">
-          Ajukan Pemberkasan
-        </VBtn>
-      </div>
-
+      <!-- Menampilkan semua informasi arsip (kecuali ID) -->
+      <VTabs v-model="activeTab">
+        <VTab>Detail Arsip</VTab>
+        <VTab>Dokumen</VTab>
+      </VTabs>
 
       <VWindow v-model="activeTab">
         <VWindowItem>
@@ -236,7 +363,6 @@ onMounted(() => {
                   <v-text-field label="Dibuat pada" v-model="archiveData.dibuatPada" readonly />
                 </v-col>
               </v-row>
-
 
               <h5>Klasifikasi</h5>
               <hr class="mb-6">

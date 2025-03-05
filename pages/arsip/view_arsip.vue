@@ -56,7 +56,6 @@ const buttons = [
   { label: 'Semua', status: 'all' },
   { label: 'Usul Unggahan Arsip', status: 'active' & 'inactive' & 'static' },
   { label: 'Usul Pemberkasan Arsip', status: 'active' & 'inactive' & 'static' },
-  { label: 'Usul Pemusnahan Arsip', status: 'destroyed' },
 ]
 
 const filterArchives = async status => {
