@@ -3,7 +3,7 @@ import useArsipStatus from '@/composables/useArsipStatus'
 import useClassification from '@/composables/useClassification'
 import { getSelectedRoleToken } from '@/middleware/auth'
 import { onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 // Middleware for auth on the page
 definePageMeta({
@@ -11,6 +11,8 @@ definePageMeta({
 })
 
 const router = useRouter()
+const route = useRoute()
+const selectedIds = ref([])
 const searchQuery = ref('')
 const archives = ref([])
 const isLoading = ref(false)
@@ -44,19 +46,20 @@ const confirmMutation = async () => {
     console.log("Mutating archive with ID:", archiveToMutate.value.id); // Debugging
 
     try {
-        await mutateArchive(archiveToMutate.value.id);
+        // Panggil createArchiveDisposalBatch dengan data yang sesuai
+        await createArchiveDisposalBatch({
+            archiveIds: [archiveToMutate.value.id], // Kirim array berisi satu ID arsip
+            userId: 1 // Gantilah dengan fungsi untuk mengambil ID user
+        });
+
+
+        console.log("Archive Disposal Batch created successfully!");
     } catch (error) {
         console.error('Mutation failed:', error);
     } finally {
         closeDialog();
     }
 };
-
-// Ensure mutateArchive function is defined
-const mutateArchive = async (id) => {
-    // Implement the mutation logic here
-    console.log(`Archive with ID ${id} mutated.`);
-}
 
 // Configure table headers
 const headers = [
@@ -65,6 +68,43 @@ const headers = [
     { title: 'Unit', key: 'unit_id' },
     { title: 'Dibuat Pada', key: 'created_at' },
 ]
+
+const createArchiveDisposalBatch = async ({ archiveIds, userId }) => {
+    const query = `
+        mutation CreateArchiveDisposalBatch($archiveIds: [Int!]!, $userId: Int!) {
+            createArchiveDisposalBatch(archiveIds: $archiveIds, userId: $userId) {
+                id
+                batch_code
+                submission_date
+                created_at
+            }
+        }
+    `;
+
+    try {
+        const response = await fetch('http://localhost:4000/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getSelectedRoleToken()}`,
+            },
+            body: JSON.stringify({ query, variables: { archiveIds, userId } }),
+        });
+
+        const result = await response.json();
+
+        if (result.errors) {
+            console.error('GraphQL errors:', result.errors);
+        } else if (result.data && result.data.createArchiveDisposalBatch) {
+            console.log('Archive Disposal Batch created:', result.data.createArchiveDisposalBatch);
+        } else {
+            console.warn('No data returned from createArchiveDisposalBatch mutation:', result);
+        }
+    } catch (error) {
+        console.error('Error creating Archive Disposal Batch:', error);
+    }
+};
+
 
 // GraphQL query to fetch archives data
 const fetchArchives = async () => {
@@ -98,7 +138,7 @@ const fetchArchives = async () => {
         }
     `;
 
-    isLoading.value = true
+    isLoading.value = true;
     try {
         const response = await fetch('http://localhost:4000/graphql', {
             method: 'POST',
@@ -115,20 +155,25 @@ const fetchArchives = async () => {
             console.log('📥 Raw Response:', await response.text());
             console.error('GraphQL errors:', result.errors);
         } else if (result.data && result.data.getArchives) {
-            // Map archives and fetch classification description
+            // 🔥 Filter data sesuai selectedIds
+            const filteredData = result.data.getArchives.data.filter(archive =>
+                selectedIds.value.includes(archive.id)
+            );
+
+            // Ambil deskripsi klasifikasi dan status arsip
             archives.value = await Promise.all(
-                result.data.getArchives.data.map(async archive => {
+                filteredData.map(async archive => {
                     const classification = await fetchClassification(archive.classification_id);
                     const status = await fetchArsipStatus(archive.archive_status_id);
 
                     return {
                         ...archive,
                         classification_description: classification?.description || 'N/A',
-                        archive_status_name: status?.name || 'N/A',  // Set status name here
+                        archive_status_name: status?.name || 'N/A',
                     };
-                }),
+                })
             );
-            totalArchives.value = result.data.getArchives.total || 0;
+            totalArchives.value = archives.value.length;
         } else {
             console.warn('No data returned from getArchives query:', result);
         }
@@ -140,9 +185,15 @@ const fetchArchives = async () => {
     }
 };
 
+
+
 onMounted(() => {
-    fetchArchives();
-});
+    if (route.query.ids) {
+        selectedIds.value = route.query.ids.split(",").map(id => Number(id)) // Konversi ke array angka
+        console.log("Selected archives:", selectedIds.value)
+        fetchArchives();
+    }
+})
 
 // Watch for changes in searchQuery and fetch archives
 watch(searchQuery, () => {
@@ -173,6 +224,18 @@ watch(searchQuery, () => {
                     </v-data-table>
                 </v-col>
             </v-row>
+
+            <!-- <v-row>
+                <v-col cols="12">
+                    <h3>Selected Archives:</h3>
+                    <ul>
+                        <li v-for="archive in selectedArchives" :key="archive">
+                            ID Arsip: {{ archive }}
+                        </li>
+                    </ul>
+                </v-col>
+            </v-row> -->
+
         </v-container>
 
         <v-dialog v-model="isDialogOpen" max-width="500px">
@@ -196,6 +259,13 @@ watch(searchQuery, () => {
     </v-col>
     <v-col cols="12">
         <v-file-input show-size label="Upload Arsip" class="mb-4" @change="handleFileChange" />
+    </v-col>
+
+    <v-col cols="12">
+        <v-btn color="red darken-1" @click="openMutationDialog(archives[0])">
+            Usulkan Pemusnahan
+        </v-btn>
+
     </v-col>
 </template>
 

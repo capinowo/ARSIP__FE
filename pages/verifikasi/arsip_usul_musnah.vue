@@ -175,25 +175,24 @@ const mutateArchive = async (id) => {
   }
 };
 
-
 const detailArchive = item => {
   router.push(`/arsip/${item.id}/detail`) // Mengarahkan ke halaman detail dengan ID dinamis
 }
 
-const submitProposal = () => {
-  if (selectedArchives.value.length === 0) {
-    console.warn("No archives selected.");
-    return;
-  }
+const navigateToDetail = () => {
+    if (selectedArchives.value.length === 0) {
+        console.warn("⚠️ No archives selected.");
+        return;
+    }
 
-  // Navigasi ke halaman detail_usul_musnah dengan parameter ID yang dipilih
-  router.push({
+    console.log("📤 Navigating with archives:", selectedArchives.value);
+
+    router.push({
     path: "/verifikasi/detail_usul_musnah",
     query: { ids: selectedArchives.value.join(",") }
   });
+
 };
-
-
 
 onMounted(() => {
   fetchArchives()
@@ -253,7 +252,7 @@ onMounted(() => {
         </VDataTable>
 
         <VCardActions class="justify-end">
-          <VBtn color="primary" :disabled="selectedArchives.length === 0" @click="submitProposal">
+          <VBtn color="primary" :disabled="selectedArchives.length === 0" @click="navigateToDetail">
             Kirim Usulan
           </VBtn>
 

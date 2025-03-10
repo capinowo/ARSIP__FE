@@ -18,7 +18,6 @@ definePageMeta({
 const route = useRoute()
 const locationStore = useLocationStore()
 const selectedLocation = ref(null)
-const selectedRetentionDisposition = ref(null)
 const formStore = useFormStore()
 const content = ref(null)
 const selectedFile = ref(null)
@@ -40,22 +39,6 @@ const unitStore = useUnitStore()
 onMounted(() => {
   unitStore.fetchUnits()
 })
-
-const isFormValid = computed(() => {
-  return (
-    selectedLocation.value &&
-    selectedRetentionDisposition.value &&
-    content.value &&
-    selectedFile.value &&
-    unit_id.value &&
-    unit_name.value &&
-    formStore.selectedClassification &&
-    formStore.tanggalDokumen &&
-    formStore.retentionActiveDate &&
-    formStore.retentionInactiveDate
-  )
-})
-
 
 const handleFileChange = event => {
   if (event && event.length > 0) {
@@ -141,24 +124,10 @@ onMounted(() => {
 const classificationStore = useClassificationStore()
 
 const classificationOptions = computed(() => {
-  // console.log('Classifications:', classificationStore.classifications) 
-
-  return classificationStore.classifications.map(item => {
-    // console.log('Mapping item:', {
-    //   classification_code: item.classification_code,
-    //   description: item.description,
-    //   retention_active: item.retention_active,
-    //   retention_inactive: item.retention_inactive,
-    // }) 
-
-    return {
-      text: `${item.classification_code} - ${item.description}`,
-      value: item.id,
-      retention_active: item.retention_active || 'N/A',
-      retention_inactive: item.retention_inactive || 'N/A',
-
-    }
-  })
+  return classificationStore.classifications.map(item => ({
+    value: item.id, // id sebagai value
+    text: `${item.classification_code} - ${item.description}` // Gunakan properti yang benar
+  }))
 })
 
 onMounted(() => {
@@ -167,80 +136,40 @@ onMounted(() => {
   })
 })
 
-watch(() => formStore.selectedClassification, async (newVal) => {
+watch(() => formStore.selectedClassification, newVal => {
   if (newVal) {
     const selectedClass = classificationStore.classifications.find(c => c.id === newVal)
     if (selectedClass) {
       formStore.retentionActivePeriod = selectedClass.retention_active
       formStore.retentionInactivePeriod = selectedClass.retention_inactive
 
-      // Ambil retention_disposition_id dari klasifikasi yang dipilih
-      const retentionDispositionId = selectedClass.retention_disposition_id
-
-      if (retentionDispositionId) {
-        try {
-          // Query data Retention Disposition
-          const { data } = await apolloClient.query({
-            query: GetRetentionDisposition,
-            variables: { getRetentionDispositionId: retentionDispositionId }
-          })
-
-          if (data?.getRetentionDisposition) {
-            formStore.retentionDispositionName = data.getRetentionDisposition.name
-          }
-        } catch (error) {
-          console.error('Error fetching Retention Disposition:', error)
-        }
-      } else {
-        formStore.retentionDispositionName = null
-      }
+      // You can add other retention/security values to formStore here if needed
     }
   }
 })
 
 
-
-watch(
-  [() => formStore.selectedClassification, () => formStore.tanggalDokumen],
-  () => {
-    const selectedClass = classificationStore.classifications.find(
-      c => c.id === formStore.selectedClassification
-    )
-
-    if (!selectedClass || !formStore.tanggalDokumen) {
-      formStore.retentionActiveDate = ''
-      return
+const retentionActiveDate = computed(() => {
+  if (formStore.selectedClassification && formStore.tanggalDokumen) {
+    const selectedClass = classificationStore.classifications.find(c => c.id === formStore.selectedClassification)
+    if (selectedClass) {
+      const activeYears = selectedClass.retention_active || 0
+      const documentDate = new Date(formStore.tanggalDokumen)
+      documentDate.setFullYear(documentDate.getFullYear() + activeYears)
+      return documentDate.toISOString().split('T')[0]
     }
-
-    const activeYears = selectedClass.retention_active || 0
-    const documentDate = new Date(formStore.tanggalDokumen)
-    documentDate.setFullYear(documentDate.getFullYear() + activeYears)
-
-    const day = String(documentDate.getDate()).padStart(2, '0')
-    const month = String(documentDate.getMonth() + 1).padStart(2, '0')
-    const year = documentDate.getFullYear()
-
-    formStore.retentionActiveDate = `${day}-${month}-${year}`
   }
-)
-
+  return ''
+})
 
 const retentionInactiveDate = computed(() => {
   if (formStore.selectedClassification && retentionActiveDate.value) {
     const selectedClass = classificationStore.classifications.find(c => c.id === formStore.selectedClassification)
     if (selectedClass) {
       const inactiveYears = selectedClass.retention_inactive || 0
-
-      // Pecah retentionActiveDate.value untuk parsing manual
-      const [day, month, year] = retentionActiveDate.value.split('-').map(Number)
-      const activeEndDate = new Date(year, month - 1, day) // Bulan dikurangi 1 karena getMonth() berbasis 0
-      activeEndDate.setFullYear(activeEndDate.getFullYear() + inactiveYears)
-
-      const newDay = String(activeEndDate.getDate()).padStart(2, '0')
-      const newMonth = String(activeEndDate.getMonth() + 1).padStart(2, '0') // getMonth() dimulai dari 0
-      const newYear = activeEndDate.getFullYear()
-
-      return `${newDay}-${newMonth}-${newYear}`
+      const activeDate = new Date(retentionActiveDate.value)
+      activeDate.setFullYear(activeDate.getFullYear() + inactiveYears)
+      return activeDate.toISOString().split('T')[0]
     }
   }
   return ''
@@ -272,23 +201,24 @@ const statusComputed = computed(() => {
     return null // Jika tanggal belum lengkap, status tetap kosong
   }
 
-  // Konversi retentionActiveDate dan retentionInactiveDate ke format Date JS
-  const [dayA, monthA, yearA] = retentionActiveDate.value.split('-').map(Number)
+  // Konversi retentionActiveDate dan retentionInactiveDate ke format Date
+  const [dayA, monthA, yearA] = retentionActiveDate.value.split('/').map(Number)
   const activeDate = new Date(yearA, monthA - 1, dayA)
 
-  const [dayI, monthI, yearI] = retentionInactiveDate.value.split('-').map(Number)
+  const [dayI, monthI, yearI] = retentionInactiveDate.value.split('/').map(Number)
   const inactiveDate = new Date(yearI, monthI - 1, dayI)
 
   const today = new Date()
+  today.setHours(0, 0, 0, 0) // Normalisasi waktu ke tengah malam agar akurat
 
   let statusName = ''
 
   if (today < activeDate) {
-    statusName = 'Aktif'
+    statusName = 'Aktif'  // Masih dalam masa aktif
   } else if (today >= activeDate && today < inactiveDate) {
-    statusName = 'Inaktif'
+    statusName = 'Inaktif'  // Sudah inaktif, belum musnah
   } else {
-    statusName = 'Statis'
+    statusName = 'Statis/Musnah'  // Sudah melewati retensi inaktif
   }
 
   // Cari ID status berdasarkan nama status
@@ -296,16 +226,23 @@ const statusComputed = computed(() => {
   return matchedStatus ? matchedStatus.id : null
 })
 
-watch(statusComputed, (newStatus) => {
-  formStore.selectedStatus = newStatus
+
+
+watchEffect(() => {
+  formStore.selectedStatus = statusComputed.value
+  console.log('Updated Selected Status:', formStore.selectedStatus) // Debugging
 })
 
+
+console.log('Status Options:', statusOptions)
+console.log('Selected Status:', formStore.selectedStatus)
 
 const selectedLocationName = computed(() => {
   const location = locationStore.locations.find(item => item.unit_id === unit_id.value)
 
   return location ? `${location.name} - ${location.building_name}` : ''
 })
+
 
 watch(() => unit_id.value, newVal => {
   const location = locationStore.locations.find(item => item.unit_id === newVal)
@@ -339,7 +276,7 @@ const handleSave = async () => {
     tingkat_perkembangan: formStore.selectedTingkatPerkembangan,
     jumlah_lampiran: parseInt(formStore.jumlahArsip, 10) || 0, // Jika tidak diisi, default ke 0
     media_lampiran: formStore.selectedMediaLampiran,
-    document_date: new Date().toISOString(),
+    document_date: formStore.tanggalDokumen,
     final_retensi_aktif: new Date().toISOString(),
     final_retensi_inaktif: new Date().toISOString(),
   }
@@ -481,7 +418,7 @@ const showSnackbar = (message, color = 'success') => {
 
               <VCol cols="6">
                 <VTextField v-model="formStore.retentionDispositionName" label="Jenis Retensi"
-                  placeholder="Jenis Retensi akan terisi otomatis" readonly />
+                  prepend-icon="ri-calendar-schedule-line" placeholder="Jenis Retensi akan terisi otomatis" readonly />
               </VCol>
 
               <VCol cols="4">
@@ -502,9 +439,9 @@ const showSnackbar = (message, color = 'success') => {
 
               <VCol cols="4"
                 v-if="formStore.selectedMedia === 'Audio' || formStore.selectedMedia === 'Video' || formStore.selectedMedia === 'Elektronik'">
-                <VSelect v-model="formStore.selectedTingkatPerkembangan" label="Kondisi Media"
-                  :items="tingkatPerkembanganOptions" item-title="name" item-value="name"
-                  placeholder="Select Tingkat Perkembangan"
+                <VSelect v-model="formStore.selectedTingkatPerkembangan"
+                  label="Tingkat Perkembangan (Audio/Video/Elektronik)" :items="tingkatPerkembanganOptions"
+                  item-title="name" item-value="name" placeholder="Select Tingkat Perkembangan"
                   :rules="[value => !!value || 'Tingkat Perkembangan wajib dipilih']" />
               </VCol>
 
@@ -517,23 +454,14 @@ const showSnackbar = (message, color = 'success') => {
           </VCardText>
 
           <!-- Tombol Simpan dan Clear Draft di bagian bawah -->
-          <VCardActions class="d-flex flex-column align-end mt-4 px-4 pb-4">
-            <div class="d-flex">
-              <VBtn variant="outlined" color="secondary" @click="clearDraft">
-                Clear Draft
-              </VBtn>
-              <VBtn variant="flat" color="primary" style="margin-inline-start: 8px;" :disabled="!isFormValid"
-                @click="handleSave">
-                Simpan Arsip
-              </VBtn>
-            </div>
-
-            <!-- Pesan error di bawah kedua tombol -->
-            <p v-if="!isFormValid" class="text-red-500 text-sm mt-2">
-              Silakan lengkapi isian pada kolom
-            </p>
+          <VCardActions class="d-flex justify-end mt-4 px-4 pb-4">
+            <VBtn variant="outlined" color="secondary" @click="clearDraft">
+              Clear Draft
+            </VBtn>
+            <VBtn variant="flat" color="primary" style="margin-inline-start: 8px;" @click="handleSave">
+              Simpan Arsip
+            </VBtn>
           </VCardActions>
-
         </VCard>
       </VCol>
     </VRow>
