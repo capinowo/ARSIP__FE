@@ -4,6 +4,7 @@
 import { useClassificationStore } from '@/stores/classificationStore'
 import { useFormStore } from '@/stores/formStoreArsip'
 import { useLocationStore } from '@/stores/locationStore'
+import { useRetentionDispositionStore } from '@/stores/retentionDispositionStore'
 import { saveArsip } from '@/stores/saveArsip'
 import { uploadFileArchive } from '@/stores/saveFileUploads'
 import { useStatusStore } from '@/stores/statusStore'
@@ -148,32 +149,70 @@ watch(() => formStore.selectedClassification, newVal => {
   }
 })
 
+const retentionDispositionStore = useRetentionDispositionStore()
+
+// Ambil retentionDispositionName berdasarkan selectedClassification
+const retentionDispositionName = computed(() => {
+  if (!formStore.selectedClassification) return ''
+
+  // Cari classification yang dipilih
+  const selectedClass = classificationStore.classifications.find(
+    c => c.id === formStore.selectedClassification
+  )
+
+  if (!selectedClass) return ''
+
+  // Ambil retention_disposition_id
+  const dispositionId = selectedClass.retention_disposition_id
+  if (!dispositionId) return ''
+
+  // Cari retention disposition berdasarkan ID
+  const retention = retentionDispositionStore.retentions.find(r => r.id === dispositionId)
+
+  return retention ? retention.name : 'Unknown'
+})
+
+// Gunakan watchEffect agar formStore.retentionDispositionName selalu update
+watchEffect(() => {
+  formStore.retentionDispositionName = retentionDispositionName.value
+})
+
+onMounted(async () => {
+  await classificationStore.fetchClassifications()
+  await retentionDispositionStore.fetchRetentions()
+})
+
+
+const formatDate = (date) => {
+  return date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+};
 
 const retentionActiveDate = computed(() => {
   if (formStore.selectedClassification && formStore.tanggalDokumen) {
-    const selectedClass = classificationStore.classifications.find(c => c.id === formStore.selectedClassification)
+    const selectedClass = classificationStore.classifications.find(c => c.id === formStore.selectedClassification);
     if (selectedClass) {
-      const activeYears = selectedClass.retention_active || 0
-      const documentDate = new Date(formStore.tanggalDokumen)
-      documentDate.setFullYear(documentDate.getFullYear() + activeYears)
-      return documentDate.toISOString().split('T')[0]
+      const activeYears = selectedClass.retention_active || 0;
+      const documentDate = new Date(formStore.tanggalDokumen);
+      documentDate.setFullYear(documentDate.getFullYear() + activeYears);
+      return formatDate(documentDate);
     }
   }
-  return ''
-})
+  return '';
+});
 
 const retentionInactiveDate = computed(() => {
   if (formStore.selectedClassification && retentionActiveDate.value) {
-    const selectedClass = classificationStore.classifications.find(c => c.id === formStore.selectedClassification)
+    const selectedClass = classificationStore.classifications.find(c => c.id === formStore.selectedClassification);
     if (selectedClass) {
-      const inactiveYears = selectedClass.retention_inactive || 0
-      const activeDate = new Date(retentionActiveDate.value)
-      activeDate.setFullYear(activeDate.getFullYear() + inactiveYears)
-      return activeDate.toISOString().split('T')[0]
+      const inactiveYears = selectedClass.retention_inactive || 0;
+      const activeDate = new Date(retentionActiveDate.value.split('/').reverse().join('-')); // Konversi balik ke format Date
+      activeDate.setFullYear(activeDate.getFullYear() + inactiveYears);
+      return formatDate(activeDate);
     }
   }
-  return ''
-})
+  return '';
+});
+
 
 
 // Pastikan formStore menyimpan tanggal publikasi arsip
@@ -218,7 +257,7 @@ const statusComputed = computed(() => {
   } else if (today >= activeDate && today < inactiveDate) {
     statusName = 'Inaktif'  // Sudah inaktif, belum musnah
   } else {
-    statusName = 'Statis/Musnah'  // Sudah melewati retensi inaktif
+    statusName = 'Statis'  // Sudah melewati retensi inaktif
   }
 
   // Cari ID status berdasarkan nama status
@@ -252,65 +291,56 @@ watch(() => unit_id.value, newVal => {
 })
 
 const handleSave = async () => {
-  if (!formStore.namaArsip || !formStore.selectedUnit || !formStore.selectedLocation || !formStore.selectedClassification || !formStore.selectedStatus) {
-    formStore.isFormValid = false
-
-    return
-  }
-
-  formStore.isFormValid = true
-
-  const data = {
-    title: formStore.namaArsip,
-    description: formStore.content,
-    classification_id: formStore.selectedClassification,
-    document_path: "", // Jika ada file, sesuaikan dengan path dari file yang diunggah
-    archive_status_id: formStore.selectedStatus,
-    archive_type_id: formStore.selectedType,
-    unit_id: formStore.selectedUnit,
-    location_id: formStore.selectedLocation,
-    user_id: 1, // Sesuaikan dengan ID user yang sedang login
-    approval_status_id: 2,
-    jumlah_arsip: parseInt(formStore.jumlahArsip, 10) || 0, // Jika tidak diisi, default ke 0
-    media_arsip: formStore.selectedMediaArsip,
-    tingkat_perkembangan: formStore.selectedTingkatPerkembangan,
-    jumlah_lampiran: parseInt(formStore.jumlahArsip, 10) || 0, // Jika tidak diisi, default ke 0
-    media_lampiran: formStore.selectedMediaLampiran,
-    document_date: formStore.tanggalDokumen,
-    final_retensi_aktif: new Date().toISOString(),
-    final_retensi_inaktif: new Date().toISOString(),
+  if (!formStore.namaArsip) {
+    showSnackbar('Harap lengkapi semua field yang wajib!', 'error');
+    return;
   }
 
   try {
-    const savedArchive = await saveArsip(data)
+    const data = {
+      title: formStore.namaArsip,
+      description: formStore.content,
+      classification_id: formStore.selectedClassification,
+      archive_status_id: formStore.selectedStatus,
+      archive_type_id: formStore.selectedType,
+      unit_id: formStore.selectedUnit,
+      location_id: formStore.selectedLocation,
+      user_id: 1,
+      approval_status_id: 2,
+      jumlah_arsip: parseInt(formStore.jumlahArsip, 10) || 0,
+      media_arsip: formStore.selectedMediaArsip,
+      document_date: formStore.tanggalDokumen
+        ? new Date(formStore.tanggalDokumen).toISOString()
+        : null,
+      final_retensi_aktif: retentionActiveDate.value
+        ? new Date(retentionActiveDate.value).toISOString()
+        : null,
+      final_retensi_inaktif: retentionInactiveDate.value
+        ? new Date(retentionInactiveDate.value).toISOString()
+        : null,
+    };
 
+    const savedArchive = await saveArsip(data);
     if (savedArchive.error) {
-      showSnackbar(savedArchive.error, 'error')
-
-      return
+      showSnackbar(savedArchive.error, 'error');
+      return;
     }
 
-    showSnackbar('Save Arsip berhasil!', 'success')
+    showSnackbar('Arsip berhasil disimpan!', 'success');
 
     if (savedArchive?.id && selectedFile.value) {
-      const uploadedFile = await uploadFileArchive(savedArchive.id, selectedFile.value)
-
-      // Update the document_path of the saved archive
-      savedArchive.document_path = uploadedFile.document_path
-
-      showSnackbar('File berhasil diunggah!', 'success')
+      await uploadFileArchive(savedArchive.id, selectedFile.value);
+      showSnackbar('File berhasil diunggah!', 'success');
     }
 
-    clearDraft()
+    clearDraft();
     setTimeout(() => {
-      navigateTo('/arsip/list_arsip')
-    }, 2000)
+      navigateTo('/arsip/list_arsip');
+    }, 2000);
   } catch (error) {
-    const errorMessages = error.message || 'Terjadi kesalahan saat menyimpan arsip'
-
-    showSnackbar(errorMessages, 'error')
+    showSnackbar(error.message || 'Terjadi kesalahan saat menyimpan arsip', 'error');
   }
-}
+};
 
 const showSnackbar = (message, color = 'success') => {
   snackbar.value.message = message
@@ -345,6 +375,11 @@ const showSnackbar = (message, color = 'success') => {
         <VCard class="mb-6 pb-4" title="Form Arsip">
           <VCardText>
             <VRow>
+
+              <VCol cols="12">
+                <VTextField v-model="formStore.tanggalDokumen" label="Tanggal Arsip Dibuat"
+                  prepend-icon="ri-calendar-schedule-line" type="date" />
+              </VCol>
               <VCol cols="12">
                 <VAutocomplete v-model="formStore.selectedClassification" label="Klasifikasi"
                   placeholder="Select Klasifikasi" :items="classificationOptions" item-title="text" item-value="value"
@@ -387,10 +422,7 @@ const showSnackbar = (message, color = 'success') => {
                   :rules="[value => !!value || 'Nilai Guna wajib dipilih']" />
               </VCol>
 
-              <VCol cols="12">
-                <VTextField v-model="formStore.tanggalDokumen" label="Tanggal Arsip Dibuat"
-                  prepend-icon="ri-calendar-schedule-line" type="date" />
-              </VCol>
+
 
               <VCol cols="3">
                 <VTextField v-model="formStore.retentionActivePeriod" label="Retensi Aktif (belum)"

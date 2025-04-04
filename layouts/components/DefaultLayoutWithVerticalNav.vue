@@ -46,8 +46,8 @@ const menuItems = [
       { title: 'Usulan Masuk', to: { name: 'verifikasi-persetujuan_arsip' }, icon: { icon: 'ri-circle-line' } },
       { title: 'Usulan Pemusnahan', to: { name: 'verifikasi-arsip_usul_musnah' }, icon: { icon: 'ri-circle-line' } },
       { title: 'Persetujuan Pemusnahan', to: { name: 'verifikasi-persetujuan_usul_musnah' }, icon: { icon: 'ri-circle-line' } },
-      { title: 'Pemusnahan Arsip', to: { name: 'verifikasi-persetujuan_usul_musnah' }, icon: { icon: 'ri-circle-line' } },
-      { title: 'Berita Acara', to: { name: 'verifikasi-persetujuan_usul_musnah' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Pemusnahan Arsip', to: { name: 'verifikasi-persetujuan_pemusnahan' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Berita Acara', to: { name: 'verifikasi-berita_acara_pemusnahan' }, icon: { icon: 'ri-circle-line' } },
     ],
   },
 ]

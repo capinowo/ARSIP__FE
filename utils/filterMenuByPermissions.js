@@ -21,7 +21,12 @@ const permissionAccess = {
     'arsip-[id]-detail',
     'arsip-add',
     'verifikasi-persetujuan_arsip',
-    'verifikasi-arsip_usul_musnah'
+    'verifikasi-arsip_usul_musnah',
+    'verifikasi-persetujuan_pemusnahan',
+    'verifikasi-persetujuan_usul_musnah',
+    'verifikasi-pemusnahan_arsip',
+    'verifikasi-berita_acara_pemusnahan',
+
   ],
 
   // 'arsip-[id]-detail': ['arsip-list_arsip'],

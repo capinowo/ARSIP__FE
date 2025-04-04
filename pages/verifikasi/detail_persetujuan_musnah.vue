@@ -36,27 +36,67 @@ const closeDialog = () => {
 
 const selectedArchives = ref([]);
 
-// Confirm deletion and send mutation to delete the archive
 const confirmMutation = async () => {
-    if (selectedIds.value.length === 0) {
-        console.warn('No archives selected for disposal');
+    if (archives.value.length === 0) {
+        console.warn('❌ No archives available for disposal');
         return;
     }
 
     try {
-        console.log("Mutating archives:", selectedIds.value);
-        await createArchiveDisposalBatch({
-            archiveIds: [...selectedIds.value], // Pastikan arraynya "bersih"
-            userId: 1
+        const batchId = Number(route.query.ids);
+        if (!batchId) {
+            console.error('❌ Invalid batch ID!');
+            return;
+        }
+
+        console.log("🚀 Approving batch ID:", batchId);
+
+        const query = `
+            mutation accDisposalByPimpinanUK2($id: Int!, $pimpinanUk2Id: Int!) {
+                accDisposalByPimpinanUK2(id: $id, pimpinanUk2Id: $pimpinanUk2Id) {
+                    id
+                    pimpinan_uk2_approval_status_id
+                }
+            }
+        `;
+
+        const response = await fetch('http://localhost:4000/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getSelectedRoleToken()}`,
+            },
+            body: JSON.stringify({
+                query,
+                variables: { id: batchId, pimpinanUk2Id: 1 },
+            }),
         });
 
+        const result = await response.json();
 
-        console.log("Archive Disposal Batch created successfully!");
+        if (result.errors) {
+            console.error('❌ GraphQL errors:', result.errors);
+            return;
+        }
+
+        const approvalResponse = result.data.accDisposalByPimpinanUK2;
+        if (!approvalResponse || approvalResponse.pimpinan_uk2_approval_status_id !== 1) {
+            console.error('❌ Failed to approve by Pimpinan UK2');
+            return;
+        }
+
+        console.log("✅ Archive Disposal Approved by Pimpinan UK2!", approvalResponse);
+
         router.push({ path: '/verifikasi/arsip_usul_musnah' }).catch(err => console.warn("Router Error:", err));
+
     } catch (error) {
-        console.error('Mutation failed:', error);
+        console.error('❌ Mutation failed:', error);
     }
 };
+
+
+
+
 
 
 // Configure table headers
@@ -65,7 +105,12 @@ const headers = [
     { title: 'Deskripsi', key: 'description' },
     { title: 'Unit', key: 'unit_id' },
     { title: 'Dibuat Pada', key: 'created_at' },
-]
+    { title: 'Tanggal Pengajuan', key: 'submission_date' },
+    { title: 'Status Persetujuan', key: 'approval_status' },
+    { title: 'Disetujui Oleh', key: 'approved_by' }
+];
+
+
 
 const createArchiveDisposalBatch = async ({ archiveIds, userId }) => {
     const query = `
@@ -113,37 +158,58 @@ const createArchiveDisposalBatch = async ({ archiveIds, userId }) => {
 };
 
 
-// GraphQL query to fetch archives data
-const fetchArchives = async () => {
+const batchId = ref(route.params.id); // Ambil batch_id dari URL
+const fetchArchivesInBatch = async () => {
+    console.log("Fetching archives for batch:", batchId.value); // 🔥 Debugging
+
+    if (!batchId.value) {
+        console.warn("❌ No batch ID provided!");
+        return;
+    }
+
     const query = `
-        query {
-            getArchives (where: { archive_status_id: 4, approval_status_id: 2 }) {
-                total
+        query GetArchiveDisposals($where: ArchiveDisposalWhereInput) {
+            getArchiveDisposals(where: $where) {
                 data {
                     id
-                    title
-                    description
-                    classification_id
-                    document_path
-                    archive_status_id
-                    archive_type_id
-                    unit_id
-                    location_id
-                    user_id
+                    archive {
+                        id
+                        title
+                        description
+                        unit_id
+                        created_at
+                    }
+                    archive_id
+                    submission_date
+                    approvalStatus {
+                        id
+                        name
+                    }
                     approval_status_id
+                    user {
+                        id
+                        name
+                    }
+                    approved_by
+                    batch {
+                        id
+                        batch_code
+                    }
+                    batch_id
                     created_at
                     updated_at
-                    jumlah_arsip
-                    media_arsip
-                    tingkat_perkembangan
-                    jumlah_lampiran
-                    media_lampiran
-                    final_retensi_aktif
-                    final_retensi_inaktif
                 }
             }
         }
     `;
+
+    const variables = {
+        where: {
+            batch_id: Number(batchId.value)  // ✅ Pastikan ini angka
+        }
+    };
+
+    console.log("Query Variables:", variables); // 🔥 Debugging
 
     isLoading.value = true;
     try {
@@ -153,40 +219,32 @@ const fetchArchives = async () => {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getSelectedRoleToken()}`,
             },
-            body: JSON.stringify({ query }),
+            body: JSON.stringify({ query, variables }),
         });
 
         const result = await response.json();
 
         if (result.errors) {
-            console.log('📥 Raw Response:', await response.text());
-            console.error('GraphQL errors:', result.errors);
-        } else if (result.data && result.data.getArchives) {
-            // 🔥 Filter data sesuai selectedIds
-            const filteredData = result.data.getArchives.data.filter(archive =>
-                selectedIds.value.includes(archive.id)
-            );
-
-            // Ambil deskripsi klasifikasi dan status arsip
-            archives.value = await Promise.all(
-                filteredData.map(async archive => {
-                    const classification = await fetchClassification(archive.classification_id);
-                    const status = await fetchArsipStatus(archive.archive_status_id);
-
-                    return {
-                        ...archive,
-                        classification_description: classification?.description || 'N/A',
-                        archive_status_name: status?.name || 'N/A',
-                    };
-                })
-            );
+            console.error("❌ GraphQL errors:", result.errors);
+        } else if (result.data && result.data.getArchiveDisposals) {
+            console.log("✅ Data Fetched:", result.data.getArchiveDisposals.data);
+            archives.value = result.data.getArchiveDisposals.data.map(disposal => ({
+                id: disposal.archive.id,
+                title: disposal.archive.title,
+                description: disposal.archive.description,
+                unit_id: disposal.archive.unit_id,
+                created_at: disposal.archive.created_at,
+                submission_date: disposal.submission_date,
+                approval_status: disposal.approvalStatus?.name || "Pending",
+                approved_by: disposal.user?.name || "N/A",
+                batch_code: disposal.batch?.batch_code || "N/A"
+            }));
             totalArchives.value = archives.value.length;
         } else {
-            console.warn('No data returned from getArchives query:', result);
+            console.warn("⚠️ No data returned from getArchiveDisposals query:", result);
         }
     } catch (error) {
-        console.error('Error fetching archives:', error);
-        snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives');
+        console.error("❌ Error fetching archives in batch:", error);
     } finally {
         isLoading.value = false;
     }
@@ -194,13 +252,18 @@ const fetchArchives = async () => {
 
 
 
+
 onMounted(() => {
+    console.log("Route query:", route.query); // 🔥 Debugging
     if (route.query.ids) {
-        selectedIds.value = route.query.ids.split(",").map(id => Number(id)) // Konversi ke array angka
-        console.log("Selected archives:", selectedIds.value)
-        fetchArchives();
+        batchId.value = Number(route.query.ids); // Konversi ke angka
+        console.log("Batch ID from URL:", batchId.value); // 🔥 Debugging
+        fetchArchivesInBatch();
     }
-})
+});
+
+
+
 
 // Watch for changes in searchQuery and fetch archives
 watch(searchQuery, () => {
@@ -226,9 +289,13 @@ watch(searchQuery, () => {
                                 <td>{{ item.description }}</td>
                                 <td>{{ item.unit_id }}</td>
                                 <td>{{ item.created_at }}</td>
+                                <td>{{ item.submission_date }}</td>
+                                <td>{{ item.approval_status }}</td>
+                                <td>{{ item.approved_by }}</td>
                             </tr>
                         </template>
                     </v-data-table>
+
                 </v-col>
             </v-row>
 

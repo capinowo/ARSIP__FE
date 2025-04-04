@@ -27,50 +27,52 @@ const isDialogOpen = ref(false)
 
 const closeDialog = () => {
   isDialogOpen.value = false   // Close the dialog
+  console.log("Dialog closed. Archive mutation status:", isDialogOpen.value ? "Open" : "Closed");
 }
 
 const selectedArchives = ref([]);
+const batches = ref([]);
+
+const goToDetail = (item) => {
+  if (!item.id) {
+    console.warn("Item tidak memiliki ID!");
+    return;
+  }
+
+  router.push({
+    path: "/verifikasi/detail_persetujuan_musnah",
+    query: { ids: item.id.toString() } // Kirim ID dari item yang ditekan
+  });
+};
+
+
 
 
 // Configure table headers
 const headers = [
   { title: 'No', key: 'no', sortable: false },
-  { title: 'Judul', key: 'title' },
-  { title: 'Deskripsi', key: 'description' },
-  { title: 'Klasifikasi', key: 'classification_description' },
-  { title: 'Dokumen', key: 'documents' },
-  { title: 'Actions', key: 'actions', sortable: false },
-  { title: '', key: 'select', sortable: false },
+  { title: 'Kode Batch', key: 'batch_code' },
+  { title: 'Tanggal Pengajuan', key: 'submission_date' },
+  { title: 'Detail', key: 'detail' },
+  { title: 'Berita Acara', key: 'berita_acara_status' },
 ]
 
 // GraphQL query to fetch archives data
+
 const fetchArchives = async () => {
   const query = `
     query {
-      getArchives (where: { archive_status_id: 4, approval_status_id: 2 }) {
-        total
+      getArchiveDisposalBatches {
         data {
           id
-          title
-          description
-          classification_id
-          document_path
-          archive_status_id
-          archive_type_id
-          unit_id
-          location_id
-          user_id
-          approval_status_id
+          batch_code
+          submission_date
           created_at
           updated_at
-          jumlah_arsip
-          media_arsip
-          tingkat_perkembangan
-          jumlah_lampiran
-          media_lampiran
-          final_retensi_aktif
-          final_retensi_inaktif
+          detail
+          berita_acara_path
         }
+        total
       }
     }
   `
@@ -89,29 +91,22 @@ const fetchArchives = async () => {
     const result = await response.json()
 
     if (result.errors) {
-      console.log('📥 Raw Response:', await response.text())
       console.error('GraphQL errors:', result.errors)
-    } else if (result.data && result.data.getArchives) {
-      // Map archives and fetch classification description
-      archives.value = await Promise.all(
-        result.data.getArchives.data.map(async archive => {
-          const classification = await fetchClassification(archive.classification_id)
-          const status = await fetchArsipStatus(archive.archive_status_id)
-
-          return {
-            ...archive,
-            classification_description: classification?.description || 'N/A',
-            archive_status_name: status?.name || 'N/A',  // Set status name here
-          }
-        }),
-      )
-      totalArchives.value = result.data.getArchives.total || 0
     } else {
-      console.warn('No data returned from getArchives query:', result)
+      if (result.data?.getArchives) {
+        archives.value = result.data.getArchives.data
+        totalArchives.value = result.data.getArchives.total
+      }
+
+      if (result.data?.getArchiveDisposalBatches) {
+        batches.value = result.data.getArchiveDisposalBatches.data.map(batch => ({
+          ...batch,
+          berita_acara_status: batch.berita_acara_path ? "Tersedia" : "Belum tersedia"
+        }))
+      }
     }
   } catch (error) {
-    console.error('Error fetching archives:', error)
-    snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives')
+    console.error('Error fetching data:', error)
   } finally {
     isLoading.value = false
   }
@@ -217,8 +212,9 @@ onMounted(() => {
     </div>
     <div>
       <VCard style="padding: 24px;">
-        <VDataTable :headers="headers" :items="archives" :search="searchQuery" :loading="isLoading"
-          :total-items="totalArchives" :items-per-page="itemsPerPage" :page="currentPage" item-key="id"
+        <h3>Daftar Arsip & Batch Pemusnahan</h3>
+        <VDataTable :headers="headers" :items="[...archives, ...batches]" :search="searchQuery" :loading="isLoading"
+          :total-items="totalArchives + totalBatches" :items-per-page="itemsPerPage" :page="currentPage" item-key="id"
           @update:page="currentPage = $event" @update:items-per-page="itemsPerPage = $event">
           <!-- Checkbox Column -->
           <template #item.select="{ item }">
@@ -230,13 +226,36 @@ onMounted(() => {
             {{ (currentPage - 1) * itemsPerPage + index + 1 }}
           </template>
 
-          <!-- Slot for Classification Description column -->
-          <template #item.classification_description="{ item }">
-            {{ item.classification_description }}
+          <!-- Slot for Judul & Batch Code -->
+          <template #item.title="{ item }">
+            {{ item.title || item.batch_code || "N/A" }}
           </template>
 
+          <!-- Slot for Deskripsi & Detail Batch -->
+          <template #item.description="{ item }">
+            {{ item.description || item.detail || "N/A" }}
+          </template>
+
+          <!-- Slot for Classification Description -->
+          <template #item.classification_description="{ item }">
+            {{ item.classification_description || "N/A" }}
+          </template>
+
+          <!-- Slot for Archive Status Name -->
           <template #item.archive_status_name="{ item }">
-            {{ item.archive_status_name }}
+            {{ item.archive_status_name || "N/A" }}
+          </template>
+
+          <!-- Slot for Berita Acara -->
+          <template #item.berita_acara_status="{ item }">
+            {{ item.berita_acara_path ? "Tersedia" : "Belum tersedia" }}
+          </template>
+
+          <!-- Slot for Detail Button -->
+          <template #item.detail="{ item }">
+            <VBtn color="primary" @click="goToDetail(item)">
+              Cek Detail
+            </VBtn>
           </template>
 
           <!-- Slot for Actions column -->
@@ -256,11 +275,9 @@ onMounted(() => {
           <VBtn color="primary" :disabled="selectedArchives.length === 0" @click="submitProposal">
             Kirim Usulan
           </VBtn>
-
         </VCardActions>
-
-
       </VCard>
+
     </div>
     <!-- Confirmation Dialog for Deletion -->
     <VDialog v-model="isDialogOpen" max-width="400">

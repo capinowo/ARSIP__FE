@@ -41,7 +41,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
         'lokasi-dashboard': ['/', 'index', 'master-master_lokasi'],
         'dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah'],
         'lokasi-dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'master-master_lokasi'],
-        'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'arsip-verifikasi-persetujuan_arsip'],
+        'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'arsip-verifikasi-persetujuan_arsip', 'arsip-verifikasi-persetujuan_usul_musnah'],
       }
 
       // Get user's permissions from the token

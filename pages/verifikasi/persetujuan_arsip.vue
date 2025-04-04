@@ -25,6 +25,9 @@ const { fetchArsipStatus } = useArsipStatus()
 const snackbarRef = ref(null)
 const isDialogOpen = ref(false)  // Track dialog visibility
 const archiveToDelete = ref(null)  // Store the archive item to be deleted
+const selectedArchives = ref([])
+const selectAll = ref(false)
+
 
 const openDeleteDialog = item => {
   archiveToDelete.value = item  // Set the archive item to be deleted
@@ -51,6 +54,15 @@ const confirmDeletion = async () => {
     closeDialog()
   }
 }
+
+const toggleSelectAll = () => {
+  if (selectAll.value) {
+    selectedArchives.value = archives.value.map(archive => archive.id)
+  } else {
+    selectedArchives.value = []
+  }
+}
+
 
 const buttons = [
   { label: 'Semua', status: 'all' },
@@ -174,11 +186,11 @@ const headers = [
   { title: 'Judul', key: 'title' },
   { title: 'Deskripsi', key: 'description' },
   { title: 'Klasifikasi', key: 'classification_description' },
-
-  // { title: 'Document Path', key: 'document_path' },
   { title: 'Status', key: 'archive_status_name' },
   { title: 'Actions', key: 'actions', sortable: false },
+  { title: '', key: 'select', sortable: false }, // Checkbox kolom
 ]
+
 
 // GraphQL query to fetch archives data
 //sebelum ke filter unit
@@ -377,7 +389,10 @@ const deleteArchive = async id => {
 }
 
 const detailArchive = item => {
-  router.push(`/arsip/${item.id}/detail`) // Mengarahkan ke halaman detail dengan ID dinamis
+  router.push({
+    path: "/arsip/verifikasi/detail_acc",
+    query: { ids: selectedArchives.value.join(",") }
+  }); // Mengarahkan ke halaman detail dengan ID dinamis
 }
 
 
@@ -413,16 +428,23 @@ onMounted(() => {
           </VBtnToggle>
         </div>
 
-
         <VDataTable :headers="headers" :items="archives" :search="searchQuery" :loading="isLoading"
           :total-items="totalArchives" :items-per-page="itemsPerPage" :page="currentPage" item-key="id"
           @update:page="currentPage = $event" @update:items-per-page="itemsPerPage = $event">
-          <!-- Slot for No column -->
+          <!-- Checkbox Header untuk Pilih Semua -->
+          <template #column.select>
+            <VCheckbox v-model="selectAll" @click="toggleSelectAll" />
+          </template>
+
+          <!-- Checkbox di Setiap Baris -->
+          <template #item.select="{ item }">
+            <VCheckbox v-model="selectedArchives" :value="item.id" />
+          </template>
+
           <template #item.no="{ index }">
             {{ (currentPage - 1) * itemsPerPage + index + 1 }}
           </template>
 
-          <!-- Slot for Classification Description column -->
           <template #item.classification_description="{ item }">
             {{ item.classification_description }}
           </template>
@@ -431,10 +453,8 @@ onMounted(() => {
             {{ item.archive_status_name }}
           </template>
 
-          <!-- Slot for Actions column -->
           <template #item.actions="{ item }">
             <div class="d-flex">
-              <!-- Tombol untuk melihat detail -->
               <VBtn icon style="margin-inline-end: 6px;" @click="detailArchive(item)">
                 <VIcon>ri-todo-line</VIcon>
                 Detail
@@ -442,6 +462,10 @@ onMounted(() => {
             </div>
           </template>
         </VDataTable>
+        <VBtn v-if="selectedArchives.length > 0" color="primary" @click="processSelectedArchives">
+          Proses Arsip Terpilih ({{ selectedArchives.length }})
+        </VBtn>
+
       </VCard>
     </div>
     <!-- Confirmation Dialog for Deletion -->

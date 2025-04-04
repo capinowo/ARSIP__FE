@@ -19,6 +19,7 @@ export const useClassificationStore = defineStore('classification', () => {
             description
             retention_active
             retention_inactive
+            retention_disposition_id
           }
         }
       }

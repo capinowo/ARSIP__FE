@@ -38,26 +38,28 @@ const selectedArchives = ref([]);
 
 // Confirm deletion and send mutation to delete the archive
 const confirmMutation = async () => {
-    if (selectedIds.value.length === 0) {
-        console.warn('No archives selected for disposal');
+    if (!archiveToMutate.value || !archiveToMutate.value.id) {
+        console.warn('No archive selected for mutation:', archiveToMutate.value);
         return;
     }
 
+    console.log("Mutating archive with ID:", archiveToMutate.value.id); // Debugging
+
     try {
-        console.log("Mutating archives:", selectedIds.value);
+        // Panggil createArchiveDisposalBatch dengan data yang sesuai
         await createArchiveDisposalBatch({
-            archiveIds: [...selectedIds.value], // Pastikan arraynya "bersih"
-            userId: 1
+            archiveIds: [archiveToMutate.value.id], // Kirim array berisi satu ID arsip
+            userId: 1 // Gantilah dengan fungsi untuk mengambil ID user
         });
 
 
         console.log("Archive Disposal Batch created successfully!");
-        router.push({ path: '/verifikasi/arsip_usul_musnah' }).catch(err => console.warn("Router Error:", err));
     } catch (error) {
         console.error('Mutation failed:', error);
+    } finally {
+        closeDialog();
     }
 };
-
 
 // Configure table headers
 const headers = [
@@ -69,21 +71,12 @@ const headers = [
 
 const createArchiveDisposalBatch = async ({ archiveIds, userId }) => {
     const query = `
-        mutation CreateArchiveDisposal($archiveIds: [Int!]!, $userId: Int!) {
-            createArchiveDisposal(archiveIds: $archiveIds, userId: $userId) {
+        mutation CreateArchiveDisposalBatch($archiveIds: [Int!]!, $userId: Int!) {
+            createArchiveDisposalBatch(archiveIds: $archiveIds, userId: $userId) {
                 id
                 batch_code
                 submission_date
                 created_at
-                updated_at
-                verifikator_approval_status_id
-                verifikator_id
-                pimpinan_uk2_approval_status_id
-                pimpinan_uk2_id
-                pimpinan_uk1_approval_status_id
-                pimpinan_uk1_id
-                detail
-                berita_acara_path
             }
         }
     `;
@@ -269,10 +262,9 @@ watch(searchQuery, () => {
     </v-col>
 
     <v-col cols="12">
-        <v-btn color="red darken-1" @click="confirmMutation">
+        <v-btn color="red darken-1" @click="openMutationDialog(archives[0])">
             Usulkan Pemusnahan
         </v-btn>
-
 
     </v-col>
 </template>
