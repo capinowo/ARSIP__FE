@@ -69,6 +69,62 @@ const headers = [
     { title: 'Dibuat Pada', key: 'created_at' },
 ]
 
+const verifyAllArchives = async () => {
+    if (!archives.value.length) {
+        console.warn('Tidak ada arsip yang bisa diverifikasi.');
+        return;
+    }
+
+    const query = `
+        mutation VerifyNewArchive($id: Int!) {
+            verifyNewArchive(id: $id) {
+                id
+                title
+                approval_status_id
+            }
+        }
+    `;
+
+    const results = []
+
+    for (const archive of archives.value) {
+        try {
+            const response = await fetch('http://localhost:4000/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getSelectedRoleToken()}`,
+                },
+                body: JSON.stringify({
+                    query,
+                    variables: { id: archive.id },
+                }),
+            });
+
+            const result = await response.json();
+
+            if (result.errors) {
+                console.error(`❌ Gagal verifikasi arsip ID ${archive.id}:`, result.errors);
+                results.push({ id: archive.id, status: 'failed', error: result.errors });
+            } else {
+                console.log(`✅ Arsip ID ${archive.id} berhasil diverifikasi`);
+                results.push({ id: archive.id, status: 'success' });
+            }
+
+        } catch (err) {
+            console.error(`❌ Error network/verifikasi ID ${archive.id}:`, err);
+            results.push({ id: archive.id, status: 'error', error: err });
+        }
+    }
+
+    console.log('[✔️ Summary]', results);
+
+    // 🚀 Redirect ke halaman list arsip
+    router.push('/arsip/list_arsip');
+};
+
+
+
 const createArchiveDisposalBatch = async ({ archiveIds, userId }) => {
     const query = `
         mutation CreateArchiveDisposalBatch($archiveIds: [Int!]!, $userId: Int!) {
@@ -107,93 +163,84 @@ const createArchiveDisposalBatch = async ({ archiveIds, userId }) => {
 
 
 // GraphQL query to fetch archives data
-const fetchArchives = async () => {
+const fetchArchivesByIds = async (ids) => {
+    const allArchives = []
+
     const query = `
-        query {
-            getArchives (where: { archive_status_id: 4, approval_status_id: 2 }) {
-                total
-                data {
-                    id
-                    title
-                    description
-                    classification_id
-                    document_path
-                    archive_status_id
-                    archive_type_id
-                    unit_id
-                    location_id
-                    user_id
-                    approval_status_id
-                    created_at
-                    updated_at
-                    jumlah_arsip
-                    media_arsip
-                    tingkat_perkembangan
-                    jumlah_lampiran
-                    media_lampiran
-                    final_retensi_aktif
-                    final_retensi_inaktif
-                }
+        query GetArchive($getArchiveId: Int!) {
+            getArchive(id: $getArchiveId) {
+                id
+                title
+                description
+                classification_id
+                document_path
+                document_date
+                archive_status_id
+                archive_type_id
+                unit_id
+                location_id
+                user_id
+                approval_status_id
+                created_at
+                updated_at
+                jumlah_arsip
+                media_arsip
+                tingkat_perkembangan
+                jumlah_lampiran
+                media_lampiran
+                final_retensi_aktif
+                final_retensi_inaktif
+                nilai_guna
             }
         }
     `;
 
-    isLoading.value = true;
-    try {
-        const response = await fetch('http://localhost:4000/graphql', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getSelectedRoleToken()}`,
-            },
-            body: JSON.stringify({ query }),
-        });
+    for (const id of ids) {
+        try {
+            const response = await fetch('http://localhost:4000/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getSelectedRoleToken()}`,
+                },
+                body: JSON.stringify({
+                    query,
+                    variables: { getArchiveId: id },
+                }),
+            });
 
-        const result = await response.json();
+            const result = await response.json();
 
-        if (result.errors) {
-            console.log('📥 Raw Response:', await response.text());
-            console.error('GraphQL errors:', result.errors);
-        } else if (result.data && result.data.getArchives) {
-            // 🔥 Filter data sesuai selectedIds
-            const filteredData = result.data.getArchives.data.filter(archive =>
-                selectedIds.value.includes(archive.id)
-            );
-
-            // Ambil deskripsi klasifikasi dan status arsip
-            archives.value = await Promise.all(
-                filteredData.map(async archive => {
-                    const classification = await fetchClassification(archive.classification_id);
-                    const status = await fetchArsipStatus(archive.archive_status_id);
-
-                    return {
-                        ...archive,
-                        classification_description: classification?.description || 'N/A',
-                        archive_status_name: status?.name || 'N/A',
-                    };
-                })
-            );
-            totalArchives.value = archives.value.length;
-        } else {
-            console.warn('No data returned from getArchives query:', result);
+            if (result.data && result.data.getArchive) {
+                allArchives.push(result.data.getArchive);
+            } else {
+                console.warn(`Archive with ID ${id} not found`);
+            }
+        } catch (error) {
+            console.error(`Error fetching archive with ID ${id}:`, error);
         }
-    } catch (error) {
-        console.error('Error fetching archives:', error);
-        snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives');
-    } finally {
-        isLoading.value = false;
     }
+
+    return allArchives;
 };
 
 
 
-onMounted(() => {
+
+
+
+
+onMounted(async () => {
     if (route.query.ids) {
-        selectedIds.value = route.query.ids.split(",").map(id => Number(id)) // Konversi ke array angka
-        console.log("Selected archives:", selectedIds.value)
-        fetchArchives();
+        selectedIds.value = route.query.ids.split(',').map(Number);
+        console.log('[✅] Selected IDs:', selectedIds.value);
+
+        const fetched = await fetchArchivesByIds(selectedIds.value);
+        archives.value = fetched;
+        totalArchives.value = fetched.length;
     }
-})
+});
+
 
 // Watch for changes in searchQuery and fetch archives
 watch(searchQuery, () => {
@@ -262,11 +309,12 @@ watch(searchQuery, () => {
     </v-col>
 
     <v-col cols="12">
-        <v-btn color="red darken-1" @click="openMutationDialog(archives[0])">
-            Usulkan Pemusnahan
+        <v-btn color="green darken-1" @click="verifyAllArchives">
+            Setujui Semua Usulan
         </v-btn>
 
     </v-col>
+
 </template>
 
 <style scoped>

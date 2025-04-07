@@ -1,13 +1,12 @@
 <!-- eslint-disable import/no-unresolved -->
 <script setup>
-import tree1 from '@/images/misc/tree1.png'
 import authV2LoginIllustrationBorderedDark from '@/images/pages/auth-v2-login-illustration-bordered-dark.png'
 import authV2LoginIllustrationBorderedLight from '@/images/pages/auth-v2-login-illustration-bordered-light.png'
 import authV2LoginIllustrationDark from '@/images/pages/auth-v2-login-illustration-dark.png'
 import authV2LoginIllustrationLight from '@/images/pages/auth-v2-login-illustration-light.png'
 import authV2MaskDark from '@/images/pages/mask-v2-dark.png'
 import authV2MaskLight from '@/images/pages/mask-v2-light.png'
-import undipLogo from '@/images/undiplogo2.png' // Import the logo
+import undipLogo from '@/images/undiplogo2.png'; // Import the logo
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import { setAuthToken } from '@/middleware/auth'
 
@@ -70,9 +69,9 @@ async function login() {
     if (!response.ok || data.errors) {
       // Ambil error message dari response
       const errorMessages = data.errors
-        ? data.errors.map(err => err.message).join(', ') 
+        ? data.errors.map(err => err.message).join(', ')
         : 'Terjadi kesalahan saat login'
-        
+
       // Menampilkan error di snackbar
       snackbarRef.value.showSnackbar(errorMessages, 'error')
     } else {
@@ -85,6 +84,11 @@ async function login() {
     snackbarRef.value.showSnackbar('Network error. Please try again later.', 'error')
   }
 }
+
+function showSSOUnavailable() {
+  snackbarRef.value.showSnackbar('Maaf, fitur belum tersedia', 'info')
+}
+
 </script>
 
 <template>
@@ -95,57 +99,16 @@ async function login() {
       </div>
     </a>
 
-    <VRow
-      no-gutters
-      class="auth-wrapper"
-    >
-      <VCol
-        md="8"
-        class="d-none d-md-flex position-relative"
-      >
-        <div
-          class="d-flex align-center justify-end w-100 h-100 pa-10"
-          :class="$vuetify.locale.isRtl ? 'pe-10' : 'pe-0'"
-        >
-          <VImg
-            max-width="797"
-            :src="authThemeImg"
-            class="auth-illustration"
-          />
-        </div>
-        <img
-          class="auth-footer-mask"
-          height="360"
-          :src="authThemeMask"
-        >
-        <VImg
-          :src="tree1"
-          alt="tree image"
-          height="190"
-          width="90"
-          class="auth-footer-tree"
-        />
-      </VCol>
+    <VRow no-gutters class="auth-wrapper" align="center" justify="center" style="min-height: 100vh;">
 
-      <VCol
-        cols="12"
-        md="4"
-        class="auth-card-v2 d-flex align-center justify-center"
-        style="background-color: rgb(var(--v-theme-surface));"
-      >
-        <VCard
-          flat
-          :max-width="500"
-          class="mt-12 mt-sm-0 pa-4"
-        >
+
+      <VCol cols="12" md="4" class="auth-card-v2 d-flex align-center justify-center"
+        style="background-color: rgb(var(--v-theme-surface));">
+        <VCard flat :max-width="500" class="mt-12 mt-sm-0 pa-4">
           <VCardText>
             <!-- Logo positioned above the welcome text -->
-            <img
-              :src="undipLogo"
-              alt="Undip Logo"
-              class="mb-4"
-              style=" display: block;inline-size: 100px; margin-block: 0; margin-inline: auto;"
-            >
+            <img :src="undipLogo" alt="Undip Logo" class="mb-4"
+              style=" display: block;inline-size: 100px; margin-block: 0; margin-inline: auto;">
             <div class="welcome-text text-center">
               <!-- Center-aligned text container -->
               <h4 class="text-h4 mb-1">
@@ -161,39 +124,27 @@ async function login() {
               <VRow>
                 <!-- email -->
                 <VCol cols="12">
-                  <VTextField
-                    v-model="form.username"
-                    autofocus
-                    label="Username"
-                    type="text"
-                    placeholder="johndoe"
-                    :rules="[v => !!v || 'Username is required']"
-                  />
+                  <VTextField v-model="form.username" autofocus label="Username" type="text" placeholder="johndoe"
+                    :rules="[v => !!v || 'Username is required']" />
                 </VCol>
 
                 <!-- password -->
                 <VCol cols="12">
-                  <VTextField
-                    v-model="form.password"
-                    label="Password"
-                    placeholder="············"
+                  <VTextField v-model="form.password" label="Password" placeholder="············"
                     :type="isPasswordVisible ? 'text' : 'password'"
                     :append-inner-icon="isPasswordVisible ? 'ri-eye-off-line' : 'ri-eye-line'"
                     :rules="[v => !!v || 'Password is required']"
-                    @click:append-inner="isPasswordVisible = !isPasswordVisible"
-                  />
+                    @click:append-inner="isPasswordVisible = !isPasswordVisible" />
                   <div class="d-flex align-center flex-wrap justify-space-between my-5 gap-2">
-                    <VCheckbox
-                      v-model="form.remember"
-                      label="Remember me"
-                    />
+                    <VCheckbox v-model="form.remember" label="Remember me" />
                   </div>
-                  <VBtn
-                    block
-                    type="submit"
-                  >
+                  <VBtn block type="submit">
                     Login
                   </VBtn>
+                  <VBtn block variant="outlined" class="mt-4" @click="showSSOUnavailable">
+                    <VIcon start icon="mdi-window" /> Login with SSO
+                  </VBtn>
+
 
                   <!-- Tampilkan pesan error jika ada -->
                   <Snackbar ref="snackbarRef" />

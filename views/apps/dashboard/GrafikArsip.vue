@@ -4,12 +4,14 @@ import { useTheme } from 'vuetify'
 
 const vuetifyTheme = useTheme()
 
+cons
+
 const options = computed(() => {
   const currentTheme = ref(vuetifyTheme.current.value.colors)
   const variableTheme = ref(vuetifyTheme.current.value.variables)
-  const disabledColor = `rgba(${ hexToRgb(currentTheme.value['on-surface']) },${ variableTheme.value['disabled-opacity'] })`
-  const borderColor = `rgba(${ hexToRgb(String(variableTheme.value['border-color'])) },${ variableTheme.value['border-opacity'] })`
-  
+  const disabledColor = `rgba(${hexToRgb(currentTheme.value['on-surface'])},${variableTheme.value['disabled-opacity']})`
+  const borderColor = `rgba(${hexToRgb(String(variableTheme.value['border-color']))},${variableTheme.value['border-opacity']})`
+
   return {
     chart: {
       stacked: true,
@@ -52,7 +54,7 @@ const options = computed(() => {
           colors: disabledColor,
           fontFamily: 'inter',
         },
-        formatter: value => value > 999 ? `${ (value / 1000).toFixed(0) }k` : `${ value }`,
+        formatter: value => value > 999 ? `${(value / 1000).toFixed(0)}k` : `${value}`,
       },
     },
     colors: [
@@ -252,11 +254,7 @@ const lastThreeTransactions = [
 <template>
   <VCard>
     <VRow no-gutters>
-      <VCol
-        cols="12"
-        sm="8"
-        class="responsive-border"
-      >
+      <VCol cols="12" sm="8" class="responsive-border">
         <VCardItem>
           <VCardTitle>
             Grafik Arsip Total
@@ -264,19 +262,11 @@ const lastThreeTransactions = [
         </VCardItem>
 
         <VCardText>
-          <VueApexCharts
-            type="bar"
-            :options="options"
-            :series="series"
-            :height="292"
-          />
+          <VueApexCharts type="bar" :options="options" :series="series" :height="292" />
         </VCardText>
       </VCol>
 
-      <VCol
-        cols="12"
-        sm="4"
-      >
+      <VCol cols="12" sm="4">
         <VCardItem>
           <VCardTitle>
             1.800.556 Files
@@ -292,16 +282,9 @@ const lastThreeTransactions = [
 
         <VCardText class="pt-12">
           <VList class="card-list mt-2">
-            <VListItem
-              v-for="transaction in lastThreeTransactions"
-              :key="transaction.title"
-            >
+            <VListItem v-for="transaction in lastThreeTransactions" :key="transaction.title">
               <template #prepend>
-                <VAvatar
-                  :color="transaction.avatar.color"
-                  variant="tonal"
-                  rounded
-                >
+                <VAvatar :color="transaction.avatar.color" variant="tonal" rounded>
                   <VIcon :icon="transaction.avatar.icon" />
                 </VAvatar>
               </template>
@@ -317,10 +300,7 @@ const lastThreeTransactions = [
             </VListItem>
           </VList>
 
-          <VBtn
-            block
-            class="mt-4"
-          >
+          <VBtn block class="mt-4">
             View Report
           </VBtn>
         </VCardText>
@@ -346,7 +326,7 @@ $responsive-border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity
 </style>
 
 <style lang="scss" scoped>
-  .card-list {
-    --v-card-list-gap: 1rem;
-  }
+.card-list {
+  --v-card-list-gap: 1rem;
+}
 </style>

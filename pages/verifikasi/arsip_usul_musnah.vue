@@ -43,8 +43,40 @@ const headers = [
   { title: '', key: 'select', sortable: false },
 ]
 
+const fetchDisposalArchiveIds = async () => {
+  const query = `
+    query {
+      getArchiveDisposals {
+        data {
+          archive_id
+        }
+      }
+    }
+  `
+
+  try {
+    const response = await fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getSelectedRoleToken()}`
+      },
+      body: JSON.stringify({ query })
+    })
+
+    const result = await response.json()
+    return result.data.getArchiveDisposals.data.map(item => item.archive_id)
+  } catch (err) {
+    console.error('❌ Failed to fetch disposal archive IDs:', err)
+    return []
+  }
+}
+
+
 // GraphQL query to fetch archives data
 const fetchArchives = async () => {
+  const disposalIds = await fetchDisposalArchiveIds()
+
   const query = `
     query {
       getArchives (where: { archive_status_id: 4, approval_status_id: 2 }) {
@@ -88,34 +120,35 @@ const fetchArchives = async () => {
 
     const result = await response.json()
 
-    if (result.errors) {
-      console.log('📥 Raw Response:', await response.text())
-      console.error('GraphQL errors:', result.errors)
-    } else if (result.data && result.data.getArchives) {
-      // Map archives and fetch classification description
+    if (result.data?.getArchives?.data) {
+      // 🔍 Filter data agar hanya arsip yang belum pernah diusulkan pemusnahan
+      const filtered = result.data.getArchives.data.filter(
+        archive => !disposalIds.includes(archive.id)
+      )
+
       archives.value = await Promise.all(
-        result.data.getArchives.data.map(async archive => {
+        filtered.map(async archive => {
           const classification = await fetchClassification(archive.classification_id)
           const status = await fetchArsipStatus(archive.archive_status_id)
 
           return {
             ...archive,
             classification_description: classification?.description || 'N/A',
-            archive_status_name: status?.name || 'N/A',  // Set status name here
+            archive_status_name: status?.name || 'N/A',
           }
-        }),
+        })
       )
-      totalArchives.value = result.data.getArchives.total || 0
-    } else {
-      console.warn('No data returned from getArchives query:', result)
+
+      totalArchives.value = archives.value.length
     }
   } catch (error) {
     console.error('Error fetching archives:', error)
-    snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives')
+    snackbarRef.value.showSnackbar('Error fetching archives', 'error')
   } finally {
     isLoading.value = false
   }
 }
+
 
 // Function to mutate the archive
 const mutateArchive = async (id) => {
@@ -180,14 +213,14 @@ const detailArchive = item => {
 }
 
 const navigateToDetail = () => {
-    if (selectedArchives.value.length === 0) {
-        console.warn("⚠️ No archives selected.");
-        return;
-    }
+  if (selectedArchives.value.length === 0) {
+    console.warn("⚠️ No archives selected.");
+    return;
+  }
 
-    console.log("📤 Navigating with archives:", selectedArchives.value);
+  console.log("📤 Navigating with archives:", selectedArchives.value);
 
-    router.push({
+  router.push({
     path: "/verifikasi/detail_usul_musnah",
     query: { ids: selectedArchives.value.join(",") }
   });

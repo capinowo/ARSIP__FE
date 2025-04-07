@@ -45,7 +45,12 @@ const goToDetail = (item) => {
   });
 };
 
-
+const goToUploadBeritaAcara = (batchId) => {
+  router.push({
+    path: "/verifikasi/unggah_berita_acara",
+    query: { id: batchId.toString() }
+  });
+};
 
 
 // Configure table headers
@@ -248,8 +253,14 @@ onMounted(() => {
 
           <!-- Slot for Berita Acara -->
           <template #item.berita_acara_status="{ item }">
-            {{ item.berita_acara_path ? "Tersedia" : "Belum tersedia" }}
+            <div class="d-flex align-center justify-space-between" style="gap: 8px;">
+              <span>{{ item.berita_acara_path ? "Tersedia" : "Belum tersedia" }}</span>
+              <VBtn color="primary" size="x-small" @click="goToUploadBeritaAcara(item.id)">
+                Unggah
+              </VBtn>
+            </div>
           </template>
+
 
           <!-- Slot for Detail Button -->
           <template #item.detail="{ item }">

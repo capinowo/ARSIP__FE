@@ -291,9 +291,16 @@ watch(() => unit_id.value, newVal => {
 })
 
 const handleSave = async () => {
-  if (!formStore.namaArsip) {
-    showSnackbar('Harap lengkapi semua field yang wajib!', 'error');
-    return;
+  // Validasi manual untuk field wajib
+  if (
+    !formStore.namaArsip ||
+    !formStore.selectedClassification ||
+    !formStore.selectedLocation ||
+    !formStore.jumlahArsip ||
+    !formStore.tanggalDokumen
+  ) {
+    showSnackbar('Harap lengkapi semua field yang wajib!', 'error')
+    return
   }
 
   try {
@@ -318,29 +325,29 @@ const handleSave = async () => {
       final_retensi_inaktif: retentionInactiveDate.value
         ? new Date(retentionInactiveDate.value).toISOString()
         : null,
-    };
-
-    const savedArchive = await saveArsip(data);
-    if (savedArchive.error) {
-      showSnackbar(savedArchive.error, 'error');
-      return;
     }
 
-    showSnackbar('Arsip berhasil disimpan!', 'success');
+    const savedArchive = await saveArsip(data)
+    if (savedArchive.error) {
+      showSnackbar(savedArchive.error, 'error')
+      return
+    }
+
+    showSnackbar('Arsip berhasil disimpan!', 'success')
 
     if (savedArchive?.id && selectedFile.value) {
-      await uploadFileArchive(savedArchive.id, selectedFile.value);
-      showSnackbar('File berhasil diunggah!', 'success');
+      await uploadFileArchive(savedArchive.id, selectedFile.value)
+      showSnackbar('File berhasil diunggah!', 'success')
     }
 
-    clearDraft();
-    setTimeout(() => {
-      navigateTo('/arsip/list_arsip');
-    }, 2000);
+    // ✅ Clear draft setelah semuanya sukses
+    clearDraft()
   } catch (error) {
-    showSnackbar(error.message || 'Terjadi kesalahan saat menyimpan arsip', 'error');
+    showSnackbar(error.message || 'Terjadi kesalahan saat menyimpan arsip', 'error')
   }
-};
+}
+
+
 
 const showSnackbar = (message, color = 'success') => {
   snackbar.value.message = message
@@ -350,6 +357,8 @@ const showSnackbar = (message, color = 'success') => {
     snackbar.value.show = false
   }, 2000)
 }
+
+
 </script>
 
 

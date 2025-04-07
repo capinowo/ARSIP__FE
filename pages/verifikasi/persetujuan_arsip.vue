@@ -63,17 +63,58 @@ const toggleSelectAll = () => {
   }
 }
 
+const navigateToDetail = () => {
+  if (selectedArchives.value.length === 0) {
+    console.warn("⚠️ No archives selected.");
+    return
+  }
+
+  console.log("📤 Navigating with archives:", selectedArchives.value)
+
+  router.push({
+    path: "/verifikasi/detail_acc", // pastikan path ini sesuai dengan route kamu
+    query: { ids: selectedArchives.value.join(",") },
+  })
+}
+
+
 
 const buttons = [
-  { label: 'Semua', status: 'all' },
-  { label: 'Usul Unggahan Arsip', status: 'active' & 'inactive' & 'static' },
-  { label: 'Usul Pemberkasan Arsip', status: 'active' & 'inactive' & 'static' },
+  { label: 'Semua', status: 'all', type: 'all' },
+  { label: 'Usul Unggahan Arsip', status: 'upload', type: 'archive' },
+  { label: 'Usul Pemberkasan Arsip', status: 'filing', type: 'filing' },
 ]
 
-const filterArchives = async status => {
-  let query = `
+
+const filterArchives = async (status, type) => {
+  isLoading.value = true
+
+  // Tentukan status ID jika bukan "all"
+  const statusIdMap = {
+    active: 1,
+    inactive: 2,
+    static: 3,
+    destroyed: 4,
+  }
+  const statusId = status !== 'all' ? statusIdMap[status] : null
+
+  // Pilih nama query berdasarkan `type`
+  let queryName = 'getArchives'
+  if (type === 'filing') {
+    queryName = 'getArchiveFiling'
+  }
+
+  // Rakit bagian `where` secara dinamis
+  const whereParts = [`approval_status_id: 2`]
+  if (statusId) {
+    whereParts.push(`archive_status_id: ${statusId}`)
+  }
+  const whereClause = `where: { ${whereParts.join(', ')} }`
+
+  // Buat query
+  const query = `
     query {
-      getArchives (where: { approval_status_id: 2 }) {
+      ${queryName}(${whereClause}) {
         total
         data {
           id
@@ -101,46 +142,6 @@ const filterArchives = async status => {
     }
   `
 
-  if (status !== 'all') {
-    const statusId = {
-      active: 1,
-      inactive: 2,
-      static: 3,
-      destroyed: 4,
-    }[status]
-
-    query = `
-      query {
-        getArchives(where: { archive_status_id: ${statusId}, approval_status_id: 2 }) {
-          total
-          data {
-            id
-            title
-            description
-            classification_id
-            document_path
-            archive_status_id
-            archive_type_id
-            unit_id
-            location_id
-            user_id
-            approval_status_id
-            created_at
-            updated_at
-            jumlah_arsip
-            media_arsip
-            tingkat_perkembangan
-            jumlah_lampiran
-            media_lampiran
-            final_retensi_aktif
-            final_retensi_inaktif
-          }
-        }
-      }
-    `
-  }
-
-  isLoading.value = true
   try {
     const response = await fetch(BASE_URL, {
       method: 'POST',
@@ -155,30 +156,17 @@ const filterArchives = async status => {
 
     if (result.errors) {
       console.error('GraphQL errors:', result.errors)
-    } else if (result.data && result.data.getArchives) {
-      archives.value = await Promise.all(
-        result.data.getArchives.data.map(async archive => {
-          const classification = await fetchClassification(archive.classification_id)
-          const status = await fetchArsipStatus(archive.archive_status_id)
-
-          return {
-            ...archive,
-            classification_description: classification?.description || 'N/A',
-            archive_status_name: status?.name || 'N/A',
-          }
-        }),
-      )
-      totalArchives.value = result.data.getArchives.total || 0
-    } else {
-      console.warn('No data returned from getArchives query:', result)
+    } else if (result.data && result.data[queryName]) {
+      archives.value = result.data[queryName].data
+      totalArchives.value = result.data[queryName].total
     }
   } catch (error) {
-    console.error('Error fetching archives:', error)
-    snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives')
+    console.error('Error fetching:', error)
   } finally {
     isLoading.value = false
   }
 }
+
 
 // Configure table headers
 const headers = [
@@ -421,10 +409,11 @@ onMounted(() => {
 
         <div class="d-flex justify-content-between mb-4">
           <VBtnToggle v-model="activeTab" class="d-flex w-100">
-            <VBtn v-for="button in buttons" :key="button.status" @click="filterArchives(button.status)"
+            <VBtn v-for="button in buttons" :key="button.status" @click="filterArchives(button.status, button.type)"
               class="flex-grow-1 text-center">
               {{ button.label }}
             </VBtn>
+
           </VBtnToggle>
         </div>
 
@@ -462,9 +451,15 @@ onMounted(() => {
             </div>
           </template>
         </VDataTable>
-        <VBtn v-if="selectedArchives.length > 0" color="primary" @click="processSelectedArchives">
-          Proses Arsip Terpilih ({{ selectedArchives.length }})
-        </VBtn>
+        <VCardActions class="justify-end">
+          <VCardActions class="justify-end">
+            <VBtn color="primary" :disabled="selectedArchives.length === 0" @click="navigateToDetail">
+              Kirim Usulan
+            </VBtn>
+          </VCardActions>
+
+
+        </VCardActions>
 
       </VCard>
     </div>

@@ -13,6 +13,7 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@apollo/client": "^3.13.6",
     "@casl/ability": "6.7.1",
     "@casl/vue": "2.2.2",
     "@floating-ui/dom": "1.6.7",
@@ -27,12 +28,15 @@
     "@tiptap/pm": "^2.5.6",
     "@tiptap/starter-kit": "^2.5.6",
     "@tiptap/vue-3": "^2.5.6",
+    "@vue/apollo-composable": "^4.2.2",
     "@vueuse/core": "10.11.0",
     "@vueuse/math": "10.11.0",
     "apexcharts": "3.51.0",
     "chart.js": "4.4.3",
     "cookie-es": "1.2.1",
     "eslint-plugin-regexp": "2.6.0",
+    "graphql": "^16.10.0",
+    "graphql-tag": "^2.12.6",
     "jwt-decode": "^4.0.0",
     "mapbox-gl": "3.5.1",
     "next-auth": "4.21.1",
