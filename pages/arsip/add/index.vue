@@ -322,6 +322,8 @@ const handleSave = async () => {
       approval_status_id: 2,
       jumlah_arsip: parseInt(formStore.jumlahArsip, 10) || 0,
       media_arsip: formStore.selectedMediaArsip,
+      tingkat_perkembangan: formStore.selectedTingkatPerkembangan,
+      nilai_guna: formStore.nilaiGuna,
       document_date: formStore.tanggalDokumen
         ? new Date(formStore.tanggalDokumen).toISOString()
         : null,
@@ -439,8 +441,8 @@ const showSnackbar = (message, color = 'success') => {
 
 
               <VCol cols="12">
-                <VSelect v-model="formStore.selectedNilaiGuna" label="Nilai Guna" :items="nilaiGunaOptions"
-                  item-title="name" item-value="name" placeholder="Select Nilai Guna"
+                <VSelect v-model="formStore.nilaiGuna" label="Nilai Guna" :items="nilaiGunaOptions" item-title="name"
+                  item-value="name" placeholder="Select Nilai Guna"
                   :rules="[value => !!value || 'Nilai Guna wajib dipilih']" />
               </VCol>
 
@@ -477,7 +479,7 @@ const showSnackbar = (message, color = 'success') => {
 
               <VCol cols="4">
                 <VTextField v-model="formStore.jumlahArsip" label="Jumlah Arsip (belum)"
-                  placeholder="Masukkan jumlah tahun" :rules="[value => !!value || 'Periode Retensi wajib diisi']"
+                  placeholder="Masukkan jumlah arsip" :rules="[value => !!value || 'Periode Retensi wajib diisi']"
                   type="number" min="1" />
               </VCol>
               <VCol cols="4">
