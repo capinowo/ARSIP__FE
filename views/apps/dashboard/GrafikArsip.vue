@@ -4,7 +4,139 @@ import { useTheme } from 'vuetify'
 
 const vuetifyTheme = useTheme()
 
-cons
+import { onMounted, ref } from 'vue'
+
+const archivesPerMonth = ref({})
+const disposalsPerMonth = ref({})
+const isLoading = ref(true)
+
+const archiveDates = ref([])
+const disposalDates = ref([])
+
+const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+function groupByMonth(data, dateKey) {
+  const result = new Array(12).fill(0)
+
+  data.forEach(item => {
+    const date = new Date(item[dateKey])
+    const month = date.getMonth() // 0 (Jan) - 11 (Dec)
+    if (!isNaN(month)) {
+      result[month]++
+    }
+  })
+
+  return result
+}
+
+
+
+const fetchData = async () => {
+  isLoading.value = true
+
+  // Fetch Archives
+  // Fetch Archives
+  const resArchives = await fetch('http://localhost:4000/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getSelectedRoleToken()}`, // Pastikan Anda mengganti ini dengan token yang sesuai
+    },
+    body: JSON.stringify({
+      query: `
+    query GetArchives($where: ArchiveWhereInput) {
+      getArchives(where: $where) {
+        data {
+          created_at
+        }
+      }
+    }
+  `,
+      variables: {
+        where: {},
+      },
+    }),
+
+  })
+
+  const archivesData = await resArchives.json()
+  console.log('archivesData:', archivesData) // ⬅️ cek isi responnya dulu
+
+  if (
+    archivesData &&
+    archivesData.data &&
+    archivesData.data.getArchives &&
+    Array.isArray(archivesData.data.getArchives.data)
+  ) {
+    archiveDates.value = archivesData.data.getArchives.data
+  } else {
+    console.error('Gagal fetch archive, data tidak sesuai format:', archivesData)
+    archiveDates.value = []
+  }
+  veDates.value = archivesData.data.getArchives.data
+
+  console.log('GraphQL archive errorsa:', archivesData.errors)
+
+  // Fetch Disposals
+  // Fetch Disposals
+  const resDisposals = await fetch('http://localhost:4000/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `
+      query GetArchiveDisposals {
+        getArchiveDisposals {
+          data {
+            updated_at
+          }
+        }
+      }
+    `,
+    }),
+  })
+
+  const disposalsData = await resDisposals.json()
+  console.log('disposalsData:', disposalsData)
+
+  if (
+    disposalsData &&
+    disposalsData.data &&
+    disposalsData.data.getArchiveDisposals &&
+    Array.isArray(disposalsData.data.getArchiveDisposals.data)
+  ) {
+    disposalDates.value = disposalsData.data.getArchiveDisposals.data
+  } else {
+    console.error('Gagal fetch disposal, data tidak sesuai format:', disposalsData)
+    disposalDates.value = []
+  }
+
+  // Update chart series
+  chartSeries.value[0].data = groupByMonth(archiveDates.value, 'created_at')
+  chartSeries.value[1].data = groupByMonth(disposalDates.value, 'updated_at')
+
+  console.log('Archive grouped:', groupByMonth(archiveDates.value, 'created_at'))
+  console.log('Disposal grouped:', groupByMonth(disposalDates.value, 'updated_at'))
+
+  isLoading.value = false
+}
+
+
+const chartSeries = ref([
+  {
+    name: 'Arsip Masuk',
+    data: [], // Will be filled dynamically
+  },
+  {
+    name: 'Penyusutan Arsip',
+    data: [],
+  },
+])
+
+
+
+onMounted(fetchData)
 
 const options = computed(() => {
   const currentTheme = ref(vuetifyTheme.current.value.colors)
@@ -30,15 +162,7 @@ const options = computed(() => {
       axisTicks: { show: false },
       crosshairs: { opacity: 0 },
       axisBorder: { show: false },
-      categories: [
-        2018,
-        2019,
-        2020,
-        2021,
-        2022,
-        2023,
-        2024,
-      ],
+      categories: monthLabels,
       labels: {
         style: {
           fontSize: '13px',
@@ -262,7 +386,8 @@ const lastThreeTransactions = [
         </VCardItem>
 
         <VCardText>
-          <VueApexCharts type="bar" :options="options" :series="series" :height="292" />
+          <VueApexCharts type="bar" :options="options" :series="chartSeries" :height="292" />
+
         </VCardText>
       </VCol>
 

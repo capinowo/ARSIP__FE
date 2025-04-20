@@ -206,7 +206,7 @@ const fetchArchivesInBatch = async () => {
 
     const variables = {
         where: {
-            batch_id: Number(batchId.value)  // ✅ Pastikan ini angka
+            batch_id: Number(batchId.value)
         }
     };
 

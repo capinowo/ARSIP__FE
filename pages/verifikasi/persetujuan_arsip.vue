@@ -79,11 +79,11 @@ const navigateToDetail = () => {
 
 
 
-const buttons = [
-  { label: 'Semua', status: 'all', type: 'all' },
-  { label: 'Usul Unggahan Arsip', status: 'upload', type: 'archive' },
-  { label: 'Usul Pemberkasan Arsip', status: 'filing', type: 'filing' },
-]
+// const buttons = [
+//   { label: 'Semua', status: 'all', type: 'all' },
+//   { label: 'Usul Unggahan Arsip', status: 'upload', type: 'archive' },
+//   { label: 'Usul Pemberkasan Arsip', status: 'filing', type: 'filing' },
+// ]
 
 
 const filterArchives = async (status, type) => {

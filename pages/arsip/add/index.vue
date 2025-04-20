@@ -6,7 +6,8 @@ import { useFormStore } from '@/stores/formStoreArsip'
 import { useLocationStore } from '@/stores/locationStore'
 import { useRetentionDispositionStore } from '@/stores/retentionDispositionStore'
 import { saveArsip } from '@/stores/saveArsip'
-import { uploadFileArchive } from '@/stores/saveFileUploads'
+// import { uploadFileArchive } from '@/stores/saveFileUploads'
+import { saveFileUploadLocal } from '@/stores/saveFileUploadLocal'
 import { useStatusStore } from '@/stores/statusStore'
 import { useTokenStore } from '@/stores/tokenStores'
 import { useUnitStore } from '@/stores/unitStore'
@@ -69,7 +70,7 @@ const nilaiGunaOptions = computed(() => [
 ])
 
 const tingkatPerkembanganOptions = computed(() => {
-  if (formStore.selectedMedia === 'Dokumen' || formStore.selectedMedia === 'Tekstual') {
+  if (formStore.selectedMediaArsip === 'Dokumen' || formStore.selectedMediaArsip === 'Tekstual') {
     return [
       { name: 'Asli' },
       { name: 'Tembusan' },
@@ -77,7 +78,11 @@ const tingkatPerkembanganOptions = computed(() => {
       { name: 'Fotocopy' },
       { name: 'Pertinggal' },
     ]
-  } else if (formStore.selectedMedia === 'Audio' || formStore.selectedMedia === 'Video' || formStore.selectedMedia === 'Elektronik') {
+  } else if (
+    formStore.selectedMediaArsip === 'Audio' ||
+    formStore.selectedMediaArsip === 'Video' ||
+    formStore.selectedMediaArsip === 'Elektronik'
+  ) {
     return [
       { name: 'Baik' },
       { name: 'Rusak' },
@@ -85,6 +90,7 @@ const tingkatPerkembanganOptions = computed(() => {
   }
   return []
 })
+
 
 const clearDraft = () => {
   formStore.clearDraft()
@@ -293,11 +299,11 @@ watch(() => unit_id.value, newVal => {
 const handleSave = async () => {
   // Validasi manual untuk field wajib
   if (
-    !formStore.namaArsip ||
-    !formStore.selectedClassification ||
-    !formStore.selectedLocation ||
-    !formStore.jumlahArsip ||
-    !formStore.tanggalDokumen
+    !formStore.namaArsip //||
+    // !formStore.selectedClassification ||
+    // !formStore.selectedLocation ||
+    // !formStore.jumlahArsip ||
+    // !formStore.tanggalDokumen
   ) {
     showSnackbar('Harap lengkapi semua field yang wajib!', 'error')
     return
@@ -336,7 +342,7 @@ const handleSave = async () => {
     showSnackbar('Arsip berhasil disimpan!', 'success')
 
     if (savedArchive?.id && selectedFile.value) {
-      await uploadFileArchive(savedArchive.id, selectedFile.value)
+      await saveFileUploadLocal(savedArchive.id, selectedFile.value)
       showSnackbar('File berhasil diunggah!', 'success')
     }
 
@@ -426,6 +432,13 @@ const showSnackbar = (message, color = 'success') => {
               </VCol>
 
               <VCol cols="12">
+                <VSelect v-model="formStore.selectedType" label="Jenis Arsip" :items="typeOptions" item-title="name"
+                  item-value="id" placeholder="Select Jenis Arsip"
+                  :rules="[value => !!value || 'Jenis Arsip wajib dipilih']" />
+              </VCol>
+
+
+              <VCol cols="12">
                 <VSelect v-model="formStore.selectedNilaiGuna" label="Nilai Guna" :items="nilaiGunaOptions"
                   item-title="name" item-value="name" placeholder="Select Nilai Guna"
                   :rules="[value => !!value || 'Nilai Guna wajib dipilih']" />
@@ -468,10 +481,13 @@ const showSnackbar = (message, color = 'success') => {
                   type="number" min="1" />
               </VCol>
               <VCol cols="4">
-                <VSelect v-model="formStore.selectedMedia" label="Pilih Media" :items="mediaOptions" item-title="name"
-                  item-value="name" placeholder="Select Media" :rules="[value => !!value || 'Media wajib dipilih']" />
+                <VSelect v-model="formStore.selectedMediaArsip" label="Pilih Media" :items="mediaOptions"
+                  item-title="name" item-value="name" placeholder="Select Media"
+                  :rules="[value => !!value || 'Media wajib dipilih']" />
               </VCol>
-              <VCol cols="4" v-if="formStore.selectedMedia === 'Dokumen' || formStore.selectedMedia === 'Tekstual'">
+
+              <VCol cols="4"
+                v-if="formStore.selectedMediaArsip === 'Dokumen' || formStore.selectedMediaArsip === 'Tekstual'">
                 <VSelect v-model="formStore.selectedTingkatPerkembangan" label="Tingkat Perkembangan (Dokumen/Tekstual)"
                   :items="tingkatPerkembanganOptions" item-title="name" item-value="name"
                   placeholder="Select Tingkat Perkembangan"
@@ -479,7 +495,7 @@ const showSnackbar = (message, color = 'success') => {
               </VCol>
 
               <VCol cols="4"
-                v-if="formStore.selectedMedia === 'Audio' || formStore.selectedMedia === 'Video' || formStore.selectedMedia === 'Elektronik'">
+                v-if="formStore.selectedMediaArsip === 'Audio' || formStore.selectedMediaArsip === 'Video' || formStore.selectedMediaArsip === 'Elektronik'">
                 <VSelect v-model="formStore.selectedTingkatPerkembangan"
                   label="Tingkat Perkembangan (Audio/Video/Elektronik)" :items="tingkatPerkembanganOptions"
                   item-title="name" item-value="name" placeholder="Select Tingkat Perkembangan"

@@ -188,9 +188,9 @@ onMounted(() => {
           <VTab>Detail Arsip</VTab>
           <VTab>Dokumen</VTab>
         </VTabs>
-        <VBtn color="primary" @click="submitFiling">
+        <!-- <VBtn color="primary" variant="text" @click="submitFiling">
           Ajukan Pemberkasan
-        </VBtn>
+        </VBtn> -->
       </div>
 
 

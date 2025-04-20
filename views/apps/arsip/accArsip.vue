@@ -224,248 +224,77 @@ onMounted(() => {
 </script>
 
 <template>
-  <VNavigationDrawer temporary :width="400" location="end" class="scrollable-content" :model-value="props.isDrawerOpen"
-    @update:model-value="handleDrawerModelValueUpdate">
-    <!-- Drawer Title -->
-    <AppDrawerHeaderSection title="Add Master JRA" @cancel="closeNavigationDrawer" />
-
-    <VDivider />
-
-    <PerfectScrollbar :options="{ wheelPropagation: false }">
-      <VCard flat>
-        <VCardText>
-          <!-- Form -->
-          <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
-            <VRow>
-              <!-- Classification Code -->
-              <VCol cols="12">
-                <VTextField v-model="classificationCode" :rules="[requiredValidator, classificationCodeValidator]"
-                  label="Classification Code" placeholder="Enter classification code" />
-              </VCol>
-
-              <!-- Description -->
-              <VCol cols="12">
-                <VTextField v-model="description" :rules="[requiredValidator]" label="Description"
-                  placeholder="Enter description" />
-              </VCol>
-              <!-- Retention Active -->
-              <VCol cols="12">
-                <VTextField v-model="retentionActive" type="number"
-                  :rules="[requiredValidator, value => value >= 0 || 'Must be a positive number']"
-                  label="Retention Active (in years)" placeholder="Enter number of years" />
-              </VCol>
-              <!-- Retention Inactive -->
-              <VCol cols="12">
-                <VTextField v-model="retentionInactive" type="number"
-                  :rules="[requiredValidator, value => value >= 0 || 'Must be a positive number']"
-                  label="Retention Inactive (in years)" placeholder="Enter number of years" />
-              </VCol>
-              <!-- Retention Disposition ID -->
-              <VCol cols="12">
-                <VSelect v-model="retentionDispositionId" :items="[
-                  { title: 'Musnah', value: 1 },
-                  { title: 'Permanen', value: 2 }
-                ]" :rules="[requiredValidator]" label="Retention Disposition ID" placeholder="Select Disposition" />
-              </VCol>
-
-              <!-- Security Classification ID -->
-              <VCol cols="12">
-                <VSelect v-model="securityClassificationId" :items="[
-                  { title: 'Terbuka', value: 1 },
-                  { title: 'Terbatas', value: 2 }
-                ]" :rules="[requiredValidator]" label="Security Classification ID"
-                  placeholder="Select Classification" />
-              </VCol>
-
-              <!-- Submit and Cancel buttons -->
-              <VCol cols="12">
-                <VBtn type="submit" class="me-4">
-                  Submit
-                </VBtn>
-                <VBtn type="reset" variant="outlined" color="error" @click="closeNavigationDrawer">
-                  Cancel
-                </VBtn>
-              </VCol>
-            </VRow>
-          </VForm>
-        </VCardText>
-      </VCard>
-    </PerfectScrollbar>
-  </VNavigationDrawer>
-
   <section>
-    <!-- Tampilkan loading saat data sedang diambil -->
+    <!-- === BAGIAN VIEW DETAIL ARSIP === -->
     <div v-if="isLoading">Loading...</div>
 
-    <!-- Tampilkan pesan error jika ada -->
     <div v-if="errorMessage" class="text-red-500">
       {{ errorMessage }}
     </div>
 
-    <!-- Tampilkan detail arsip setelah data berhasil diambil -->
-    <div v-if="archiveDetail" class="mb-6">
-      <div class="d-flex justify-space-between align-center flex-wrap gap-y-4 mb-6">
+    <div v-if="archiveDetail">
+      <div class="d-flex justify-space-between align-center mb-4">
         <div>
-          <div class="d-flex gap-2 align-center mb-2 flex-wrap">
-            <h5 class="text-h5">Detail Arsip #{{ archiveDetail.id }}</h5>
-          </div>
-          <div>
-            <span class="text-body-1">{{ archiveDetail.updated_at || 'Tidak ada informasi' }}</span>
-          </div>
+          <h5 class="text-h5">Detail Arsip #{{ archiveDetail.id }}</h5>
+          <div class="text-caption text-medium-emphasis">{{ archiveDetail.updated_at || 'Tidak ada informasi' }}</div>
         </div>
+
+        <VBtn @click="isEditDrawerOpen = true" color="primary">
+          Edit Arsip
+        </VBtn>
       </div>
 
-      <!-- Menampilkan semua informasi arsip (kecuali ID) -->
+      <!-- TABS -->
       <VTabs v-model="activeTab">
         <VTab>Detail Arsip</VTab>
         <VTab>Dokumen</VTab>
       </VTabs>
 
       <VWindow v-model="activeTab">
+        <!-- Tab 1: Detail -->
         <VWindowItem>
-          <VCard class="mb-6">
+          <VCard class="mt-4">
             <VCardText>
-              <h5>ARSIP</h5>
-              <hr class="mb-6">
-
+              <h5>Informasi Arsip</h5>
               <v-row>
-                <v-col md="12">
-                  <v-text-field label="Judul Arsip" v-model="archiveData.judulArsip" readonly />
+                <v-col md="6">
+                  <v-text-field label="Judul Arsip" :model-value="archiveDetail.judul_arsip" readonly />
+                </v-col>
+                <v-col md="6">
+                  <v-text-field label="Deskripsi" :model-value="archiveDetail.deskripsi" readonly />
                 </v-col>
               </v-row>
 
+              <h5 class="mt-6">Lokasi</h5>
               <v-row>
-                <v-col md="12">
-                  <v-text-field label="Deskripsi Arsip" v-model="archiveData.deskripsiArsip" readonly />
+                <v-col md="6">
+                  <v-text-field label="Gedung" :model-value="archiveDetail.gedung" readonly />
+                </v-col>
+                <v-col md="6">
+                  <v-text-field label="Ruangan" :model-value="archiveDetail.ruangan" readonly />
                 </v-col>
               </v-row>
 
+              <h5 class="mt-6">Lainnya</h5>
               <v-row>
-                <v-col md="12">
-                  <v-text-field label="Unit" v-model="archiveData.unit" readonly />
+                <v-col md="6">
+                  <v-text-field label="Status" :model-value="archiveDetail.status" readonly />
                 </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Jenis Arsip" v-model="archiveData.jenisArsip" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Status Arsip" v-model="archiveData.statusArsip" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Dibuat pada" v-model="archiveData.dibuatPada" readonly />
-                </v-col>
-              </v-row>
-
-              <h5>Klasifikasi</h5>
-              <hr class="mb-6">
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Deskripsi klassifikasi" v-model="archiveData.deskripsiKlasifikasi" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Kode klasifikasi" v-model="archiveData.kodeKlasifikasi" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Retensi aktif" v-model="archiveData.retensiAktif" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Retensi non-aktif" v-model="archiveData.retensiNonAktif" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Jenis Retensi" v-model="archiveData.jenisRetensi" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Keamanan" v-model="archiveData.keamanan" readonly />
-                </v-col>
-              </v-row>
-
-              <h5>Lokasi</h5>
-              <hr class="mb-6">
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Nama Gedung" v-model="archiveData.namaGedung" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Nama lokasi" v-model="archiveData.namaLokasi" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Nama ruangan" v-model="archiveData.namaRuangan" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Nama rak" v-model="archiveData.namaRak" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Nama box" v-model="archiveData.namaBox" readonly />
-                </v-col>
-              </v-row>
-
-              <h5>Pengguna</h5>
-              <hr class="mb-6">
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Nama pengguna" v-model="archiveData.namaPengguna" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Identitas pengguna" v-model="archiveData.identitasPengguna" readonly />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col md="12">
-                  <v-text-field label="Role pengguna" v-model="archiveData.rolePengguna" readonly />
+                <v-col md="6">
+                  <v-text-field label="Unit" :model-value="archiveDetail.unit" readonly />
                 </v-col>
               </v-row>
             </VCardText>
           </VCard>
         </VWindowItem>
 
-        <!-- TAB VIEW FILE UPLOAD -->
+        <!-- Tab 2: Dokumen -->
         <VWindowItem>
           <VCard class="mt-4">
             <VCardText>
               <p><strong>Dokumen Path:</strong> {{ archiveDetail.document_path }}</p>
               <VBtn v-if="archiveDetail.document_path" :href="archiveDetail.document_path" target="_blank"
-                rel="noopener noreferrer" color="primary">
+                color="primary">
                 Lihat Dokumen
               </VBtn>
             </VCardText>
@@ -474,7 +303,44 @@ onMounted(() => {
       </VWindow>
     </div>
   </section>
+
+  <!-- === DRAWER: EDIT ARSIP === -->
+  <VNavigationDrawer temporary location="end" :width="400" v-model="isEditDrawerOpen" class="scrollable-content">
+    <AppDrawerHeaderSection title="Edit Arsip" @cancel="isEditDrawerOpen = false" />
+    <VDivider />
+
+    <PerfectScrollbar>
+      <VCard flat>
+        <VCardText>
+          <VForm ref="form" v-model="isFormValid" @submit.prevent="onSubmitEdit">
+            <VRow>
+              <VCol cols="12">
+                <VTextField v-model="editData.judulArsip" label="Judul Arsip" :rules="[requiredValidator]" />
+              </VCol>
+
+              <VCol cols="12">
+                <VTextField v-model="editData.deskripsi" label="Deskripsi" :rules="[requiredValidator]" />
+              </VCol>
+
+              <VCol cols="12">
+                <VSelect v-model="editData.status" :items="['Aktif', 'Inaktif']" label="Status Arsip"
+                  :rules="[requiredValidator]" />
+              </VCol>
+
+              <VCol cols="12">
+                <VBtn type="submit" color="primary" class="me-2">Simpan</VBtn>
+                <VBtn color="error" variant="outlined" @click="isEditDrawerOpen = false">Batal</VBtn>
+              </VCol>
+            </VRow>
+          </VForm>
+        </VCardText>
+      </VCard>
+    </PerfectScrollbar>
+  </VNavigationDrawer>
 </template>
+
+
+
 
 <style scoped>
 .info-grid {

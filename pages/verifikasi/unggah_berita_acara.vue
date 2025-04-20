@@ -71,21 +71,21 @@ const headers = [
 
 const verifyAllArchives = async () => {
   if (!archives.value.length) {
-    console.warn('Tidak ada arsip yang bisa diverifikasi.');
+    console.warn('Tidak ada arsip yang bisa disetujui.');
     return;
   }
 
   const query = `
-        mutation VerifyNewArchive($id: Int!) {
-            verifyNewArchive(id: $id) {
-                id
-                title
-                approval_status_id
-            }
-        }
-    `;
+    mutation ApproveDisposal($id: Int!) {
+      accArchiveDisposalStatusToApproved(id: $id) {
+        id
+        approval_status_id
+        batch_code
+      }
+    }
+  `;
 
-  const results = []
+  const results = [];
 
   for (const archive of archives.value) {
     try {
@@ -104,24 +104,25 @@ const verifyAllArchives = async () => {
       const result = await response.json();
 
       if (result.errors) {
-        console.error(`❌ Gagal verifikasi arsip ID ${archive.id}:`, result.errors);
+        console.error(`❌ Gagal setujui arsip ID ${archive.id}:`, result.errors);
         results.push({ id: archive.id, status: 'failed', error: result.errors });
       } else {
-        console.log(`✅ Arsip ID ${archive.id} berhasil diverifikasi`);
+        console.log(`✅ Arsip ID ${archive.id} disetujui (approval_status_id = 2)`);
         results.push({ id: archive.id, status: 'success' });
       }
 
     } catch (err) {
-      console.error(`❌ Error network/verifikasi ID ${archive.id}:`, err);
+      console.error(`❌ Network error saat setujui ID ${archive.id}:`, err);
       results.push({ id: archive.id, status: 'error', error: err });
     }
   }
 
-  console.log('[✔️ Summary]', results);
+  console.log('[📋 Hasil Setujui Arsip]', results);
 
-  // 🚀 Redirect ke halaman list arsip
+  // Redirect ke halaman lain atau refresh data
   router.push('/arsip/list_arsip');
 };
+
 
 
 

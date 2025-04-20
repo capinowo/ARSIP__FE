@@ -2,114 +2,114 @@
   "hash": "63c67468",
   "configHash": "f63918cc",
   "lockfileHash": "b033947c",
-  "browserHash": "11bca247",
+  "browserHash": "059cfb81",
   "optimized": {
     "@casl/vue": {
       "src": "../../../node_modules/@casl/vue/dist/es6m/index.mjs",
       "file": "@casl_vue.js",
-      "fileHash": "ab7eb715",
+      "fileHash": "e4584f37",
       "needsInterop": false
     },
     "@floating-ui/dom": {
       "src": "../../../node_modules/@floating-ui/dom/dist/floating-ui.dom.mjs",
       "file": "@floating-ui_dom.js",
-      "fileHash": "013f75ea",
+      "fileHash": "5f24bb49",
       "needsInterop": false
     },
     "@tiptap/extension-placeholder": {
       "src": "../../../node_modules/@tiptap/extension-placeholder/dist/index.js",
       "file": "@tiptap_extension-placeholder.js",
-      "fileHash": "b8152a33",
+      "fileHash": "7b509e85",
       "needsInterop": false
     },
     "@tiptap/extension-text-align": {
       "src": "../../../node_modules/@tiptap/extension-text-align/dist/index.js",
       "file": "@tiptap_extension-text-align.js",
-      "fileHash": "da7b911c",
+      "fileHash": "64f62919",
       "needsInterop": false
     },
     "@tiptap/extension-underline": {
       "src": "../../../node_modules/@tiptap/extension-underline/dist/index.js",
       "file": "@tiptap_extension-underline.js",
-      "fileHash": "7e70e5a8",
+      "fileHash": "75cf9ad9",
       "needsInterop": false
     },
     "@tiptap/starter-kit": {
       "src": "../../../node_modules/@tiptap/starter-kit/dist/index.js",
       "file": "@tiptap_starter-kit.js",
-      "fileHash": "09e0d1ea",
+      "fileHash": "57b28bb1",
       "needsInterop": false
     },
     "@tiptap/vue-3": {
       "src": "../../../node_modules/@tiptap/vue-3/dist/index.js",
       "file": "@tiptap_vue-3.js",
-      "fileHash": "5fd29ca9",
+      "fileHash": "a2404ee0",
       "needsInterop": false
     },
     "jwt-decode": {
       "src": "../../../node_modules/jwt-decode/build/esm/index.js",
       "file": "jwt-decode.js",
-      "fileHash": "bb3e15eb",
+      "fileHash": "2b1f50ae",
       "needsInterop": false
     },
     "pinia": {
       "src": "../../../node_modules/pinia/dist/pinia.mjs",
       "file": "pinia.js",
-      "fileHash": "a032843d",
+      "fileHash": "6fc9fc69",
       "needsInterop": false
     },
     "shiki": {
       "src": "../../../node_modules/shiki/dist/index.mjs",
       "file": "shiki.js",
-      "fileHash": "c2be3000",
+      "fileHash": "d452d58b",
       "needsInterop": false
     },
     "vue-flatpickr-component": {
       "src": "../../../node_modules/vue-flatpickr-component/dist/esm/index.js",
       "file": "vue-flatpickr-component.js",
-      "fileHash": "921161fe",
+      "fileHash": "b86e8c3a",
       "needsInterop": false
     },
     "vue3-apexcharts": {
       "src": "../../../node_modules/vue3-apexcharts/dist/vue3-apexcharts.js",
       "file": "vue3-apexcharts.js",
-      "fileHash": "13248732",
+      "fileHash": "0a82ce1c",
       "needsInterop": false
     },
     "vue3-perfect-scrollbar": {
       "src": "../../../node_modules/vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.js",
       "file": "vue3-perfect-scrollbar.js",
-      "fileHash": "3e7a8c24",
+      "fileHash": "533bf051",
+      "needsInterop": false
+    },
+    "@antfu/utils": {
+      "src": "../../../node_modules/@antfu/utils/dist/index.mjs",
+      "file": "@antfu_utils.js",
+      "fileHash": "4a8fe0c8",
       "needsInterop": false
     },
     "webfontloader": {
       "src": "../../../node_modules/webfontloader/webfontloader.js",
       "file": "webfontloader.js",
-      "fileHash": "7c1ca320",
+      "fileHash": "378d63ce",
       "needsInterop": true
-    },
-    "@antfu/utils": {
-      "src": "../../../node_modules/@antfu/utils/dist/index.mjs",
-      "file": "@antfu_utils.js",
-      "fileHash": "41ff54b6",
-      "needsInterop": false
     },
     "@intlify/shared": {
       "src": "../../../node_modules/@intlify/shared/dist/shared.mjs",
       "file": "@intlify_shared.js",
-      "fileHash": "a8d3de98",
+      "fileHash": "24aea55a",
       "needsInterop": false
     },
     "is-https": {
       "src": "../../../node_modules/is-https/dist/index.mjs",
       "file": "is-https.js",
-      "fileHash": "66fabffa",
+      "fileHash": "f3a1fec8",
       "needsInterop": false
     },
     "@intlify/core-base": {
       "src": "../../../node_modules/@intlify/core-base/dist/core-base.mjs",
       "file": "@intlify_core-base.js",
-      "fileHash": "fc9aa6a7",
+      "fileHash": "996de9de",
       "needsInterop": false
     }
   },

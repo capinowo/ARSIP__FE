@@ -1,16 +1,21 @@
 <!-- eslint-disable camelcase -->
 <!-- eslint-disable camelcase -->
 <script setup>
+import { getSelectedRoleToken } from '@/middleware/auth'
 import { useClassificationStore } from '@/stores/classificationStore'
+import { editArsip } from '@/stores/editArsip'
 import { useFormStore } from '@/stores/formStoreArsip'
 import { useLocationStore } from '@/stores/locationStore'
 import { useRetentionDispositionStore } from '@/stores/retentionDispositionStore'
-import { saveArsip } from '@/stores/saveArsip'
 import { uploadFileArchive } from '@/stores/saveFileUploads'
 import { useStatusStore } from '@/stores/statusStore'
 import { useTokenStore } from '@/stores/tokenStores'
 import { useUnitStore } from '@/stores/unitStore'
 import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+const archiveId = computed(() => route.params.id)
+
+
 
 definePageMeta({
   middleware: 'auth-middleware',
@@ -25,6 +30,8 @@ const selectedFile = ref(null)
 const tokenStore = useTokenStore()
 const unit_id = ref(null)
 const unit_name = ref(null)
+const token = tokenStore.token;
+
 
 onMounted(() => {
   const selectedUnit = tokenStore.tokenData.selectedUnit
@@ -89,12 +96,6 @@ const tingkatPerkembanganOptions = computed(() => {
 const clearDraft = () => {
   formStore.clearDraft()
 }
-
-const snackbar = ref({
-  show: false,
-  message: '',
-  color: 'success',
-})
 
 const locationOptions = computed(() => {
   return locationStore.locations
@@ -278,7 +279,6 @@ console.log('Selected Status:', formStore.selectedStatus)
 
 const selectedLocationName = computed(() => {
   const location = locationStore.locations.find(item => item.unit_id === unit_id.value)
-
   return location ? `${location.name} - ${location.building_name}` : ''
 })
 
@@ -290,66 +290,11 @@ watch(() => unit_id.value, newVal => {
   }
 })
 
-const handleSave = async () => {
-  if (!formStore.namaArsip || !formStore.selectedUnit || !formStore.selectedLocation || !formStore.selectedClassification || !formStore.selectedStatus) {
-    formStore.isFormValid = false
-
-    return
-  }
-
-  formStore.isFormValid = true
-
-  const data = {
-    title: formStore.namaArsip,
-    description: formStore.content,
-    classification_id: formStore.selectedClassification,
-    document_path: "", // Jika ada file, sesuaikan dengan path dari file yang diunggah
-    archive_status_id: formStore.selectedStatus,
-    archive_type_id: formStore.selectedType,
-    unit_id: formStore.selectedUnit,
-    location_id: formStore.selectedLocation,
-    user_id: 1, // Sesuaikan dengan ID user yang sedang login
-    approval_status_id: 2,
-    jumlah_arsip: parseInt(formStore.jumlahArsip, 10) || 0, // Jika tidak diisi, default ke 0
-    media_arsip: formStore.selectedMediaArsip,
-    tingkat_perkembangan: formStore.selectedTingkatPerkembangan,
-    jumlah_lampiran: parseInt(formStore.jumlahArsip, 10) || 0, // Jika tidak diisi, default ke 0
-    media_lampiran: formStore.selectedMediaLampiran,
-    document_date: formStore.tanggalDokumen,
-    final_retensi_aktif: new Date().toISOString(),
-    final_retensi_inaktif: new Date().toISOString(),
-  }
-
-  try {
-    const savedArchive = await saveArsip(data)
-
-    if (savedArchive.error) {
-      showSnackbar(savedArchive.error, 'error')
-
-      return
-    }
-
-    showSnackbar('Save Arsip berhasil!', 'success')
-
-    if (savedArchive?.id && selectedFile.value) {
-      const uploadedFile = await uploadFileArchive(savedArchive.id, selectedFile.value)
-
-      // Update the document_path of the saved archive
-      savedArchive.document_path = uploadedFile.document_path
-
-      showSnackbar('File berhasil diunggah!', 'success')
-    }
-
-    clearDraft()
-    setTimeout(() => {
-      navigateTo('/arsip/list_arsip')
-    }, 2000)
-  } catch (error) {
-    const errorMessages = error.message || 'Terjadi kesalahan saat menyimpan arsip'
-
-    showSnackbar(errorMessages, 'error')
-  }
-}
+const snackbar = ref({
+  message: '',
+  color: 'success',
+  show: false,
+})
 
 const showSnackbar = (message, color = 'success') => {
   snackbar.value.message = message
@@ -359,6 +304,159 @@ const showSnackbar = (message, color = 'success') => {
     snackbar.value.show = false
   }, 2000)
 }
+
+
+const handleSave = async () => {
+  if (!formStore.namaArsip || !formStore.selectedUnit || !formStore.selectedLocation || !formStore.selectedClassification || !formStore.selectedStatus) {
+    formStore.isFormValid = false
+    return
+  }
+
+  formStore.isFormValid = true
+
+  const data = {
+    title: formStore.namaArsip,
+    description: formStore.content,
+    classification_id: formStore.selectedClassification,
+    document_path: "",
+    archive_status_id: formStore.selectedStatus,
+    archive_type_id: formStore.selectedType,
+    unit_id: formStore.selectedUnit,
+    location_id: formStore.selectedLocation,
+    user_id: 1,
+    approval_status_id: 1,
+    jumlah_arsip: parseInt(formStore.jumlahArsip, 10) || 0,
+    tingkat_perkembangan: formStore.selectedTingkatPerkembangan,
+    kondisi: formStore.selectedKondisi,
+    jumlah_lampiran: parseInt(formStore.jumlahLampiran, 10) || 0,
+    media_lampiran: formStore.selectedMediaLampiran,
+    document_date: formStore.tanggalDokumen,
+    final_retensi_aktif: new Date().toISOString(),
+    final_retensi_inaktif: new Date().toISOString(),
+    nilai_guna: formStore.selectedNilaiGuna
+  }
+
+  try {
+    const savedArchive = await editArsip(data)
+
+    if (savedArchive.error) {
+      showSnackbar(savedArchive.error, 'error')
+      return
+    }
+
+    showSnackbar('✅ Arsip berhasil diusulkan!', 'success')
+
+    if (savedArchive?.id && selectedFile.value) {
+      const uploadedFile = await uploadFileArchive(savedArchive.id, selectedFile.value)
+      savedArchive.document_path = uploadedFile.document_path
+      showSnackbar('📁 File berhasil diunggah!', 'success')
+    }
+
+    clearDraft()
+    setTimeout(() => {
+      navigateTo('/arsip/list_arsip')
+    }, 2000)
+  } catch (error) {
+    showSnackbar(error.message || '❌ Terjadi kesalahan saat menyimpan arsip', 'error')
+  }
+
+}
+
+
+const fetchArchiveById = async (id) => {
+  const response = await fetch(`http://localhost:4000/graphql`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getSelectedRoleToken()}`,
+    },
+    body: JSON.stringify({
+      query: `
+        query getArchive($id: Int!) {
+          getArchive(id: $id) {
+            id
+            title
+            description
+            classification_id
+            document_path
+            document_date
+            archive_status_id
+            archive_type_id
+            unit_id
+            location_id
+            user_id
+            approval_status_id
+            created_at
+            updated_at
+            jumlah_arsip
+            media_arsip
+            tingkat_perkembangan
+            jumlah_lampiran
+            media_lampiran
+            final_retensi_aktif
+            final_retensi_inaktif
+            nilai_guna
+          }
+        }
+      `,
+      variables: { id }, // variabel disesuaikan
+    }),
+  })
+
+  const json = await response.json()
+  const archive = json.data?.getArchive
+
+  if (!archive) {
+    console.error("getArchive tidak ditemukan", json)
+  }
+
+  console.log("GRAPHQL RESPONSE:", json)
+  console.error("DETAIL ERROR:", JSON.stringify(json.errors, null, 2))
+
+  return archive
+}
+
+
+
+
+
+
+onMounted(async () => {
+
+  const id = route.params.id
+  const archiveId = parseInt(route.params.id)
+  const archive = await fetchArchiveById(archiveId)
+
+  if (archive) {
+    // Isi data ke formStore
+    formStore.tanggalDokumen = archive.document_date
+    formStore.selectedClassification = archive.classification_id
+    formStore.namaArsip = archive.title
+    formStore.content = archive.description
+    formStore.selectedNilaiGuna = archive.nilai_guna
+    formStore.retentionActivePeriod = archive.final_retensi_aktif
+    formStore.retentionInactivePeriod = archive.final_retensi_inaktif
+    formStore.jumlahArsip = archive.jumlah_arsip
+    formStore.selectedMedia = archive.media_arsip
+    formStore.selectedTingkatPerkembangan = archive.tingkat_perkembangan
+    formStore.selectedStatus = archive.archive_status_id
+    formStore.retentionDispositionName = ''
+    formStore.retentionActiveDate = ''
+    formStore.retentionInactiveDate = ''
+
+    // Kolom unit dan lokasi biasanya ditampilkan di luar store
+    unit_name.value = + archive.unit_id // Kamu bisa mapping dari ID ke nama unit
+    unit_id.value = archive.unit_id
+    selectedLocationName.value = archive.location_id
+    formStore.selectedLocation = archive.location_id
+
+    // Jika ada file yang sebelumnya sudah di-upload, kamu bisa tampilkan nama file-nya juga
+    selectedFile.value = archive.document_path
+  }
+})
+
+
+
 </script>
 
 
@@ -372,9 +470,9 @@ const showSnackbar = (message, color = 'success') => {
     <div class="d-flex flex-wrap justify-center justify-md-space-between gap-4 mb-6">
       <div class="d-flex flex-column justify-center">
         <h4 class="text-h4">
-          Input Arsip
+          Ajukan Pemberkasan Arsip
         </h4>
-        <span class="text-medium-emphasis">Tolong lengkapi dokumen arsip anda</span>
+        <span class="text-medium-emphasis">Masukkan pembaharuan berkaitan dengan dokumen arsip anda</span>
       </div>
     </div>
 
@@ -496,17 +594,18 @@ const showSnackbar = (message, color = 'success') => {
 
           <!-- Tombol Simpan dan Clear Draft di bagian bawah -->
           <VCardActions class="d-flex justify-end mt-4 px-4 pb-4">
-            <VBtn variant="outlined" color="secondary" @click="clearDraft">
-              Clear Draft
-            </VBtn>
             <VBtn variant="flat" color="primary" style="margin-inline-start: 8px;" @click="handleSave">
-              Simpan Arsip
+              Ajukan Pemberkasan Arsip
             </VBtn>
           </VCardActions>
         </VCard>
       </VCol>
     </VRow>
   </div>
+  <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="2000">
+    {{ snackbar.message }}
+  </v-snackbar>
+
 </template>
 
 

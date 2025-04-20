@@ -52,11 +52,11 @@ const confirmDeletion = async () => {
   }
 }
 
-const buttons = [
-  { label: 'Semua', status: 'all' },
-  { label: 'Usul Unggahan Arsip', status: 'active' & 'inactive' & 'static' },
-  { label: 'Usul Pemberkasan Arsip', status: 'active' & 'inactive' & 'static' },
-]
+// const buttons = [
+//   { label: 'Semua', status: 'all' },
+//   { label: 'Usul Unggahan Arsip', status: 'active' & 'inactive' & 'static' },
+//   { label: 'Usul Pemberkasan Arsip', status: 'active' & 'inactive' & 'static' },
+// ]
 
 const filterArchives = async status => {
   let query = `
@@ -404,14 +404,14 @@ onMounted(() => {
     <div>
       <VCard style="padding: 24px;">
 
-        <div class="d-flex justify-content-between mb-4">
+        <!-- <div class="d-flex justify-content-between mb-4">
           <VBtnToggle v-model="activeTab" class="d-flex w-100">
             <VBtn v-for="button in buttons" :key="button.status" @click="filterArchives(button.status)"
               class="flex-grow-1 text-center">
               {{ button.label }}
             </VBtn>
           </VBtnToggle>
-        </div>
+        </div> -->
 
 
         <VDataTable :headers="headers" :items="archives" :search="searchQuery" :loading="isLoading"
@@ -437,7 +437,6 @@ onMounted(() => {
               <!-- Tombol untuk melihat detail -->
               <VBtn icon style="margin-inline-end: 6px;" @click="detailArchive(item)">
                 <VIcon>ri-todo-line</VIcon>
-                Detail
               </VBtn>
             </div>
           </template>

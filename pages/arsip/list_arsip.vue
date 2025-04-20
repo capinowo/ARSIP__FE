@@ -440,10 +440,6 @@ onMounted(() => {
               <VBtn icon style="margin-inline-end: 6px;" @click="detailArchive(item)">
                 <VIcon>ri-todo-line</VIcon>
               </VBtn>
-              <!-- Tombol untuk menghapus -->
-              <VBtn icon @click="openDeleteDialog(item)">
-                <VIcon>ri-delete-bin-2-fill</VIcon>
-              </VBtn>
             </div>
           </template>
         </VDataTable>

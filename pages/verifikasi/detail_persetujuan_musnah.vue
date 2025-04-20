@@ -2,7 +2,7 @@
 import useArsipStatus from '@/composables/useArsipStatus'
 import useClassification from '@/composables/useClassification'
 import { getSelectedRoleToken } from '@/middleware/auth'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 // Middleware for auth on the page
@@ -160,13 +160,6 @@ const createArchiveDisposalBatch = async ({ archiveIds, userId }) => {
 
 const batchId = ref(route.params.id); // Ambil batch_id dari URL
 const fetchArchivesInBatch = async () => {
-    console.log("Fetching archives for batch:", batchId.value); // 🔥 Debugging
-
-    if (!batchId.value) {
-        console.warn("❌ No batch ID provided!");
-        return;
-    }
-
     const query = `
         query GetArchiveDisposals($where: ArchiveDisposalWhereInput) {
             getArchiveDisposals(where: $where) {
@@ -204,9 +197,11 @@ const fetchArchivesInBatch = async () => {
     `;
 
     const variables = {
-        where: {
-            batch_id: Number(batchId.value)  // ✅ Pastikan ini angka
-        }
+        where:
+        {
+            batch_id: Number(batchId.value),
+            approval_status_id: 2
+        },
     };
 
     console.log("Query Variables:", variables); // 🔥 Debugging
@@ -227,7 +222,6 @@ const fetchArchivesInBatch = async () => {
         if (result.errors) {
             console.error("❌ GraphQL errors:", result.errors);
         } else if (result.data && result.data.getArchiveDisposals) {
-            console.log("✅ Data Fetched:", result.data.getArchiveDisposals.data);
             archives.value = result.data.getArchiveDisposals.data.map(disposal => ({
                 id: disposal.archive.id,
                 title: disposal.archive.title,
@@ -240,8 +234,6 @@ const fetchArchivesInBatch = async () => {
                 batch_code: disposal.batch?.batch_code || "N/A"
             }));
             totalArchives.value = archives.value.length;
-        } else {
-            console.warn("⚠️ No data returned from getArchiveDisposals query:", result);
         }
     } catch (error) {
         console.error("❌ Error fetching archives in batch:", error);
@@ -266,9 +258,9 @@ onMounted(() => {
 
 
 // Watch for changes in searchQuery and fetch archives
-watch(searchQuery, () => {
-    fetchArchives();
-});
+// watch(searchQuery, () => {
+//     fetchArchives();
+// });
 </script>
 
 <template>

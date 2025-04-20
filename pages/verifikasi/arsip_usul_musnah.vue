@@ -79,7 +79,7 @@ const fetchArchives = async () => {
 
   const query = `
     query {
-      getArchives (where: { archive_status_id: 4, approval_status_id: 2 }) {
+      getArchives (where: { archive_status_id: 4, approval_status_id: 1 }) {
         total
         data {
           id
