@@ -77,10 +77,10 @@ const verifyAllArchives = async () => {
 
   const query = `
     mutation ApproveDisposal($id: Int!) {
-      accArchiveDisposalStatusToApproved(id: $id) {
+      updateArchiveDisposalStatusToApproved(id: $id) {
         id
         approval_status_id
-        batch_code
+        batch_id
       }
     }
   `;

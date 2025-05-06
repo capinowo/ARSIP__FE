@@ -36,12 +36,20 @@ const closeDialog = () => {
 }
 
 const tokenStore = useTokenStore()
+const activeTab = ref('all') // atau status default yang kamu mau
+
 
 // onMounted(() => {
 //   console.log('Token Store Data on mount:', tokenStore.tokenData)
 //   console.log('Selected Unit:', tokenStore.tokenData.selectedUnit)
 //   console.log('Selected Unit ID:', tokenStore.tokenData.selectedUnit?.id)
 // })
+
+
+const isRetensiJatuhTempo = (arsip) => {
+  const today = new Date()
+  return new Date(arsip.tanggalRetensi) <= today
+}
 
 
 // Confirm deletion and send mutation to delete the archive
@@ -60,115 +68,132 @@ const buttons = [
   { label: 'Musnah', status: 'destroyed' },
 ]
 
-const filterArchives = async status => {
-  let query = `
-    query {
-      getArchives (where: { approval_status_id: 1 }) {
-        total
-        data {
-          id
-          title
-          description
-          classification_id
-          document_path
-          archive_status_id
-          archive_type_id
-          unit_id
-          location_id
-          user_id
-          approval_status_id
-          created_at
-          updated_at
-          jumlah_arsip
-          media_arsip
-          tingkat_perkembangan
-          jumlah_lampiran
-          media_lampiran
-          final_retensi_aktif
-          final_retensi_inaktif
-        }
-      }
-    }
-  `
+const filterArchives = async (status) => {
+  isLoading.value = true
+  let query = ''
+  let variables = {}
 
-  if (status !== 'all') {
-    const statusId = {
-      active: 1,
-      inactive: 2,
-      static: 3,
-      destroyed: 4,
-    }[status]
-
-    query = `
-      query {
-        getArchives(where: { archive_status_id: ${statusId}, approval_status_id: 1 }) {
-          total
-          data {
-            id
-            title
-            description
-            classification_id
-            document_path
-            archive_status_id
-            archive_type_id
-            unit_id
-            location_id
-            user_id
-            approval_status_id
-            created_at
-            updated_at
-            jumlah_arsip
-            media_arsip
-            tingkat_perkembangan
-            jumlah_lampiran
-            media_lampiran
-            final_retensi_aktif
-            final_retensi_inaktif
+  try {
+    if (status === 'destroyed') {
+      query = `
+        query GetDeletedArchives($where: DeletedArchiveWhereInput) {
+          getDeletedArchives(where: $where) {
+            data {
+              id
+              title
+              description
+              classification_id
+              archive_status_id
+              archive_type_id
+              location_id
+              user_id
+              unit_id
+              document_path
+              created_at
+              updated_at
+            }
+            total
           }
         }
+      `
+      variables = {
+        where: {
+          approval_status_id: 1,
+        },
       }
-    `
-  }
+    } else {
+      const statusIdMap = {
+        active: 1,
+        inactive: 2,
+        static: 3,
+      }
+      const archiveStatusId = statusIdMap[status]
 
-  isLoading.value = true
-  try {
+      query = `
+        query {
+          getArchives(where: { ${status !== 'all' ? `archive_status_id: ${archiveStatusId},` : ''} approval_status_id: 1 }) {
+            total
+            data {
+              id
+              title
+              description
+              classification_id
+              archive_status_id
+              document_path
+              archive_type_id
+              unit_id
+              location_id
+              user_id
+              approval_status_id
+              created_at
+              updated_at
+              jumlah_arsip
+              media_arsip
+              tingkat_perkembangan
+              jumlah_lampiran
+              media_lampiran
+              final_retensi_aktif
+              final_retensi_inaktif
+            }
+          }
+        }
+      `
+    }
+
     const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${getSelectedRoleToken()}`,
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, variables }),
     })
 
     const result = await response.json()
 
     if (result.errors) {
       console.error('GraphQL errors:', result.errors)
-    } else if (result.data && result.data.getArchives) {
-      archives.value = await Promise.all(
-        result.data.getArchives.data.map(async archive => {
-          const classification = await fetchClassification(archive.classification_id)
-          const status = await fetchArsipStatus(archive.archive_status_id)
-
-          return {
-            ...archive,
-            classification_description: classification?.description || 'N/A',
-            archive_status_name: status?.name || 'N/A',
-          }
-        }),
-      )
-      totalArchives.value = result.data.getArchives.total || 0
     } else {
-      console.warn('No data returned from getArchives query:', result)
+      if (status === 'destroyed') {
+        const data = result.data?.getDeletedArchives
+        archives.value = await Promise.all(
+          data?.data?.map(async (archive) => {
+            const classification = await fetchClassification(archive.classification_id)
+            const status = await fetchArsipStatus(archive.archive_status_id)
+
+            return {
+              ...archive,
+              classification_description: classification?.description || 'N/A',
+              archive_status_name: status?.name || 'N/A',
+            }
+          }) || [],
+        )
+        totalArchives.value = data?.total || 0
+      } else {
+        const data = result.data?.getArchives
+        archives.value = await Promise.all(
+          data?.data?.map(async (archive) => {
+            const classification = await fetchClassification(archive.classification_id)
+            const status = await fetchArsipStatus(archive.archive_status_id)
+
+            return {
+              ...archive,
+              classification_description: classification?.description || 'N/A',
+              archive_status_name: status?.name || 'N/A',
+            }
+          }) || [],
+        )
+        totalArchives.value = data?.total || 0
+      }
     }
   } catch (error) {
     console.error('Error fetching archives:', error)
-    snackbarRef.value.showSnackbar('This is an error message', 'error fetch archives')
+    snackbarRef.value.showSnackbar('Gagal mengambil data', 'error')
   } finally {
     isLoading.value = false
   }
 }
+
 
 // Configure table headers
 const headers = [
@@ -384,7 +409,7 @@ const detailArchive = item => {
 
 
 onMounted(() => {
-  fetchArchives()
+  filterArchives(activeTab.value)
 })
 </script>
 
@@ -408,10 +433,11 @@ onMounted(() => {
 
         <div class="d-flex justify-content-between mb-4">
           <VBtnToggle v-model="activeTab" class="d-flex w-100">
-            <VBtn v-for="button in buttons" :key="button.status" @click="filterArchives(button.status)"
-              class="flex-grow-1 text-center">
+            <VBtn v-for="button in buttons" :key="button.status" :value="button.status"
+              @click="activeTab = button.status; filterArchives(button.status)" class="flex-grow-1 text-center">
               {{ button.label }}
             </VBtn>
+
           </VBtnToggle>
         </div>
 
@@ -430,8 +456,16 @@ onMounted(() => {
           </template>
 
           <template #item.archive_status_name="{ item }">
-            {{ item.archive_status_name }}
+            <div class="d-flex align-center ga-2">
+              <span>{{ item.archive_status_name }}</span>
+
+              <VBtn v-if="isRetensiJatuhTempo(item)" size="x-small" color="warning"
+                @click="$router.push(`/arsip/${item.id}/edit`)">
+                <VIcon size="16">mdi-pencil</VIcon>
+              </VBtn>
+            </div>
           </template>
+
 
           <!-- Slot for Actions column -->
           <template #item.actions="{ item }">

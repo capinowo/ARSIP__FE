@@ -12,7 +12,7 @@ const permissionAccess = {
     'management-role_manage',
     'management-user_manage',
     'management-unit_manage',
-    'management-unit_role_manage', // Added new menu
+    'management-unit_role_manage',
     'management-log_manage',
     'master-master_jra',
     'master-master_lokasi',
@@ -26,7 +26,6 @@ const permissionAccess = {
     'verifikasi-persetujuan_usul_musnah',
     'verifikasi-pemusnahan_arsip',
     'verifikasi-berita_acara_pemusnahan',
-
   ],
 
   // 'arsip-[id]-detail': ['arsip-list_arsip'],

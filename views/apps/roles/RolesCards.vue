@@ -1,15 +1,15 @@
 <!-- eslint-disable camelcase -->
 <script setup>
-import { setPermissionsFromToken } from '@/composables/usePermission' // Import fungsi dari composable
-import avatar1 from '@/images/avatars/avatar-1.png'
-import avatar2 from '@/images/avatars/avatar-2.png'
-import avatar3 from '@/images/avatars/avatar-3.png'
-import avatar4 from '@/images/avatars/avatar-4.png'
-import avatar5 from '@/images/avatars/avatar-5.png'
-import { getAuthToken, setSelectedRoleToken } from '@/middleware/auth'
-import { BASE_URL } from "@/utils/api"
-import { navigateTo, useState } from 'nuxt/app'
-import { computed, ref } from 'vue'
+import { setPermissionsFromToken } from '@/composables/usePermission'; // Import fungsi dari composable
+import avatar1 from '@/images/avatars/avatar-1.png';
+import avatar2 from '@/images/avatars/avatar-2.png';
+import avatar3 from '@/images/avatars/avatar-3.png';
+import avatar4 from '@/images/avatars/avatar-4.png';
+import avatar5 from '@/images/avatars/avatar-5.png';
+import { getAuthToken, setSelectedRoleToken } from '@/middleware/auth';
+import { BASE_URL } from "@/utils/api";
+import { navigateTo, useState } from 'nuxt/app';
+import { computed, ref } from 'vue';
 
 const avatarImages = [avatar1, avatar2, avatar3, avatar4, avatar5]
 const getRandomAvatar = () => avatarImages[Math.floor(Math.random() * avatarImages.length)]
@@ -28,6 +28,7 @@ const roleMapping = {
 }
 
 const userState = useState('user')
+console.log('Semua role dari userState:', userState.value?.roles)
 
 // Computed roles with name and value
 const roles = computed(() =>
@@ -57,7 +58,7 @@ const selectRole = async roleDetails => {
   if (!authToken) {
     console.error('Auth token is missing. Redirecting to login.')
     navigateTo('/login')
-    
+
     return
   }
 
@@ -120,25 +121,11 @@ const selectRole = async roleDetails => {
 
 
 <template>
-  <VRow
-    class="pt-6 px-4 mx-auto"
-    style="max-inline-size: 1200px;"
-  >
-    <VCol
-      v-for="item in roles"
-      :key="item.value"
-      cols="12"
-      sm="6"
-      lg="4"
-      class="mb-4"
-    >
+  <VRow class="pt-6 px-4 mx-auto" style="max-inline-size: 1200px;">
+    <VCol v-for="item in roles" :key="item.value" cols="12" sm="6" lg="4" class="mb-4">
       <VCard class="pa-4">
         <VCardText class="d-flex align-center">
-          <VAvatar
-            v-if="item.users.length > 0"
-            size="40"
-            :image="item.users[0]"
-          />
+          <VAvatar v-if="item.users.length > 0" size="40" :image="item.users[0]" />
           <VSpacer />
         </VCardText>
 
@@ -147,10 +134,7 @@ const selectRole = async roleDetails => {
             {{ item.name }} <!-- Display name for role -->
           </h5>
           <div class="d-flex align-center">
-            <VBtn
-              color="primary"
-              @click="selectRole(item.details)"
-            >
+            <VBtn color="primary" @click="selectRole(item.details)">
               Select Role
             </VBtn>
             <VSpacer />
@@ -161,10 +145,7 @@ const selectRole = async roleDetails => {
   </VRow>
 
   <!-- Role dialog for editing permissions if needed -->
-  <AddEditRoleDialog
-    v-model:is-dialog-visible="isRoleDialogVisible"
-    v-model:role-permissions="roleDetail"
-  />
+  <AddEditRoleDialog v-model:is-dialog-visible="isRoleDialogVisible" v-model:role-permissions="roleDetail" />
 </template>
 
 <style scoped>

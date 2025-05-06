@@ -1,38 +1,42 @@
-import { getSelectedRoleToken } from '@/middleware/auth'
-import { BASE_URL } from "@/utils/api"
-
 export async function saveFileUploadLocal(archiveId, file) {
-  if (!file) return // Jika tidak ada file, keluar dari fungsi
+  if (!file) {
+    console.warn('Tidak ada file yang diunggah.')
+    return null // atau bisa juga `throw new Error("File tidak ditemukan")` tergantung kebutuhan
+  }
 
   const formData = new FormData()
 
-  const currentDate = new Date()
-  const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`
-  const fileName = `${file.name.split('.')[0]}-${formattedDate}.${file.name.split('.').pop()}`
-
-  formData.append('file', new File([file], fileName))
-  formData.append('archive_id', archiveId)
-
-  try {
-    const response = await fetch(`${BASE_URL}/upload-local`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getSelectedRoleToken()}`,
+  formData.append(
+    'operations',
+    JSON.stringify({
+      query: `
+        mutation UploadFileArchiveLocal($id: Int!, $file: Upload!) {
+          uploadFileArchiveLocal(id: $id, file: $file) {
+            id
+            document_path
+          }
+        }
+      `,
+      variables: {
+        id: archiveId,
+        file: null,
       },
-      body: formData,
     })
+  )
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.message || 'Upload failed')
-    }
+  formData.append('map', JSON.stringify({ '1': ['variables.file'] }))
+  formData.append('1', file)
 
-    const result = await response.json()
-    console.log('File uploaded locally:', result)
+  const response = await fetch('http://localhost:4000/graphql', {
+    method: 'POST',
+    body: formData,
+  })
 
-    return result
-  } catch (error) {
-    console.error('Upload to local failed:', error)
-    throw error
+  const result = await response.json()
+
+  if (result.errors) {
+    throw new Error(result.errors[0].message)
   }
+
+  return result.data.uploadFileArchiveLocal
 }

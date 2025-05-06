@@ -76,8 +76,8 @@ const createArchiveDisposalBatch = async ({ archiveIds, userId }) => {
                 submission_date
                 created_at
                 updated_at
-                verifikator_approval_status_id
-                verifikator_id
+                pimpinan_approval_status_id
+                pimpinan_id
                 pimpinan_uk2_approval_status_id
                 pimpinan_uk2_id
                 pimpinan_uk1_approval_status_id

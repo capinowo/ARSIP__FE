@@ -193,6 +193,7 @@ const formatDate = (date) => {
   return date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
 };
 
+
 const retentionActiveDate = computed(() => {
   if (formStore.selectedClassification && formStore.tanggalDokumen) {
     const selectedClass = classificationStore.classifications.find(c => c.id === formStore.selectedClassification);
@@ -296,6 +297,55 @@ watch(() => unit_id.value, newVal => {
   }
 })
 
+
+const uploadFileManual = async (archiveId, file) => {
+  const formData = new FormData()
+
+  // Isi struktur multipart GraphQL spec
+  formData.append(
+    'operations',
+    JSON.stringify({
+      query: `
+        mutation UploadFileArchiveLocal($id: Int!, $file: Upload!) {
+          uploadFileArchiveLocal(id: $id, file: $file) {
+            id
+            document_path
+          }
+        }
+      `,
+      variables: {
+        id: archiveId,
+        file: null,
+      },
+    })
+  )
+
+  formData.append('map', JSON.stringify({ '1': ['variables.file'] }))
+  formData.append('1', file)
+
+  const response = await fetch('http://localhost:4000/graphql', {
+    method: 'POST',
+    body: formData,
+  })
+
+  const result = await response.json()
+
+  if (result.errors) {
+    throw new Error(result.errors[0].message)
+  }
+
+  return result.data.uploadFileArchiveLocal
+}
+
+
+const parseDateStringToISO = (dateStr) => {
+  if (!dateStr || !dateStr.includes('/')) return null
+  const [day, month, year] = dateStr.split('/').map(Number)
+  const dateObj = new Date(year, month - 1, day)
+  return dateObj.toISOString()
+}
+
+
 const handleSave = async () => {
   // Validasi manual untuk field wajib
   if (
@@ -327,12 +377,9 @@ const handleSave = async () => {
       document_date: formStore.tanggalDokumen
         ? new Date(formStore.tanggalDokumen).toISOString()
         : null,
-      final_retensi_aktif: retentionActiveDate.value
-        ? new Date(retentionActiveDate.value).toISOString()
-        : null,
-      final_retensi_inaktif: retentionInactiveDate.value
-        ? new Date(retentionInactiveDate.value).toISOString()
-        : null,
+      final_retensi_aktif: parseDateStringToISO(retentionActiveDate.value),
+      final_retensi_inaktif: parseDateStringToISO(retentionInactiveDate.value),
+
     }
 
     const savedArchive = await saveArsip(data)
@@ -340,6 +387,17 @@ const handleSave = async () => {
       showSnackbar(savedArchive.error, 'error')
       return
     }
+
+    if (savedArchive?.id && selectedFile.value) {
+      try {
+        const uploaded = await saveFileUploadLocal(savedArchive.id, selectedFile.value)
+        showSnackbar('File berhasil diunggah!', 'success')
+      } catch (err) {
+        showSnackbar('Gagal upload file: ' + err.message, 'error')
+      }
+    }
+
+
 
     showSnackbar('Arsip berhasil disimpan!', 'success')
 
@@ -506,8 +564,8 @@ const showSnackbar = (message, color = 'success') => {
 
 
               <VCol cols="12">
-                <VFileInput v-model="selectedFile" show-size label="Upload Arsip" class="mb-4"
-                  @change="handleFileChange" />
+                <VFileInput v-model="selectedFile" label="Upload Arsip" accept=".pdf,.docx,.xlsx" />
+
               </VCol>
             </VRow>
           </VCardText>

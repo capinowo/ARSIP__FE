@@ -52,41 +52,47 @@ const confirmMutation = async () => {
         console.log("🚀 Approving batch ID:", batchId);
 
         const query = `
-            mutation accDisposalByPimpinanUK1($id: Int!, $pimpinanUk1Id: Int!) {
-                accDisposalByPimpinanUK1(id: $id, pimpinanUk1Id: $pimpinanUk1Id) {
+            mutation updateArchiveDisposalStatusToApproved($id: Int!) {
+                updateArchiveDisposalStatusToApproved(id: $id) {
                     id
-                    pimpinan_uk1_approval_status_id
+                    archive_id
+                    approval_status_id
+                    batch_id
                 }
             }
         `;
 
-        const response = await fetch('http://localhost:4000/graphql', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getSelectedRoleToken()}`,
-            },
-            body: JSON.stringify({
-                query,
-                variables: { id: batchId, pimpinanUk1Id: 1 }, // 🔥 Fix: Menggunakan pimpinanUk1Id
-            }),
-        });
+        // Loop semua archives buat approve satu-satu
+        for (const archive of archives.value) {
+            const response = await fetch('http://localhost:4000/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getSelectedRoleToken()}`,
+                },
+                body: JSON.stringify({
+                    query,
+                    variables: { id: archive.id },
+                }),
+            });
 
-        const result = await response.json();
+            const result = await response.json();
 
-        if (result.errors) {
-            console.error('❌ GraphQL errors:', result.errors);
-            return;
+            if (result.errors) {
+                console.error(`❌ Error approving archive ID ${archive.id}:`, result.errors);
+                continue; // lanjut ke archive berikutnya
+            }
+
+            const approvalResponse = result.data.updateArchiveDisposalStatusToApproved;
+            if (!approvalResponse || approvalResponse.approval_status_id !== 1) {
+                console.error(`❌ Failed to approve archive ID ${archive.id}`);
+                continue;
+            }
+
+            console.log(`✅ Archive ID ${archive.id} approved successfully!`);
         }
 
-        const approvalResponse = result.data.accDisposalByPimpinanUK1;
-        if (!approvalResponse || approvalResponse.pimpinan_uk1_approval_status_id !== 1) {
-            console.error('❌ Failed to approve by Pimpinan UK1');
-            return;
-        }
-
-        console.log("✅ Archive Disposal Approved by Pimpinan UK1!", approvalResponse);
-
+        // Setelah semua diapprove
         router.push({ path: '/verifikasi/arsip_usul_musnah' }).catch(err => console.warn("Router Error:", err));
 
     } catch (error) {
@@ -122,8 +128,8 @@ const createArchiveDisposalBatch = async ({ archiveIds, userId }) => {
                 submission_date
                 created_at
                 updated_at
-                verifikator_approval_status_id
-                verifikator_id
+                pimpinan_approval_status_id
+                pimpinan_id
                 pimpinan_uk2_approval_status_id
                 pimpinan_uk2_id
                 pimpinan_uk1_approval_status_id

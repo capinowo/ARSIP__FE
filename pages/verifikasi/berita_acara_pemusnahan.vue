@@ -67,7 +67,7 @@ const headers = [
 const fetchArchives = async () => {
   const query = `
     query {
-      getArchiveDisposalBatches (where: { verifikator_approval_status_id: 2, pimpinan_uk2_approval_status_id: 1, pimpinan_uk1_approval_status_id: 1}) {
+      getArchiveDisposalBatches (where: { pimpinan_approval_status_id: 2, pimpinan_uk2_approval_status_id: 1, pimpinan_uk1_approval_status_id: 1}) {
         data {
           id
           batch_code
