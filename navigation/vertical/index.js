@@ -3,10 +3,19 @@ import { computed } from 'vue'
 
 const permissionAccess = {
   'lokasi-dashboard': ['/', 'index', 'master-master_lokasi'],
-  'dashboard-arsip': ['/', 'index', 'arsip-list_arsip'],
+  'dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah'],
   'lokasi-dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'master-master_lokasi'],
-  'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'management-unit_role_manage'],
-  'arsip-detail': ['arsip-list_arsip'],
+  'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-persetujuan_arsip', 'verifikasi-persetujuan_usul_musnah'],
+  'system': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-persetujuan_arsip', 'verifikasi-persetujuan_usul_musnah'],
+  'admin': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-persetujuan_arsip', 'verifikasi-persetujuan_usul_musnah'],
+  'pimpinan': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-berita_acara_pemusnahan'],
+  'pimpinan_uk_1': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-persetujuan_arsip', 'verifikasi-persetujuan_pemusnahan'],
+  'operator_uk_1': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-add'],
+  'verifikator_uk_1': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-persetujuan_arsip', 'verifikasi-persetujuan_usul_musnah'],
+  'pimpinan_uk_2': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-add'],
+  'operator_uk_2': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-add'],
+  'verifikator_uk_2': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-arsip_usul_musnah'],
+  'upp': ['/', 'index', 'arsip-list_arsip', 'arsip-arsip_inactive', 'arsip-add'],
 }
 
 // Ambil permissions pengguna dari state secara reaktif
@@ -71,7 +80,13 @@ export default computed(() => filterMenuByPermissions([
     icon: { icon: 'ri-book-shelf-line' },
     children: [
       { title: 'Daftar Arsip', to: { name: 'arsip-list_arsip' }, icon: { icon: 'ri-circle-line' } },
-      { title: 'Tambah Arsip', to: { name: 'arsip-add' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Status Usulan', to: { name: 'arsip-view_arsip' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Unggah Arsip', to: { name: 'arsip-add' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Usulan Masuk', to: { name: 'verifikasi-persetujuan_arsip' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Usulan Pemusnahan', to: { name: 'verifikasi-arsip_usul_musnah' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Persetujuan Pemusnahan', to: { name: 'verifikasi-persetujuan_usul_musnah' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Pemusnahan Arsip', to: { name: 'verifikasi-persetujuan_pemusnahan' }, icon: { icon: 'ri-circle-line' } },
+      { title: 'Berita Acara', to: { name: 'verifikasi-berita_acara_pemusnahan' }, icon: { icon: 'ri-circle-line' } },
     ],
   },
 ], userPermissions.value))

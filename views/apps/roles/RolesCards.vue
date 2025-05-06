@@ -18,13 +18,19 @@ const getRandomAvatar = () => avatarImages[Math.floor(Math.random() * avatarImag
 const roleMapping = {
   system: 'ADMIN PUSAT',
   admin: 'ADMIN',
-  pimpinan_uk_1: 'PIMPINAN UNIT KERJA 1',
   pimpinan: 'PIMPINAN',
+  pimpinan_uk_1: 'PIMPINAN UNIT KERJA 1',
   operator_uk_1: 'OPERATOR UNIT KERJA 1',
+  verifikator_uk_1: 'VERIFIKATOR UNIT KERJA 1',
+  pimpinan_uk_2: 'PIMPINAN UNIT KERJA 2',
+  operator_uk_2: 'OPERATOR UNIT KERJA 2',
+  verifikator_uk_2: 'VERIFIKATOR UNIT KERJA 2',
+  admin_uk_1: 'ADMIN UNIT KERJA 1',
   operator: 'OPERATOR',
   verifikator: 'VERIFIKATOR',
-  admin_uk_1: 'ADMIN UNIT KERJA 1',
-  verifikator_uk_1: 'VERIFIKATOR UNIT KERJA 1',
+  upp: 'UNIT PENGOLAH DAN PENCIPTA',
+  
+  
 }
 
 const userState = useState('user')

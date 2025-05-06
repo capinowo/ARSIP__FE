@@ -39,19 +39,19 @@ export default defineNuxtRouteMiddleware((to, from) => {
       // Define access by permission names for specific pages
       const permissionAccess = {
         'lokasi-dashboard': ['/', 'index', 'master-master_lokasi'],
-        'dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah'],
+        'dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah'],
         'lokasi-dashboard-arsip': ['/', 'index', 'arsip-list_arsip', 'master-master_lokasi'],
-        'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'arsip-verifikasi-persetujuan_arsip', 'arsip-verifikasi-persetujuan_usul_musnah'],
-        'system': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'arsip-verifikasi-persetujuan_arsip', 'arsip-verifikasi-persetujuan_usul_musnah'],
-        'admin': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'arsip-verifikasi-persetujuan_arsip', 'arsip-verifikasi-persetujuan_usul_musnah'],
-        'pimpinan': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'arsip-verifikasi-persetujuan_arsip', 'arsip-verifikasi-persetujuan_usul_musnah'],
-        'pimpinan_uk_1': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'arsip-verifikasi-persetujuan_arsip', 'arsip-verifikasi-persetujuan_usul_musnah'],
+        'access-control': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-persetujuan_arsip', 'verifikasi-persetujuan_usul_musnah'],
+        'system': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-persetujuan_arsip', 'verifikasi-persetujuan_usul_musnah'],
+        'admin': ['/', 'index', 'management-perm_manage', 'management-role_manage', 'management-user_manage', 'management-unit_manage', 'management-log_manage', 'master-master_jra', 'master-master_lokasi', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-persetujuan_arsip', 'verifikasi-persetujuan_usul_musnah'],
+        'pimpinan': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-berita_acara_pemusnahan'],
+        'pimpinan_uk_1': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-persetujuan_arsip', 'verifikasi-persetujuan_pemusnahan'],
         'operator_uk_1': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-add'],
-        'verifikator_uk_1': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'arsip-verifikasi-persetujuan_arsip', 'arsip-verifikasi-persetujuan_usul_musnah'],
+        'verifikator_uk_1': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-persetujuan_arsip', 'verifikasi-persetujuan_usul_musnah'],
         'pimpinan_uk_2': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-add'],
         'operator_uk_2': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-add'],
-        'verifikator_uk_2': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'arsip-verifikasi-persetujuan_arsip', 'arsip-verifikasi-persetujuan_usul_musnah'],
-        'upp': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'arsip-add'],
+        'verifikator_uk_2': ['/', 'index', 'arsip-list_arsip', 'arsip-view_arsip', 'arsip-arsip_inactive', 'verifikasi-arsip_usul_musnah', 'arsip-arsip_musnah', 'arsip-add', 'verifikasi-arsip_usul_musnah'],
+        'upp': ['/', 'index', 'arsip-list_arsip', 'arsip-arsip_inactive', 'arsip-add'],
       }
 
       // Get user's permissions from the token
