@@ -52,10 +52,10 @@ const confirmMutation = async () => {
         console.log("🚀 Approving batch ID:", batchId);
 
         const query = `
-            mutation accDisposalByPimpinanUK2($id: Int!, $pimpinanUk2Id: Int!) {
-                accDisposalByPimpinanUK2(id: $id, pimpinanUk2Id: $pimpinanUk2Id) {
+            mutation accDisposalByPimpinanUK1($id: Int!, $pimpinanUk1Id: Int!) {
+                accDisposalByPimpinanUK1(id: $id, pimpinanUk1Id: $pimpinanUk1Id) {
                     id
-                    pimpinan_uk2_approval_status_id
+                    pimpinan_uk1_approval_status_id
                 }
             }
         `;
@@ -68,7 +68,7 @@ const confirmMutation = async () => {
             },
             body: JSON.stringify({
                 query,
-                variables: { id: batchId, pimpinanUk2Id: 1 },
+                variables: { id: batchId, pimpinanUk1Id: 1 },
             }),
         });
 
@@ -79,13 +79,13 @@ const confirmMutation = async () => {
             return;
         }
 
-        const approvalResponse = result.data.accDisposalByPimpinanUK2;
-        if (!approvalResponse || approvalResponse.pimpinan_uk2_approval_status_id !== 1) {
-            console.error('❌ Failed to approve by Pimpinan UK2');
+        const approvalResponse = result.data.accDisposalByPimpinanuk1;
+        if (!approvalResponse || approvalResponse.pimpinan_uk1_approval_status_id !== 1) {
+            console.error('❌ Failed to approve by Pimpinan uk1');
             return;
         }
 
-        console.log("✅ Archive Disposal Approved by Pimpinan UK2!", approvalResponse);
+        console.log("✅ Archive Disposal Approved by Pimpinan uk1!", approvalResponse);
 
         router.push({ path: '/verifikasi/arsip_usul_musnah' }).catch(err => console.warn("Router Error:", err));
 
@@ -161,40 +161,68 @@ const createArchiveDisposalBatch = async ({ archiveIds, userId }) => {
 const batchId = ref(route.params.id); // Ambil batch_id dari URL
 const fetchArchivesInBatch = async () => {
     const query = `
-        query GetArchiveDisposals($where: ArchiveDisposalWhereInput) {
-            getArchiveDisposals(where: $where) {
-                data {
-                    id
-                    archive {
-                        id
-                        title
-                        description
-                        unit_id
-                        created_at
-                    }
-                    archive_id
-                    submission_date
-                    approvalStatus {
-                        id
-                        name
-                    }
-                    approval_status_id
-                    user {
-                        id
-                        name
-                    }
-                    approved_by
-                    batch {
-                        id
-                        batch_code
-                    }
-                    batch_id
-                    created_at
-                    updated_at
-                }
-            }
+query GetArchiveDisposals($where: ArchiveDisposalWhereInput) {
+  getArchiveDisposals(where: $where) {
+    data {
+      id
+      archive {
+        id
+        title
+        description
+        document_date
+        created_at
+        jumlah_arsip
+        media_arsip
+        tingkat_perkembangan
+
+        classification {
+          classification_code
+          description
+          retentionDisposition {
+            name
+          }
         }
-    `;
+
+        unit {
+          id
+          name
+        }
+
+        archiveType {
+          id
+          name
+        }
+
+        location {
+          building_name
+          box_name
+          rack_name
+        }
+      }
+      archive_id
+      submission_date
+      approvalStatus {
+        id
+        name
+      }
+      approval_status_id
+      user {
+        id
+        name
+      }
+      approved_by
+      batch {
+        id
+        batch_code
+      }
+      batch_id
+      created_at
+      updated_at
+    }
+  }
+}
+`;
+
 
     const variables = {
         where:
@@ -226,12 +254,20 @@ const fetchArchivesInBatch = async () => {
                 id: disposal.archive.id,
                 title: disposal.archive.title,
                 description: disposal.archive.description,
-                unit_id: disposal.archive.unit_id,
+                document_date: disposal.archive.document_date,
                 created_at: disposal.archive.created_at,
+                jumlah_arsip: disposal.archive.jumlah_arsip,
+                media_arsip: disposal.archive.media_arsip,
+                tingkat_perkembangan: disposal.archive.tingkat_perkembangan,
+                classification: disposal.archive.classification || {},
+                unit: disposal.archive.unit || {},
+                archiveType: disposal.archive.archiveType || {},
+                location: disposal.archive.location || {},
                 submission_date: disposal.submission_date,
                 approval_status: disposal.approvalStatus?.name || "Pending",
                 approved_by: disposal.user?.name || "N/A",
                 batch_code: disposal.batch?.batch_code || "N/A"
+
             }));
             totalArchives.value = archives.value.length;
         }
@@ -274,19 +310,55 @@ onMounted(() => {
             <v-row>
                 <v-col cols="12">
                     <v-data-table :headers="headers" :items="archives" :items-per-page="itemsPerPage"
-                        :loading="isLoading" class="elevation-1">
+                        :loading="isLoading" class="elevation-1 mb-4">
                         <template v-slot:item="{ item }">
                             <tr>
                                 <td>{{ item.title }}</td>
                                 <td>{{ item.description }}</td>
-                                <td>{{ item.unit_id }}</td>
                                 <td>{{ item.created_at }}</td>
-                                <td>{{ item.submission_date }}</td>
-                                <td>{{ item.approval_status }}</td>
-                                <td>{{ item.approved_by }}</td>
                             </tr>
                         </template>
                     </v-data-table>
+
+                    <v-row v-if="archives.length" class="mt-4">
+                        <v-col v-for="(item, index) in archives" :key="item.id" cols="12">
+                            <v-card class="mb-6" outlined>
+                                <v-card-title class="text-h6">
+                                    Arsip {{ index + 1 }} — {{ item.title }}
+                                </v-card-title>
+                                <v-card-subtitle>{{ item.description }}</v-card-subtitle>
+                                <v-card-text>
+                                    <div><strong>Judul:</strong> {{ item.title || '-' }}</div>
+                                    <div><strong>Deskripsi:</strong> {{ item.description || '-' }}</div>
+                                    <div><strong>Tanggal:</strong> {{ item.document_date || item.created_at || '-'
+                                    }}</div>
+                                    <div>
+                                        <strong>Klasifikasi:</strong>
+                                        {{ item.classification?.classification_code || '-' }} -
+                                        {{ item.classification?.description || '-' }}
+                                    </div>
+                                    <div><strong>Unit:</strong> {{ item.unit?.name || '-' }}</div>
+                                    <div><strong>Tipe Arsip:</strong> {{ item.archiveType?.name || '-' }}</div>
+                                    <div>
+                                        <strong>Lokasi Penyimpanan:</strong>
+                                        {{ item.location?.building_name || '-' }} -
+                                        {{ item.location?.box_name || '-' }} -
+                                        {{ item.location?.rack_name || '-' }}
+                                    </div>
+                                    <div><strong>Jumlah Arsip:</strong> {{ item.jumlah_arsip || '-' }}</div>
+                                    <div><strong>Media Arsip:</strong> {{ item.media_arsip || '-' }}</div>
+                                    <div>
+                                        <strong>Tingkat Perkembangan / Kondisi:</strong>
+                                        {{ item.tingkat_perkembangan || '-' }}
+                                    </div>
+                                    <div><strong>Nilai Guna:</strong> {{
+                                        item.classification?.retentionDisposition?.name || '-' }}</div>
+
+                                </v-card-text>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+
 
                 </v-col>
             </v-row>

@@ -56,8 +56,6 @@ export const useEditStore = defineStore('form', () => {
                 jumlah_arsip
                 media_arsip
                 tingkat_perkembangan
-                jumlah_lampiran
-                media_lampiran
                 final_retensi_aktif
                 final_retensi_inaktif
               }
@@ -81,8 +79,6 @@ export const useEditStore = defineStore('form', () => {
         jumlahArsip.value = archive.jumlah_arsip
         selectedMediaArsip.value = archive.media_arsip
         selectedTingkatPerkembangan.value = archive.tingkat_perkembangan
-        jumlahLampiran.value = archive.jumlah_lampiran
-        selectedMediaLampiran.value = archive.media_lampiran
         content.value = archive.description
         tanggalDokumen.value = archive.created_at
       }

@@ -15,9 +15,13 @@ export const useLocationStore = defineStore('location', () => {
         getLocations {
           data {
             id
-            unit_id
             name
+            description
             building_name
+            room_name
+            rack_name
+            box_name
+            unit_id
           }
         }
       }

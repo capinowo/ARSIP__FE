@@ -48,7 +48,17 @@ const activeTab = ref('all') // atau status default yang kamu mau
 
 const isRetensiJatuhTempo = (arsip) => {
   const today = new Date()
-  return new Date(arsip.tanggalRetensi) <= today
+
+  if (arsip.archive_status_id === 1) {
+    // Status Aktif → cek final_retensi_aktif
+    return new Date(arsip.final_retensi_aktif) <= today
+  } else if (arsip.archive_status_id === 2) {
+    // Status Inaktif → cek final_retensi_inaktif
+    return new Date(arsip.final_retensi_inaktif) <= today
+  }
+
+  // Jika status tidak diketahui
+  return false
 }
 
 
@@ -130,8 +140,6 @@ const filterArchives = async (status) => {
               jumlah_arsip
               media_arsip
               tingkat_perkembangan
-              jumlah_lampiran
-              media_lampiran
               final_retensi_aktif
               final_retensi_inaktif
             }
@@ -299,8 +307,6 @@ const fetchArchives = async () => {
           jumlah_arsip
           media_arsip
           tingkat_perkembangan
-          jumlah_lampiran
-          media_lampiran
           final_retensi_aktif
           final_retensi_inaktif
         }

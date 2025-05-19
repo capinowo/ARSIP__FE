@@ -187,8 +187,6 @@ const fetchArchivesByIds = async (ids) => {
                 jumlah_arsip
                 media_arsip
                 tingkat_perkembangan
-                jumlah_lampiran
-                media_lampiran
                 final_retensi_aktif
                 final_retensi_inaktif
                 nilai_guna
@@ -266,16 +264,56 @@ watch(searchQuery, () => {
       <v-row>
         <v-col cols="12">
           <v-data-table :headers="headers" :items="archives" :items-per-page="itemsPerPage" :loading="isLoading"
-            class="elevation-1">
+            class="elevation-1 mb-4">
             <template v-slot:item="{ item }">
               <tr>
                 <td>{{ item.title }}</td>
                 <td>{{ item.description }}</td>
-                <td>{{ item.unit_id }}</td>
                 <td>{{ item.created_at }}</td>
               </tr>
             </template>
           </v-data-table>
+
+          <v-row v-if="archives.length" class="mt-4">
+            <v-col v-for="(item, index) in archives" :key="item.id" cols="12">
+              <v-card class="mb-6" outlined>
+                <v-card-title class="text-h6">
+                  Arsip {{ index + 1 }} — {{ item.title }}
+                </v-card-title>
+                <v-card-subtitle>{{ item.description }}</v-card-subtitle>
+                <v-card-text>
+                  <div><strong>Judul:</strong> {{ item.title || '-' }}</div>
+                  <div><strong>Deskripsi:</strong> {{ item.description || '-' }}</div>
+                  <div><strong>Tanggal:</strong> {{ item.document_date || item.created_at || '-'
+                  }}</div>
+                  <div>
+                    <strong>Klasifikasi:</strong>
+                    {{ item.classification?.classification_code || '-' }} -
+                    {{ item.classification?.description || '-' }}
+                  </div>
+                  <div><strong>Unit:</strong> {{ item.unit?.name || '-' }}</div>
+                  <div><strong>Tipe Arsip:</strong> {{ item.archiveType?.name || '-' }}</div>
+                  <div>
+                    <strong>Lokasi Penyimpanan:</strong>
+                    {{ item.location?.building_name || '-' }} -
+                    {{ item.location?.box_name || '-' }} -
+                    {{ item.location?.rack_name || '-' }}
+                  </div>
+                  <div><strong>Jumlah Arsip:</strong> {{ item.jumlah_arsip || '-' }}</div>
+                  <div><strong>Media Arsip:</strong> {{ item.media_arsip || '-' }}</div>
+                  <div>
+                    <strong>Tingkat Perkembangan / Kondisi:</strong>
+                    {{ item.tingkat_perkembangan || '-' }}
+                  </div>
+                  <div><strong>Nilai Guna:</strong> {{
+                    item.classification?.retentionDisposition?.name || '-' }}</div>
+
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+
+
         </v-col>
       </v-row>
 

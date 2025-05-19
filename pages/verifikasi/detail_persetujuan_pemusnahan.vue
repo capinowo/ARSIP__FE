@@ -175,40 +175,67 @@ const fetchArchivesInBatch = async () => {
     }
 
     const query = `
-        query GetArchiveDisposals($where: ArchiveDisposalWhereInput) {
-            getArchiveDisposals(where: $where) {
-                data {
-                    id
-                    archive {
-                        id
-                        title
-                        description
-                        unit_id
-                        created_at
-                    }
-                    archive_id
-                    submission_date
-                    approvalStatus {
-                        id
-                        name
-                    }
-                    approval_status_id
-                    user {
-                        id
-                        name
-                    }
-                    approved_by
-                    batch {
-                        id
-                        batch_code
-                    }
-                    batch_id
-                    created_at
-                    updated_at
-                }
-            }
+query GetArchiveDisposals($where: ArchiveDisposalWhereInput) {
+  getArchiveDisposals(where: $where) {
+    data {
+      id
+      archive {
+        id
+        title
+        description
+        document_date
+        created_at
+        jumlah_arsip
+        media_arsip
+        tingkat_perkembangan
+
+        classification {
+          classification_code
+          description
+          retentionDisposition {
+            name
+          }
         }
-    `;
+
+        unit {
+          id
+          name
+        }
+
+        archiveType {
+          id
+          name
+        }
+
+        location {
+          building_name
+          box_name
+          rack_name
+        }
+      }
+      archive_id
+      submission_date
+      approvalStatus {
+        id
+        name
+      }
+      approval_status_id
+      user {
+        id
+        name
+      }
+      approved_by
+      batch {
+        id
+        batch_code
+      }
+      batch_id
+      created_at
+      updated_at
+    }
+  }
+}
+`;
 
     const variables = {
         where: {

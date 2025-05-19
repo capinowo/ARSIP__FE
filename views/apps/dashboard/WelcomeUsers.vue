@@ -74,68 +74,58 @@ const remainingMinutes = computed(() => {
 
 <template>
   <VCard class="overflow-visible mt-sm-10 mt-md-0">
-    <VRow no-gutters>
-      <VCol cols="12" sm="6" order="2" order-sm="1">
-        <VCardItem>
-          <VCardTitle>
-            <h4 class="text-h4 text-wrap">
-              Anda login sebagai: <strong>{{ tokenData.selectedRole?.description || 'Not available' }}</strong>
-            </h4>
-          </VCardTitle>
-          <VCardTitle>
-            <h4 class="text-h4 text-wrap">
-              Permissions: <strong>{{ tokenData.permissions.length ? tokenData.permissions.join(', ') : 'No permissions'
-              }}</strong>
-            </h4>
-          </VCardTitle>
-          <VCardTitle>
-            <h4 class="text-h4 text-wrap">
-              Selected Unit: <strong>{{ tokenData.selectedUnit?.name || 'Not available' }}</strong>
-            </h4>
-          </VCardTitle>
-          <VCardTitle>
-            <h4 class="text-h4 text-wrap">
-              Remaining Time: <strong>{{ remainingMinutes }} minutes</strong>
-            </h4>
-          </VCardTitle>
-        </VCardItem>
+    <VCardItem>
+      <VCardTitle>
+        <h4 class="text-h4 text-wrap">
+          Anda login sebagai: <strong>{{ tokenData.selectedRole?.description || 'Not available' }}</strong>
+        </h4>
+      </VCardTitle>
+      <VCardTitle>
+        <h4 class="text-h4 text-wrap">
+          Permissions: <strong>{{ tokenData.permissions.length ? tokenData.permissions.join(', ') : 'No permissions'
+          }}</strong>
+        </h4>
+      </VCardTitle>
+      <VCardTitle>
+        <h4 class="text-h4 text-wrap">
+          Selected Unit: <strong>{{ tokenData.selectedUnit?.name || 'Not available' }}</strong>
+        </h4>
+      </VCardTitle>
+      <VCardTitle>
+        <h4 class="text-h4 text-wrap">
+          Remaining Time: <strong>{{ remainingMinutes }} minutes</strong>
+        </h4>
+      </VCardTitle>
 
-        <VCardItem>
-          <VRow>
-            <VCol cols="4">
-              <VAvatar size="large">
-                <img :src="illustrationJohn2" alt="User Avatar">
-              </VAvatar>
-            </VCol>
-            <VCol cols="8">
-              <VCardTitle>
-                <h4 class="text-h4 text-wrap">
-                  Selamat datang, <strong>{{ tokenData.selectedRole?.description || 'Not available' }}</strong>
-                </h4>
-              </VCardTitle>
-              <VCardTitle>
-                <h4 class="text-h4 text-wrap">
-                  <strong>{{ tokenData.selectedRole?.description || 'Not available' }}</strong>
-                </h4>
-              </VCardTitle>
-              <VCardTitle>
-                <h4 class="text-h4 text-wrap">
-                  <strong>{{ tokenData.selectedUnit?.name || 'Not available' }}</strong>
-                </h4>
-              </VCardTitle>
-            </VCol>
-          </VRow>
-        </VCardItem>
-      </VCol>
-
-      <VCol cols="12" sm="6" order="1" order-sm="2" class="text-center">
-        <img :src="illustrationJohn2" :height="$vuetify.display.xs ? '165' : '200'"
-          :class="$vuetify.display.xs ? 'position-relative' : 'position-absolute'"
-          class="john-illustration flip-in-rtl mt-6 mt-sm-0">
-      </VCol>
-    </VRow>
+      <!-- Avatar & Welcome Message Section Dipindah ke sini -->
+      <VRow class="mt-4">
+        <VCol cols="4">
+          <VAvatar size="large">
+            <img :src="illustrationJohn2" alt="User Avatar">
+          </VAvatar>
+        </VCol>
+        <VCol cols="8">
+          <VCardTitle>
+            <h4 class="text-h4 text-wrap">
+              Selamat datang, <strong>{{ tokenData.selectedRole?.description || 'Not available' }}</strong>
+            </h4>
+          </VCardTitle>
+          <VCardTitle>
+            <h4 class="text-h4 text-wrap">
+              <strong>{{ tokenData.selectedRole?.description || 'Not available' }}</strong>
+            </h4>
+          </VCardTitle>
+          <VCardTitle>
+            <h4 class="text-h4 text-wrap">
+              <strong>{{ tokenData.selectedUnit?.name || 'Not available' }}</strong>
+            </h4>
+          </VCardTitle>
+        </VCol>
+      </VRow>
+    </VCardItem>
   </VCard>
 </template>
+
 
 
 

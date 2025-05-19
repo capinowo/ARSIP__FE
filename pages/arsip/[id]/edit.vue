@@ -185,8 +185,15 @@ onMounted(async () => {
 
 
 const formatDate = (date) => {
-  return date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  if (!date) return ''
+  const d = new Date(date)
+  return d.toLocaleDateString('id-ID', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
 };
+
 
 const retentionActiveDate = computed(() => {
   if (formStore.selectedClassification && formStore.tanggalDokumen) {
@@ -328,8 +335,6 @@ const handleSave = async () => {
     jumlah_arsip: parseInt(formStore.jumlahArsip, 10) || 0,
     tingkat_perkembangan: formStore.selectedTingkatPerkembangan,
     kondisi: formStore.selectedKondisi,
-    jumlah_lampiran: parseInt(formStore.jumlahLampiran, 10) || 0,
-    media_lampiran: formStore.selectedMediaLampiran,
     document_date: formStore.tanggalDokumen,
     final_retensi_aktif: new Date().toISOString(),
     final_retensi_inaktif: new Date().toISOString(),
@@ -391,8 +396,6 @@ const fetchArchiveById = async (id) => {
             jumlah_arsip
             media_arsip
             tingkat_perkembangan
-            jumlah_lampiran
-            media_lampiran
             final_retensi_aktif
             final_retensi_inaktif
             nilai_guna
@@ -409,6 +412,7 @@ const fetchArchiveById = async (id) => {
   if (!archive) {
     console.error("getArchive tidak ditemukan", json)
   }
+
 
   console.log("GRAPHQL RESPONSE:", json)
   console.error("DETAIL ERROR:", JSON.stringify(json.errors, null, 2))
@@ -429,7 +433,7 @@ onMounted(async () => {
 
   if (archive) {
     // Isi data ke formStore
-    formStore.tanggalDokumen = archive.document_date
+    formStore.tanggalDokumen = formatDate(archive.document_date)
     formStore.selectedClassification = archive.classification_id
     formStore.namaArsip = archive.title
     formStore.content = archive.description
@@ -485,12 +489,12 @@ onMounted(async () => {
 
               <VCol cols="12">
                 <VTextField v-model="formStore.tanggalDokumen" label="Tanggal Arsip Dibuat"
-                  prepend-icon="ri-calendar-schedule-line" type="date" />
+                  prepend-icon="ri-calendar-schedule-line" type="date" readonly />
               </VCol>
               <VCol cols="12">
                 <VAutocomplete v-model="formStore.selectedClassification" label="Klasifikasi"
                   placeholder="Select Klasifikasi" :items="classificationOptions" item-title="text" item-value="value"
-                  :rules="[value => !!value || 'Klasifikasi wajib dipilih']" />
+                  :rules="[value => !!value || 'Klasifikasi wajib dipilih']" readonly />
               </VCol>
 
               <!--
@@ -516,17 +520,17 @@ onMounted(async () => {
               </VCol>
               <VCol cols="12">
                 <VTextField v-model="formStore.namaArsip" label="Judul Arsip" placeholder="Judul Arsip"
-                  :rules="[value => !!value || 'Judul Arsip wajib diisi']" />
+                  :rules="[value => !!value || 'Judul Arsip wajib diisi']" readonly />
               </VCol>
               <VCol cols="12">
                 <VTextarea v-model="formStore.content" label="Deskripsi Arsip" placeholder="Deskripsi Arsip"
-                  :rules="[value => !!value || 'Deskripsi Arsip wajib diisi']" />
+                  :rules="[value => !!value || 'Deskripsi Arsip wajib diisi']" readonly />
               </VCol>
 
               <VCol cols="12">
                 <VSelect v-model="formStore.selectedNilaiGuna" label="Nilai Guna" :items="nilaiGunaOptions"
                   item-title="name" item-value="name" placeholder="Select Nilai Guna"
-                  :rules="[value => !!value || 'Nilai Guna wajib dipilih']" />
+                  :rules="[value => !!value || 'Nilai Guna wajib dipilih']" readonly />
               </VCol>
 
 
@@ -534,7 +538,7 @@ onMounted(async () => {
               <VCol cols="3">
                 <VTextField v-model="formStore.retentionActivePeriod" label="Retensi Aktif (belum)"
                   placeholder="Masukkan jumlah tahun" :rules="[value => !!value || 'Periode Retensi wajib diisi']"
-                  type="number" min="1" suffix="Tahun" />
+                  type="number" min="1" suffix="Tahun" readonly />
               </VCol>
               <VCol cols="3">
                 <VTextField v-model="formStore.retentionActiveDate" label="Tenggat Retensi Aktif" readonly />
@@ -543,7 +547,7 @@ onMounted(async () => {
               <VCol cols="3">
                 <VTextField v-model="formStore.retentionInactivePeriod" label="Retensi Inaktif (belum)"
                   placeholder="Masukkan jumlah tahun" :rules="[value => !!value || 'Periode Retensi wajib diisi']"
-                  type="number" min="1" suffix="Tahun" />
+                  type="number" min="1" suffix="Tahun" readonly />
               </VCol>
               <VCol cols="3">
                 <VTextField v-model="formStore.retentionInactiveDate" label="Tenggat Retensi Inaktif"
@@ -563,17 +567,18 @@ onMounted(async () => {
               <VCol cols="4">
                 <VTextField v-model="formStore.jumlahArsip" label="Jumlah Arsip (belum)"
                   placeholder="Masukkan jumlah tahun" :rules="[value => !!value || 'Periode Retensi wajib diisi']"
-                  type="number" min="1" />
+                  type="number" min="1" readonly />
               </VCol>
               <VCol cols="4">
                 <VSelect v-model="formStore.selectedMedia" label="Pilih Media" :items="mediaOptions" item-title="name"
-                  item-value="name" placeholder="Select Media" :rules="[value => !!value || 'Media wajib dipilih']" />
+                  item-value="name" placeholder="Select Media" :rules="[value => !!value || 'Media wajib dipilih']"
+                  readonly />
               </VCol>
               <VCol cols="4" v-if="formStore.selectedMedia === 'Dokumen' || formStore.selectedMedia === 'Tekstual'">
                 <VSelect v-model="formStore.selectedTingkatPerkembangan" label="Tingkat Perkembangan (Dokumen/Tekstual)"
                   :items="tingkatPerkembanganOptions" item-title="name" item-value="name"
                   placeholder="Select Tingkat Perkembangan"
-                  :rules="[value => !!value || 'Tingkat Perkembangan wajib dipilih']" />
+                  :rules="[value => !!value || 'Tingkat Perkembangan wajib dipilih']" readonly />
               </VCol>
 
               <VCol cols="4"
@@ -581,7 +586,7 @@ onMounted(async () => {
                 <VSelect v-model="formStore.selectedTingkatPerkembangan"
                   label="Tingkat Perkembangan (Audio/Video/Elektronik)" :items="tingkatPerkembanganOptions"
                   item-title="name" item-value="name" placeholder="Select Tingkat Perkembangan"
-                  :rules="[value => !!value || 'Tingkat Perkembangan wajib dipilih']" />
+                  :rules="[value => !!value || 'Tingkat Perkembangan wajib dipilih']" readonly />
               </VCol>
 
 

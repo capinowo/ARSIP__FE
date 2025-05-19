@@ -98,8 +98,6 @@ const fetchArchives = async () => {
           jumlah_arsip
           media_arsip
           tingkat_perkembangan
-          jumlah_lampiran
-          media_lampiran
           final_retensi_aktif
           final_retensi_inaktif
         }

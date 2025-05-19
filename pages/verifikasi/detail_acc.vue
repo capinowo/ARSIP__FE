@@ -169,31 +169,69 @@ const fetchArchivesByIds = async (ids) => {
     const query = `
         query GetArchive($getArchiveId: Int!) {
             getArchive(id: $getArchiveId) {
-                id
+                user_id
+                unit_id
                 title
+                location_id
+                id
                 description
                 classification_id
-                document_path
-                document_date
-                archive_status_id
                 archive_type_id
-                unit_id
-                location_id
-                user_id
-                approval_status_id
-                created_at
-                updated_at
+                archive_status_id
                 jumlah_arsip
                 media_arsip
                 tingkat_perkembangan
-                jumlah_lampiran
-                media_lampiran
-                final_retensi_aktif
-                final_retensi_inaktif
-                nilai_guna
+                archiveType {
+                id
+                name
+                }
+                archiveStatus {
+                id
+                name
+                }
+                classification {
+                id
+                description
+                classification_code
+                retentionDisposition {
+                    id
+                    name
+                }
+                retention_active
+                retention_disposition_id
+                retention_inactive
+                securityClassification {
+                    id
+                    name
+                }
+                security_classification_id
+                }
+                location {
+                id
+                name
+                rack_name
+                room_name
+                unit_id
+                description
+                building_name
+                box_name
+                }
+                user {
+                name
+                identity
+                roles {
+                    id
+                    name
+                }
+                }
+                unit {
+                id
+                name
+                }
+                created_at
             }
-        }
-    `;
+            }
+            `;
 
     for (const id of ids) {
         try {
@@ -259,16 +297,72 @@ watch(searchQuery, () => {
             <v-row>
                 <v-col cols="12">
                     <v-data-table :headers="headers" :items="archives" :items-per-page="itemsPerPage"
-                        :loading="isLoading" class="elevation-1">
+                        :loading="isLoading" class="elevation-1 mb-4">
                         <template v-slot:item="{ item }">
                             <tr>
                                 <td>{{ item.title }}</td>
                                 <td>{{ item.description }}</td>
-                                <td>{{ item.unit_id }}</td>
                                 <td>{{ item.created_at }}</td>
                             </tr>
                         </template>
                     </v-data-table>
+
+                    <v-row v-if="archives.length" class="mt-4">
+                        <v-col v-for="(item, index) in archives" :key="item.id" cols="12">
+                            <v-card class="mb-6" outlined>
+                                <v-card-title class="text-h6">
+                                    Arsip {{ index + 1 }} — {{ item.title }}
+                                </v-card-title>
+                                <v-card-subtitle>{{ item.description }}</v-card-subtitle>
+                                <v-card-text>
+                                    <div class="detail-row"><span class="label">Judul:</span><span class="value">{{
+                                        item.title || '-'
+                                            }}</span></div>
+                                    <div class="detail-row"><span class="label">Deskripsi:</span><span class="value">{{
+                                        item.description ||
+                                        '-' }}</span></div>
+                                    <div class="detail-row"><span class="label">Tanggal:</span><span class="value">{{
+                                        item.document_date ||
+                                        item.created_at || '-' }}</span></div>
+                                    <div class="detail-row">
+                                        <span class="label">Klasifikasi:</span>
+                                        <span class="value">
+                                            {{ item.classification?.classification_code || '-' }} - {{
+                                                item.classification?.description ||
+                                                '-' }}
+                                        </span>
+                                    </div>
+                                    <div class="detail-row"><span class="label">Unit:</span><span class="value">{{
+                                        item.unit?.name || '-'
+                                            }}</span></div>
+                                    <div class="detail-row"><span class="label">Tipe Arsip:</span><span class="value">{{
+                                        item.archiveType?.name || '-' }}</span></div>
+                                    <div class="detail-row">
+                                        <span class="label">Lokasi Penyimpanan:</span>
+                                        <span class="value">
+                                            {{ item.location?.building_name || '-' }} - {{ item.location?.box_name ||
+                                                '-' }} - {{
+                                                item.location?.rack_name || '-' }}
+                                        </span>
+                                    </div>
+                                    <div class="detail-row"><span class="label">Jumlah Arsip:</span><span
+                                            class="value">{{ item.jumlah_arsip
+                                                || '-' }}</span></div>
+                                    <div class="detail-row"><span class="label">Media Arsip:</span><span
+                                            class="value">{{ item.media_arsip
+                                                || '-' }}</span></div>
+                                    <div class="detail-row"><span class="label">Tingkat Perkembangan /
+                                            Kondisi:</span><span class="value">{{
+                                                item.tingkat_perkembangan || '-' }}</span></div>
+                                    <div class="detail-row"><span class="label">Nilai Guna:</span><span class="value">{{
+                                        item.classification?.retentionDisposition?.name || '-' }}</span></div>
+                                </v-card-text>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+
+
+
                 </v-col>
             </v-row>
 
@@ -318,5 +412,19 @@ watch(searchQuery, () => {
 </template>
 
 <style scoped>
-/* Add your styles here */
+.detail-row {
+    display: flex;
+    margin-bottom: 6px;
+}
+
+.label {
+    width: 230px;
+    /* Sesuaikan agar semua label rata kiri */
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.value {
+    flex: 1;
+}
 </style>

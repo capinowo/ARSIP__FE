@@ -107,9 +107,10 @@ const locationOptions = computed(() => {
     .filter(item => item.unit_id === unit_id.value)
     .map(item => ({
       id: item.id,
-      name: `${item.name} - ${item.building_name}`,
-    }))
-})
+      name: `${item.building_name} - ${item.box_name} - ${item.rack_name}`,
+    }));
+});
+
 
 console.log(locationStore.locations.name)
 
@@ -243,7 +244,11 @@ const statusOptions = computed(() => {
 })
 
 const statusComputed = computed(() => {
-  if (!formStore.tanggalDokumen || !retentionActiveDate.value || !retentionInactiveDate.value) {
+  if (
+    !formStore.tanggalDokumen ||
+    !retentionActiveDate.value ||
+    !retentionInactiveDate.value
+  ) {
     return null // Jika tanggal belum lengkap, status tetap kosong
   }
 
@@ -255,22 +260,30 @@ const statusComputed = computed(() => {
   const inactiveDate = new Date(yearI, monthI - 1, dayI)
 
   const today = new Date()
-  today.setHours(0, 0, 0, 0) // Normalisasi waktu ke tengah malam agar akurat
+  today.setHours(0, 0, 0, 0) // Normalisasi waktu
 
   let statusName = ''
 
   if (today < activeDate) {
-    statusName = 'Aktif'  // Masih dalam masa aktif
+    statusName = 'Aktif' // Masih dalam masa aktif
   } else if (today >= activeDate && today < inactiveDate) {
-    statusName = 'Inaktif'  // Sudah inaktif, belum musnah
+    statusName = 'Inaktif' // Sudah inaktif, belum musnah
   } else {
-    statusName = 'Statis'  // Sudah melewati retensi inaktif
+    // today >= inactiveDate
+    if (formStore.retentionDispositionName === 'Musnah') {
+      statusName = 'Musnah'
+    } else if (formStore.retentionDispositionName === 'Permanen') {
+      statusName = 'Statis'
+    } else {
+      statusName = 'Tidak Diketahui'
+    }
   }
 
   // Cari ID status berdasarkan nama status
   const matchedStatus = statusStore.statuses.find(status => status.name === statusName)
   return matchedStatus ? matchedStatus.id : null
 })
+
 
 
 
@@ -479,9 +492,10 @@ const showSnackbar = (message, color = 'success') => {
                 <input v-model="unit_id" type="hidden">
               </VCol>
               <VCol cols="6">
-                <VTextField v-model="selectedLocationName" label="Lokasi" placeholder="Lokasi" readonly />
-                <input v-model="formStore.selectedLocation" type="hidden">
+                <VSelect v-model="formStore.selectedLocation" :items="locationOptions" label="Lokasi" item-title="name"
+                  item-value="id" placeholder="Pilih Lokasi" dense outlined />
               </VCol>
+
               <VCol cols="12">
                 <VTextField v-model="formStore.namaArsip" label="Judul Arsip" placeholder="Judul Arsip"
                   :rules="[value => !!value || 'Judul Arsip wajib diisi']" />
