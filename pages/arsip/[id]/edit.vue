@@ -44,6 +44,7 @@ onMounted(() => {
 
 const unitStore = useUnitStore()
 
+
 onMounted(() => {
   unitStore.fetchUnits()
 })
@@ -423,24 +424,29 @@ const fetchArchiveById = async (id) => {
 
 
 
-
-
-
 onMounted(async () => {
-
   const id = route.params.id
   const archiveId = parseInt(route.params.id)
   const archive = await fetchArchiveById(archiveId)
 
   if (archive) {
-    // Isi data ke formStore
-    formStore.tanggalDokumen = formatDate(archive.document_date)
+    // Panggil selected classification DULUAN
     formStore.selectedClassification = archive.classification_id
+
+    // Cari datanya secara manual
+    const selectedClass = classificationStore.classifications.find(
+      c => c.id === archive.classification_id
+    )
+
+    formStore.tanggalDokumen = formatDate(archive.document_date)
     formStore.namaArsip = archive.title
     formStore.content = archive.description
     formStore.selectedNilaiGuna = archive.nilai_guna
-    formStore.retentionActivePeriod = archive.final_retensi_aktif
-    formStore.retentionInactivePeriod = archive.final_retensi_inaktif
+
+    // Gunakan hasil selectedClass dengan pengecekan
+    formStore.retentionActivePeriod = selectedClass?.retention_active ?? ''
+    formStore.retentionInactivePeriod = selectedClass?.retention_inactive ?? ''
+
     formStore.jumlahArsip = archive.jumlah_arsip
     formStore.selectedMedia = archive.media_arsip
     formStore.selectedTingkatPerkembangan = archive.tingkat_perkembangan
@@ -449,16 +455,18 @@ onMounted(async () => {
     formStore.retentionActiveDate = formatDate(archive.final_retensi_aktif)
     formStore.retentionInactiveDate = formatDate(archive.final_retensi_inaktif)
 
-    // Kolom unit dan lokasi biasanya ditampilkan di luar store
-    unit_name.value = + archive.unit_id // Kamu bisa mapping dari ID ke nama unit
+    const selectedUnit = unitStore.units.find(unit => unit.id === archive.unit_id)
     unit_id.value = archive.unit_id
+    unit_name.value = selectedUnit?.name ?? 'Unit tidak ditemukan'
+    formStore.selectedUnit = archive.unit_id
+
     selectedLocationName.value = archive.location_id
     formStore.selectedLocation = archive.location_id
 
-    // Jika ada file yang sebelumnya sudah di-upload, kamu bisa tampilkan nama file-nya juga
     selectedFile.value = archive.document_path
   }
 })
+
 
 
 
@@ -490,7 +498,7 @@ onMounted(async () => {
 
               <VCol cols="12">
                 <VTextField v-model="formStore.tanggalDokumen" label="Tanggal Arsip Dibuat"
-                  prepend-icon="ri-calendar-schedule-line" type="date" readonly />
+                  prepend-icon="ri-calendar-schedule-line" readonly />
               </VCol>
               <VCol cols="12">
                 <VAutocomplete v-model="formStore.selectedClassification" label="Klasifikasi"
