@@ -166,86 +166,75 @@ const createArchiveDisposalBatch = async ({ archiveIds, userId }) => {
 
 
 const batchId = ref(route.params.id); // Ambil batch_id dari URL
-const fetchArchivesInBatch = async () => {
-    console.log("Fetching archives for batch:", batchId.value); // 🔥 Debugging
-
-    if (!batchId.value) {
-        console.warn("❌ No batch ID provided!");
-        return;
-    }
+// GraphQL query to fetch archives in a disposal batch
+const fetchArchivesByBatchId = async (batchId) => {
+    const allArchives = [];
 
     const query = `
-query GetArchiveDisposals($where: ArchiveDisposalWhereInput) {
-  getArchiveDisposals(where: $where) {
-    data {
-      id
-      archive {
-        id
-        title
-        description
-        document_date
-        created_at
-        jumlah_arsip
-        media_arsip
-        tingkat_perkembangan
-
-        classification {
-          classification_code
-          description
-          retentionDisposition {
+    query GetArchiveDisposals($where: ArchiveDisposalWhereInput) {
+      getArchiveDisposals(where: $where) {
+        data {
+          id
+          archive {
+            id
+            title
+            description
+            document_date
+            created_at
+            jumlah_arsip
+            media_arsip
+            tingkat_perkembangan
+            classification {
+              classification_code
+              description
+              retentionDisposition {
+                name
+              }
+            }
+            unit {
+              id
+              name
+            }
+            archiveType {
+              id
+              name
+            }
+            location {
+              building_name
+              box_name
+              rack_name
+            }
+          }
+          archive_id
+          submission_date
+          approvalStatus {
+            id
             name
           }
-        }
-
-        unit {
-          id
-          name
-        }
-
-        archiveType {
-          id
-          name
-        }
-
-        location {
-          building_name
-          box_name
-          rack_name
+          approval_status_id
+          user {
+            id
+            name
+          }
+          approved_by
+          batch {
+            id
+            batch_code
+          }
+          batch_id
+          created_at
+          updated_at
         }
       }
-      archive_id
-      submission_date
-      approvalStatus {
-        id
-        name
-      }
-      approval_status_id
-      user {
-        id
-        name
-      }
-      approved_by
-      batch {
-        id
-        batch_code
-      }
-      batch_id
-      created_at
-      updated_at
     }
-  }
-}
-`;
+  `;
 
     const variables = {
         where: {
-            batch_id: Number(batchId.value)
-        }
+            batch_id: Number(batchId),
+        },
     };
 
-    console.log("Query Variables:", variables); // 🔥 Debugging
-
-    isLoading.value = true;
     try {
         const response = await fetch('http://localhost:4000/graphql', {
             method: 'POST',
@@ -253,36 +242,34 @@ query GetArchiveDisposals($where: ArchiveDisposalWhereInput) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getSelectedRoleToken()}`,
             },
-            body: JSON.stringify({ query, variables }),
+            body: JSON.stringify({
+                query,
+                variables,
+            }),
         });
 
         const result = await response.json();
 
-        if (result.errors) {
-            console.error("❌ GraphQL errors:", result.errors);
-        } else if (result.data && result.data.getArchiveDisposals) {
-            console.log("✅ Data Fetched:", result.data.getArchiveDisposals.data);
-            archives.value = result.data.getArchiveDisposals.data.map(disposal => ({
-                id: disposal.archive.id,
-                title: disposal.archive.title,
-                description: disposal.archive.description,
-                unit_id: disposal.archive.unit_id,
-                created_at: disposal.archive.created_at,
-                submission_date: disposal.submission_date,
-                approval_status: disposal.approvalStatus?.name || "Pending",
-                approved_by: disposal.user?.name || "N/A",
-                batch_code: disposal.batch?.batch_code || "N/A"
-            }));
-            totalArchives.value = archives.value.length;
+        if (
+            result.data &&
+            result.data.getArchiveDisposals &&
+            result.data.getArchiveDisposals.data
+        ) {
+            for (const disposal of result.data.getArchiveDisposals.data) {
+                if (disposal.archive) {
+                    allArchives.push(disposal.archive);
+                }
+            }
         } else {
-            console.warn("⚠️ No data returned from getArchiveDisposals query:", result);
+            console.warn(`No archives found for batch ID ${batchId}`);
         }
     } catch (error) {
-        console.error("❌ Error fetching archives in batch:", error);
-    } finally {
-        isLoading.value = false;
+        console.error(`Error fetching archives for batch ID ${batchId}:`, error);
     }
+
+    return allArchives;
 };
+
 
 
 

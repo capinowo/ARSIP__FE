@@ -70,14 +70,16 @@ const headers = [
 ]
 
 const verifyAllArchives = async () => {
-  if (!archives.value.length) {
-    console.warn('Tidak ada arsip yang bisa disetujui.');
+  const batchId = parseInt(route.query.id); // ambil dari ?id=1
+
+  if (!batchId || !archives.value.length) {
+    console.warn('❌ Tidak ada batch ID atau arsip yang bisa disetujui.');
     return;
   }
 
   const query = `
-    mutation ApproveDisposal($id: Int!) {
-      updateArchiveDisposalStatusToApproved(id: $id) {
+    mutation ApproveDisposal($batchId: Int!) {
+      updateArchiveDisposalStatusToApproved(batchId: $batchId) {
         id
         approval_status_id
         batch_id
@@ -85,43 +87,34 @@ const verifyAllArchives = async () => {
     }
   `;
 
-  const results = [];
+  try {
+    const response = await fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getSelectedRoleToken()}`,
+      },
+      body: JSON.stringify({
+        query,
+        variables: { batchId },
+      }),
+    });
 
-  for (const archive of archives.value) {
-    try {
-      const response = await fetch('http://localhost:4000/graphql', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${getSelectedRoleToken()}`,
-        },
-        body: JSON.stringify({
-          query,
-          variables: { id: archive.id },
-        }),
-      });
+    const result = await response.json();
 
-      const result = await response.json();
-
-      if (result.errors) {
-        console.error(`❌ Gagal setujui arsip ID ${archive.id}:`, result.errors);
-        results.push({ id: archive.id, status: 'failed', error: result.errors });
-      } else {
-        console.log(`✅ Arsip ID ${archive.id} disetujui (approval_status_id = 2)`);
-        results.push({ id: archive.id, status: 'success' });
-      }
-
-    } catch (err) {
-      console.error(`❌ Network error saat setujui ID ${archive.id}:`, err);
-      results.push({ id: archive.id, status: 'error', error: err });
+    if (result.errors) {
+      console.error(`❌ Gagal menyetujui arsip batch ID ${batchId}:`, result.errors);
+    } else {
+      console.log(`✅ Arsip batch ID ${batchId} disetujui (approval_status_id = 2)`);
     }
+
+  } catch (err) {
+    console.error(`❌ Network error saat menyetujui batch ID ${batchId}:`, err);
   }
 
-  console.log('[📋 Hasil Setujui Arsip]', results);
-
-  // Redirect ke halaman lain atau refresh data
   router.push('/arsip/list_arsip');
 };
+
 
 
 
@@ -170,29 +163,69 @@ const fetchArchivesByIds = async (ids) => {
   const query = `
         query GetArchive($getArchiveId: Int!) {
             getArchive(id: $getArchiveId) {
-                id
+                user_id
+                unit_id
                 title
+                location_id
+                id
                 description
                 classification_id
-                document_path
-                document_date
-                archive_status_id
                 archive_type_id
-                unit_id
-                location_id
-                user_id
-                approval_status_id
-                created_at
-                updated_at
+                archive_status_id
                 jumlah_arsip
                 media_arsip
                 tingkat_perkembangan
-                final_retensi_aktif
-                final_retensi_inaktif
-                nilai_guna
+                archiveType {
+                id
+                name
+                }
+                archiveStatus {
+                id
+                name
+                }
+                classification {
+                id
+                description
+                classification_code
+                retentionDisposition {
+                    id
+                    name
+                }
+                retention_active
+                retention_disposition_id
+                retention_inactive
+                securityClassification {
+                    id
+                    name
+                }
+                security_classification_id
+                }
+                location {
+                id
+                name
+                rack_name
+                room_name
+                unit_id
+                description
+                building_name
+                box_name
+                }
+                user {
+                name
+                identity
+                roles {
+                    id
+                    name
+                }
+                }
+                unit {
+                id
+                name
+                }
+                created_at
             }
-        }
-    `;
+            }
+            `;
 
   for (const id of ids) {
     try {

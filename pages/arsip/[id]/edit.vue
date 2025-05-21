@@ -294,6 +294,7 @@ watch(() => unit_id.value, newVal => {
   const location = locationStore.locations.find(item => item.unit_id === newVal)
   if (location) {
     formStore.selectedLocation = location.id
+    archiveUnitName = location.unit_name
   }
 })
 
@@ -511,7 +512,7 @@ onMounted(async () => {
                 </VCol> 
               -->
               <VCol cols="6">
-                <VTextField v-model="unit_name" label="Unit" placeholder="Unit" readonly />
+                <VTextField v-model="formStore.selectedLocation" label="Unit" placeholder="Unit" readonly />
                 <input v-model="unit_id" type="hidden">
               </VCol>
               <VCol cols="6">
