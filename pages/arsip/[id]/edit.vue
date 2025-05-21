@@ -446,8 +446,8 @@ onMounted(async () => {
     formStore.selectedTingkatPerkembangan = archive.tingkat_perkembangan
     formStore.selectedStatus = archive.archive_status_id
     formStore.retentionDispositionName = ''
-    formStore.retentionActiveDate = ''
-    formStore.retentionInactiveDate = ''
+    formStore.retentionActiveDate = formatDate(archive.final_retensi_aktif)
+    formStore.retentionInactiveDate = formatDate(archive.final_retensi_inaktif)
 
     // Kolom unit dan lokasi biasanya ditampilkan di luar store
     unit_name.value = + archive.unit_id // Kamu bisa mapping dari ID ke nama unit
