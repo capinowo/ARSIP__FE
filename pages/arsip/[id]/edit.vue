@@ -460,7 +460,6 @@ onMounted(async () => {
     unit_name.value = selectedUnit?.name ?? 'Unit tidak ditemukan'
     formStore.selectedUnit = archive.unit_id
 
-    selectedLocationName.value = archive.location_id
     formStore.selectedLocation = archive.location_id
 
     selectedFile.value = archive.document_path
